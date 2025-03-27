@@ -29,7 +29,6 @@ jobs:
      # 3) 패키지 설치 및 빌드
       - name: Install dependencies & Build
         run:
-          mkdir BookTown_Front_end
           cd BookTown_Front_end
           npm install
           npm run build  
