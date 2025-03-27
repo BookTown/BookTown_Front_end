@@ -21,9 +21,6 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}  
-          
-      - name: Debug - List project directory
-        run: ls -al
 
 
      # 3) 패키지 설치 및 빌드
@@ -33,6 +30,10 @@ jobs:
           cd BookTown_Front_end
           npm install
           npm run build  
+             
+      - name: Debug - Check build folder
+        run: ls -al BookTown_Front_end/build
+
 
       # 4) EC2에 배포
       - name: Deploy to EC2
