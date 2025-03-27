@@ -22,31 +22,38 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}  
 
-      - name: Install dependencies
+     # 3) 패키지 설치 및 빌드
+      - name: Install dependencies & Build
         run: |
-          cd BookTown_Front_end 
-          npm install  
-
-      - name: Build React app
-        run: |
-          cd BookTown_Front_end  
+          cd BookTown_Front_end
+          npm install
           npm run build  
 
+      # 4) EC2에 배포
       - name: Deploy to EC2
-        uses: appleboy/scp-action@v0.1.4
+        uses: appleboy/scp-action@master
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_KEY }}
-          source: "build/*"
-          target: "/home/ec2-user/BookTown_Front_end/"
+          port: ${{ secrets.EC2_PORT }}
+          source: "BookTown_Front_end/build/*"
+          target: "/home/ec2-user/frontend"
 
-      - name: Restart Nginx
-        uses: appleboy/ssh-action@v0.1.10
+      # 5) EC2에서 기존 빌드 제거 및 Nginx 재시작
+      - name: Restart Frontend on EC2
+        uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_KEY }}
+          port: ${{ secrets.EC2_PORT }}
           script: |
+            # 기존 빌드 폴더 삭제
+            sudo rm -rf /var/www/html/*
+            
+            # 새로운 빌드 배포
+            sudo cp -r /home/ec2-user/frontend/* /var/www/html/
+            
+            # Nginx 재시작
             sudo systemctl restart nginx
-
