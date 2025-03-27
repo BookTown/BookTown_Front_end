@@ -21,6 +21,10 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}  
+          
+      - name: Debug - List project directory
+        run: ls -al
+
 
      # 3) 패키지 설치 및 빌드
       - name: Install dependencies & Build
