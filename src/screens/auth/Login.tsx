@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import InputComponent from "../../components/InputComponent";
 import { useForm } from "react-hook-form";
 import axiosApi from "../../axios";
+import Button from "../../components/Button";
 
 interface ILogin {
   loginId: string;
@@ -77,9 +78,10 @@ const Login = () => {
             {errors.password.type === "required" && "비밀번호를 입력해주세요"}
           </span>
           )}
-          <button className="w-full h-[40px] bg-[#C75C5C] text-white rounded-full shadow-[4px_4px_8px_rgba(0,0,0,0.25)] hover:opacity-80">
+          {/* <button className="w-full h-[40px] bg-[#C75C5C] text-white rounded-full shadow-[4px_4px_8px_rgba(0,0,0,0.25)] hover:opacity-80">
             로그인
-          </button>
+          </button> */}
+          <Button size="lg" color="pink" type="submit">로그인</Button>
         </form>
 
         {/* 회원가입 링크 */}
