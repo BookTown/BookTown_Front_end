@@ -1,7 +1,34 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import InputComponent from "../../components/InputComponent";
+import { useForm } from "react-hook-form";
+import axiosApi from "../../axios";
+
+interface ILogin {
+  loginId: string;
+  password: string;
+}
 
 const Login = () => {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<ILogin>();
+  const navigate = useNavigate();
+
+  const loginUser = async (data: ILogin) => {
+    const { loginId, password } = data;
+    const res = await axiosApi.post("/login", {
+      loginId,
+      password,
+    });
+    if (res.status === 200) {
+      localStorage.setItem("accessToken", res.data.accessToken);
+      navigate("/home");
+    }
+  };
+
   return (
     <div className="flex justify-center">
       <div className="w-full max-w-[28rem] min-h-[100dvh] border-x border-solid border-gray-300 bg-[#FFFAF0] flex flex-col justify-center pb-12 px-7 font-ongleaf">
@@ -25,21 +52,35 @@ const Login = () => {
         </div>
 
         {/* 로그인 폼 */}
-        <div className="w-full space-y-6">
-          <input
+        <form 
+          onSubmit={handleSubmit(loginUser)}
+          className="w-full space-y-6">
+          <InputComponent
+            id="loginId"
+            label="아이디"
             type="text"
-            placeholder="아이디"
-            className="w-full h-[40px] px-4 rounded-full bg-white shadow-[4px_4px_8px_rgba(0,0,0,0.25)] placeholder:text-[#A39C9C]"
+            register={register}
           />
-          <input
+          {errors.loginId && (
+          <span className="px-4 text-red-600 w-[60%] font-bold text-center">
+            {errors.loginId.type === "required" && "아이디를 입력해주세요"}
+          </span>
+          )}
+          <InputComponent
+            id="password"
+            label="비밀번호"
             type="password"
-            placeholder="비밀번호"
-            className="w-full h-[40px] px-4 rounded-full bg-white shadow-[4px_4px_8px_rgba(0,0,0,0.25)] placeholder:text-[#A39C9C]"
+            register={register}
           />
+          {errors.password && (
+          <span className="px-4 text-red-600 w-[60%] font-bold text-center">
+            {errors.password.type === "required" && "비밀번호를 입력해주세요"}
+          </span>
+          )}
           <button className="w-full h-[40px] bg-[#C75C5C] text-white rounded-full shadow-[4px_4px_8px_rgba(0,0,0,0.25)] hover:opacity-80">
             로그인
           </button>
-        </div>
+        </form>
 
         {/* 회원가입 링크 */}
         <div className="text-[18px] mt-11 mb-16 text-sm text-center text-[#232121] flex flex-col items-center">
