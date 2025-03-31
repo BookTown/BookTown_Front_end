@@ -43,7 +43,7 @@ function Register() {
 
   return (
     <div className="flex justify-center">
-      <div className="w-full max-w-[28rem] min-h-[100dvh] border-x border-solid border-gray-300 bg-[#FFFAF0] pb-12 px-7 font-ongleaf">
+      <div className="w-full max-w-[28rem] min-h-[100dvh] bg-[#FFFAF0] pb-12 px-7 font-ongleaf">
         {/* 뒤로 가기 */}
         <Link to={"/"} className="text-[32px] mt-10">
           ←

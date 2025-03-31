@@ -38,7 +38,7 @@ const Login = () => {
 
   return (
     <div className="flex justify-center">
-      <div className="w-full max-w-[28rem] min-h-[100dvh] border-x border-solid border-gray-300 bg-[#FFFAF0] flex flex-col justify-center pb-12 px-7 font-ongleaf">
+      <div className="w-full max-w-[28rem] min-h-[100dvh] bg-[#FFFAF0] flex flex-col justify-center pb-12 px-7 font-ongleaf">
         {/* 로고 + 타이틀 */}
         <div className="flex justify-center mt-16 mb-16 -ml-10">
           <img
