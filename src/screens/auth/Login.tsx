@@ -19,14 +19,20 @@ const Login = () => {
   const navigate = useNavigate();
 
   const loginUser = async (data: ILogin) => {
-    const { loginId, password } = data;
-    const res = await axiosApi.post("/login", {
-      loginId,
-      password,
-    });
-    if (res.status === 200) {
-      localStorage.setItem("accessToken", res.data.accessToken);
-      navigate("/home");
+    try {
+      const { loginId, password } = data;
+      const res = await axiosApi.post("/users/login", {
+        username: loginId,
+        password
+      });
+      
+      if (res.status === 200) {
+        localStorage.setItem("accessToken", res.data.accessToken);
+        navigate("/home");
+      }
+    } catch (error) {
+      console.error("로그인 오류:", error);
+      alert("로그인에 실패했습니다. 아이디와 비밀번호를 확인해주세요.");
     }
   };
 

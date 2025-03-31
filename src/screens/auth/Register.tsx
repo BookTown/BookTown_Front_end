@@ -8,16 +8,15 @@ import Button from "../../components/Button";
 
 interface IRegister {
   loginId: string;
-  name: string;
   password: string;
   confirmPassword: string;
 }
+
 function Register() {
   const navigate = useNavigate();
   const {
     register,
     handleSubmit,
-    setValue,
     watch,
     formState: { errors },
   } = useForm<IRegister>();
@@ -25,16 +24,23 @@ function Register() {
   const password = watch("password");
 
   const registerUser = async (data: IRegister) => {
-    const { loginId, name, password } = data;
-    const res = await axiosApi.post("/join", {
-      loginId,
-      name,
-      password,
-    });
-    if (res.status === 200) {
-      navigate("/");
+    try {
+      const { loginId, password } = data;
+      const res = await axiosApi.post("/users/register", {
+        username: loginId,
+        password
+      });
+      
+      if (res.status === 200) {
+        alert("회원가입에 성공했습니다. 로그인 페이지로 이동합니다.");
+        navigate("/");
+      }
+    } catch (error) {
+      console.error("회원가입 오류:", error);
+      alert("회원가입에 실패했습니다. 다시 시도해주세요.");
     }
   };
+
   return (
     <div className="flex justify-center">
       <div className="w-full max-w-[28rem] min-h-[100dvh] border-x border-solid border-gray-300 bg-[#FFFAF0] pb-12 px-7 font-ongleaf">
@@ -44,22 +50,11 @@ function Register() {
         </Link>
         <h1 className="px-2 pt-[8rem] pb-10 text-[48px]">회원가입</h1>
         <div className="flex flex-col items-center justify-center">
-          {/* 로그인 폼 */}
+          {/* 회원가입 폼 */}
           <form
             onSubmit={handleSubmit(registerUser)}
             className="w-full sm:max-w-[360px] md:max-w-[500px] space-y-6"
           >
-            <InputComponent
-              id="name"
-              label="닉네임"
-              type="text"
-              register={register}
-            />
-            {errors.name && (
-              <span className="px-4 text-red-600 w-[60%] font-bold text-center">
-                {errors.name.type === "required" && "닉네임을 입력해주세요"}
-              </span>
-            )}
             <InputComponent
               id="loginId"
               label="아이디"
