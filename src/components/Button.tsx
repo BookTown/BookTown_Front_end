@@ -10,7 +10,7 @@ type ButtonProps = {
 
 const sizeClasses = {
   sm: "w-[100px] h-[36px] text-[12px]",
-  md: "w-[120px] h-[42px] text-[12px]",
+  md: "w-[7rem] h-[28px] text-sm",
   lg: "w-full h-[40px] text-[20px]",
 };
 
