@@ -5,7 +5,7 @@ import axios, {
   } from "axios";
   
   const axiosApi = axios.create({
-    baseURL: "https://booktown.site/api",
+    baseURL: "booktown.site/api",
     withCredentials: true,
   });
   
