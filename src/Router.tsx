@@ -3,6 +3,7 @@ import App from "./App";
 import Login from "./screens/auth/Login";
 import Register from "./screens/auth/Register";
 import Home from "./screens/home/Home";
+import Search from "./screens/search/Search";
 
 const router = createBrowserRouter([
     {
@@ -20,6 +21,22 @@ const router = createBrowserRouter([
             {
                 path: "/home",
                 element: <Home />,
+            },
+            {
+                path: "/history",
+                element: <Home />,
+            },
+            {
+                path: "/ranking",
+                element: <Home />,
+            },
+            {
+                path: "/settings",
+                element: <Home />,
+            },
+            {
+                path: "/search",
+                element: <Search />,
             },
             {
 
