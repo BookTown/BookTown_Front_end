@@ -21,10 +21,15 @@ const Login = () => {
   const loginUser = async (data: ILogin) => {
     try {
       const { loginId, password } = data;
+      console.log("로그인 시도:", { username: loginId, password: "***" });
+      
       const res = await axiosApi.post("/users/login", {
         username: loginId,
         password
       });
+      
+      console.log("로그인 응답 상태:", res.status);
+      console.log("로그인 응답 데이터:", res.data);
       
       if (res.status === 200) {
         localStorage.setItem("accessToken", res.data.accessToken);
