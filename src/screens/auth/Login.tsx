@@ -2,7 +2,7 @@ import React from "react";
 
 const Login = () => {
   return (
-    <div className="w-full max-w-[28rem] min-h-[100dvh] bg-[#FFFAF0] flex flex-col items-center px-7 py-16 font-ongleaf">
+    <div className="w-full max-w-[28rem] min-h-[100dvh] bg-[#FFFAF0] flex flex-col items-center justify-center px-7 font-ongleaf">
       {/* 마스코트 */}
       <div className="mb-6">
         <img 
