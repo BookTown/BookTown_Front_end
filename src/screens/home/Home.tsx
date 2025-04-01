@@ -5,7 +5,7 @@ import Main from './Main';import Navbar from '../../components/Navbar';
 
 const Home = () => {
   return (
-    <div className="w-full max-w-[28rem] min-h-[100dvh] bg-[#FFFAF0] flex flex-col font-ongleaf">
+    <div>
       <TopBar />
       <Main />
       <Navbar />
