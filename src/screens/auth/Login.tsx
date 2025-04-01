@@ -1,110 +1,73 @@
 import React from "react";
-import { Link, useNavigate } from "react-router-dom";
-import InputComponent from "../../components/InputComponent";
-import { useForm } from "react-hook-form";
-import axiosApi from "../../axios";
-import Button from "../../components/Button";
-
-interface ILogin {
-  loginId: string;
-  password: string;
-}
 
 const Login = () => {
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<ILogin>();
-  const navigate = useNavigate();
-
-  const loginUser = async (data: ILogin) => {
-    try {
-      const { loginId, password } = data;
-      console.log("로그인 시도:", { username: loginId, password: "***" });
-      
-      const res = await axiosApi.post("/users/login", {
-        username: loginId,
-        password
-      });
-      
-      console.log("로그인 응답 상태:", res.status);
-      console.log("로그인 응답 데이터:", res.data);
-      
-      if (res.status === 200) {
-        localStorage.setItem("accessToken", res.data.accessToken);
-        navigate("/home");
-      }
-    } catch (error) {
-      console.error("로그인 오류:", error);
-      alert("로그인에 실패했습니다. 아이디와 비밀번호를 확인해주세요.");
-    }
-  };
-
   return (
-    <div className="flex justify-center">
-      <div className="w-full max-w-[28rem] min-h-[100dvh] bg-[#FFFAF0] flex flex-col justify-center pb-12 px-7 font-ongleaf">
-        {/* 로고 + 타이틀 */}
-        <div className="flex justify-center mt-16 mb-16 -ml-10">
-          <img
-            src="/images/logo.png"
-            alt="책고을 로고"
-            className="w-32 h-32 -mt-6 -mr-2"
-          />
-          <div className="flex flex-col items-start">
-            <h1 className="text-[72px] text-[#222] leading-none">
-              책고을
-            </h1>
-            <p className="text-[15px] text-[#A39C9C] leading-tight w-[110px]">
-              고전문학 그림책을 읽고
-              <br />
-              퀴즈로 학습해봅시다
-            </p>
-          </div>
-        </div>
+    <div className="w-full max-w-[28rem] min-h-[100dvh] bg-[#FFFAF0] flex flex-col items-center px-7 py-16 font-ongleaf">
+      {/* 마스코트 */}
+      <div className="mb-6">
+        <img 
+          src="/images/Mascot.png" 
+          alt="책고을 마스코트" 
+          className="w-48 h-48 object-contain"
+        />
+      </div>
 
-        {/* 로그인 폼 */}
-        <form 
-          onSubmit={handleSubmit(loginUser)}
-          className="w-full space-y-6">
-          <InputComponent
-            id="loginId"
-            label="아이디"
-            type="text"
-            register={register}
-          />
-          {errors.loginId && (
-          <span className="px-4 text-red-600 w-[60%] font-bold text-center">
-            {errors.loginId.type === "required" && "아이디를 입력해주세요"}
-          </span>
-          )}
-          <InputComponent
-            id="password"
-            label="비밀번호"
-            type="password"
-            register={register}
-          />
-          {errors.password && (
-          <span className="px-4 text-red-600 w-[60%] font-bold text-center">
-            {errors.password.type === "required" && "비밀번호를 입력해주세요"}
-          </span>
-          )}
-          {/* <button className="w-full h-[40px] bg-[#C75C5C] text-white rounded-full shadow-[4px_4px_8px_rgba(0,0,0,0.25)] hover:opacity-80">
-            로그인
-          </button> */}
-          <Button size="lg" color="pink" type="submit">로그인</Button>
-        </form>
-
-        {/* 회원가입 링크 */}
-        <div className="text-[18px] mt-11 mb-16 text-sm text-center text-[#232121] flex flex-col items-center">
-          <span>아직 회원이 아니신가요?</span>
-          <Link
-            to={"/register"}
-            className="text-[18px] text-cyan-400 mt-1 underline hover:opacity-60"
-          >
-            회원가입
-          </Link>
+      {/* 로고 + 타이틀 */}
+      <div className="flex items-center mb-8">
+        <img
+          src="/images/logo.png"
+          alt="책고을 로고"
+          className="w-32 h-32 -mt-6 -mr-2"
+        />
+        <div className="flex flex-col items-start">
+          <h1 className="text-[72px] text-[#222] leading-none">
+            책고을
+          </h1>
+          <p className="text-[15px] text-[#A39C9C] leading-tight w-[110px]">
+            고전문학 그림책을 읽고
+            <br />
+            퀴즈로 학습해봅시다
+          </p>
         </div>
+      </div>
+
+      {/* 소셜 로그인 버튼 */}
+      <div className="w-full space-y-4 mt-10">
+        {/* 카카오 로그인 */}
+        <button
+          className="w-full h-[40px] bg-[#FEE500] text-[#3A1D1E] rounded-full shadow-[4px_4px_8px_rgba(0,0,0,0.25)] hover:opacity-80 transition-opacity duration-300 ease-in-out flex items-center justify-center text-[16px] font-medium"
+        >
+          <img 
+            src="/images/Kakao Logo.png" 
+            alt="카카오 로고" 
+            className="w-5 h-5 mr-2" 
+          />
+          카카오로 시작하기
+        </button>
+        
+        {/* 구글 로그인 */}
+        <button
+          className="w-full h-[40px] bg-white text-[#3A1D1E] border border-gray-300 rounded-full shadow-[4px_4px_8px_rgba(0,0,0,0.25)] hover:opacity-80 transition-opacity duration-300 ease-in-out flex items-center justify-center text-[16px] font-medium"
+        >
+          <img 
+            src="/images/Google Logo.png" 
+            alt="구글 로고" 
+            className="w-5 h-5 mr-2" 
+          />
+          google로 시작하기
+        </button>
+        
+        {/* 네이버 로그인 */}
+        <button
+          className="w-full h-[40px] bg-[#03C75A] text-white rounded-full shadow-[4px_4px_8px_rgba(0,0,0,0.25)] hover:opacity-80 transition-opacity duration-300 ease-in-out flex items-center justify-center text-[16px] font-medium"
+        >
+          <img 
+            src="/images/Naver Logo.png" 
+            alt="네이버 로고" 
+            className="w-5 h-5 mr-2" 
+          />
+          네이버로 시작하기
+        </button>
       </div>
     </div>
   );
