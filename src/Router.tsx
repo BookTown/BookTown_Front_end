@@ -4,6 +4,8 @@ import Login from "./screens/auth/Login";
 import Register from "./screens/auth/Register";
 import Home from "./screens/home/Home";
 import Search from "./screens/search/Search";
+import Popular from "./screens/book/Popular";
+import Recent from "./screens/book/Recent";
 
 const router = createBrowserRouter([
     {
@@ -37,6 +39,14 @@ const router = createBrowserRouter([
             {
                 path: "/search",
                 element: <Search />,
+            },
+            {
+                path: "/popular",
+                element: <Popular />,
+            },
+            {
+                path: "/recent",
+                element: <Recent />,
             },
             {
 

@@ -3,6 +3,8 @@ import BookCard from "../../components/BookCard";
 import Button from "../../components/Button";
 import { useState } from "react";
 import ModalOverlay from "../../components/ModalOverlay";
+import { mockBooks } from "../../mocks/mockBook";
+import { Link } from "react-router-dom";
 
 type Book = {
   id: number;
@@ -10,51 +12,6 @@ type Book = {
   author: string;
   imageUrl: string;
 };
-
-const mockBooks = [
-  {
-    id: 1,
-    title: "어린왕자",
-    author: "앙투안 드 생텍쥐페리",
-    imageUrl: "/images/little-prince.png",
-  },
-  {
-    id: 2,
-    title: "데미안",
-    author: "Hermann Hesse",
-    imageUrl: "/images/demian.png",
-  },
-  {
-    id: 3,
-    title: "헨젤과 그레텔",
-    author: "Brothers Grimm",
-    imageUrl: "/images/hansel.png",
-  },
-  {
-    id: 4,
-    title: "노인과 바다",
-    author: "Ernest Hemingway",
-    imageUrl: "/images/oldSea.png",
-  },
-  {
-    id: 5,
-    title: "변신",
-    author: "Franz Kafka",
-    imageUrl: "/images/Die Verwandlung.png",
-  },
-  {
-    id: 6,
-    title: "싯다르타",
-    author: "Hermann Hesse",
-    imageUrl: "/images/Siddhartha.png",
-  },
-  {
-    id: 7,
-    title: "소돔의 120일",
-    author: "Marquis de Sade",
-    imageUrl: "/images/Lusts of the Libertines.png",
-  },
-];
 
 const mainBook = mockBooks[0];
 
@@ -89,45 +46,78 @@ const Main = () => {
       </div>
 
       {/* 인기 고전 리스트 */}
-      <ListFrame title="인기 고전" link="search">
-        {mockBooks.slice(1).map((book) => (
-          <BookCard
-            key={book.id}
-            {...book}
-            onClick={() => {
-              setSelectedBook(book);
-              setIsModalOpen(true);
-            }}
-          />
-        ))}
-      </ListFrame>
+      <div>
+        <div className="px-4 flex items-center justify-between">
+          <h3 className="text-2xl mx-2 mb-2">인기 고전</h3>
+          <Link
+            to="/popular"
+            className="pr-2 text-[#4B8E96] hover:underline hover:opacity-80 transition"
+          >
+            모두 보기
+          </Link>
+        </div>
+        <ListFrame>
+          {mockBooks.slice(1).map((book) => (
+            <BookCard
+              key={book.id}
+              {...book}
+              onClick={() => {
+                setSelectedBook(book);
+                setIsModalOpen(true);
+              }}
+            />
+          ))}
+        </ListFrame>
+      </div>
 
       {/* 최신 고전 리스트 */}
-      <ListFrame title="최신 등록 고전" link="search">
-        {mockBooks.map((book) => (
-          <BookCard
-            key={book.id}
-            {...book}
-            onClick={() => {
-              setSelectedBook(book);
-              setIsModalOpen(true);
-            }}
-          />
-        ))}
-      </ListFrame>
+      <div>
+        <div className="px-4 flex items-center justify-between">
+          <h3 className="text-2xl mx-2 mb-2">최근 등록된 고전</h3>
+          <Link
+            to="/recent"
+            className="pr-2 text-[#4B8E96] hover:underline hover:opacity-80 transition"
+          >
+            모두 보기
+          </Link>
+        </div>
+        <ListFrame>
+          {mockBooks.map((book) => (
+            <BookCard
+              key={book.id}
+              {...book}
+              onClick={() => {
+                setSelectedBook(book);
+                setIsModalOpen(true);
+              }}
+            />
+          ))}
+        </ListFrame>
+      </div>
       {/* 히스토리 리스트 */}
-      <ListFrame title="히스토리" link="search">
-        {mockBooks.map((book) => (
-          <BookCard
-            key={book.id}
-            {...book}
-            onClick={() => {
-              setSelectedBook(book);
-              setIsModalOpen(true);
-            }}
-          />
-        ))}
-      </ListFrame>
+      <div>
+        <div className="px-4 flex items-center justify-between">
+          <h3 className="text-2xl mx-2 mb-2">히스토리</h3>
+          <Link
+            to="/search"
+            className="pr-2 text-[#4B8E96] hover:underline hover:opacity-80 transition"
+          >
+            모두 보기
+          </Link>
+        </div>
+        <ListFrame>
+          {mockBooks.map((book) => (
+            <BookCard
+              key={book.id}
+              {...book}
+              onClick={() => {
+                setSelectedBook(book);
+                setIsModalOpen(true);
+              }}
+            />
+          ))}
+        </ListFrame>
+      </div>
       {isModalOpen && selectedBook && (
         <ModalOverlay
           book={selectedBook}

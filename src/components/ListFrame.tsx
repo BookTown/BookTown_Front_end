@@ -1,38 +1,26 @@
 import React from "react";
-import { Link } from "react-router-dom";
 
 interface ListFrameProps {
-  title: string;
   horizontal?: boolean;
-  link: string;
   children: React.ReactNode;
 }
 
 const ListFrame = ({
-  title,
   horizontal = true,
-  link,
   children,
 }: ListFrameProps) => {
   return (
-    <div className="px-4 py-2">
-      <div className="flex items-center justify-between">
-        <h3 className="text-2xl mx-2 mb-2">{title}</h3>
-        <Link
-          to={`/${link}`}
-          className="pr-2 text-[#4B8E96] hover:underline hover:opacity-80 transition"
+    <div className="px-4 pb-3">
+      <div className="flex justify-center">
+        <div
+          className={`${
+            horizontal
+              ? "flex gap-3 overflow-x-auto desktop-scroll"
+              : "grid grid-cols-2 gap-x-4 gap-y-6 place-items-center w-full max-w-screen-md"
+          } p-1 md:p-2 bg-transparent`}
         >
-          모두 보기
-        </Link>
-      </div>
-      <div
-        className={`${
-          horizontal
-            ? "flex gap-3 overflow-x-auto desktop-scroll"
-            : "flex-col gap-2"
-        } p-1 md:p-2 bg-transparent`}
-      >
-        {children}
+          {children}
+        </div>
       </div>
     </div>
   );
