@@ -65,6 +65,7 @@ const Main = () => {
                 setSelectedBook(book);
                 setIsModalOpen(true);
               }}
+              size="sm"
             />
           ))}
         </ListFrame>
@@ -90,6 +91,7 @@ const Main = () => {
                 setSelectedBook(book);
                 setIsModalOpen(true);
               }}
+              size="sm"
             />
           ))}
         </ListFrame>
@@ -114,6 +116,7 @@ const Main = () => {
                 setSelectedBook(book);
                 setIsModalOpen(true);
               }}
+              size="sm"
             />
           ))}
         </ListFrame>

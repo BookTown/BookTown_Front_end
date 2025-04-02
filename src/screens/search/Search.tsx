@@ -18,6 +18,7 @@ const Search = () => {
         key={book[0].id}
         {...book[0]}
         onClick={() => {console.log("hi")}}
+        size="sm"
       />
     </>
   );
