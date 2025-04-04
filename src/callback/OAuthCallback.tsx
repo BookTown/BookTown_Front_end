@@ -11,6 +11,14 @@ const OAuthCallback = () => {
     const accessToken = searchParams.get('accessToken');
     const refreshToken = searchParams.get('refreshToken');
 
+    // URL에서 토큰 제거 (브라우저 히스토리에서 토큰 노출 방지)
+    if (window.history && window.history.replaceState) {
+      const cleanUrl = window.location.protocol + "//" + 
+                       window.location.host + 
+                       window.location.pathname;
+      window.history.replaceState({}, document.title, cleanUrl);
+    }
+
     if (accessToken) {
       // 토큰을 로컬 스토리지에 저장
       localStorage.setItem('accessToken', accessToken);
