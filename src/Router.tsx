@@ -6,6 +6,7 @@ import Home from "./screens/home/Home";
 import Search from "./screens/search/Search";
 import Popular from "./screens/book/Popular";
 import Recent from "./screens/book/Recent";
+import OAuthCallback from "./callback/OAuthCallback";
 
 const router = createBrowserRouter([
     {
@@ -49,7 +50,8 @@ const router = createBrowserRouter([
                 element: <Recent />,
             },
             {
-
+                path: "/front/oauth/callback",
+                element: <OAuthCallback />,
             }
         ]
     },
