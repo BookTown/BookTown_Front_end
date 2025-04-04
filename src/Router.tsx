@@ -50,7 +50,7 @@ const router = createBrowserRouter([
                 element: <Recent />,
             },
             {
-                path: "/front/oauth/callback",
+                path: "/login",
                 element: <OAuthCallback />,
             }
         ]
