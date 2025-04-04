@@ -1,6 +1,11 @@
 import React from "react";
 
 const Login = () => {
+  // 소셜 로그인 함수
+  const handleSocialLogin = (provider: string) => {
+    window.location.href = `https://booktown.site/oauth2/authorization/${provider}`;
+  };
+
   return (
     <div className="w-full max-w-[28rem] min-h-[100dvh] bg-[#FFFAF0] flex flex-col items-center justify-center px-7 font-ongleaf">
       {/* 마스코트 */}
@@ -35,6 +40,7 @@ const Login = () => {
       <div className="w-full space-y-4 mt-10">
         {/* 카카오 로그인 */}
         <button
+          onClick={() => handleSocialLogin("kakao")}
           className="w-full h-[40px] bg-[#FEE500] text-[#3A1D1E] rounded-full shadow-[4px_4px_8px_rgba(0,0,0,0.25)] hover:opacity-80 transition-opacity duration-300 ease-in-out flex items-center justify-center text-[16px] font-medium"
         >
           <img 
@@ -47,6 +53,7 @@ const Login = () => {
         
         {/* 구글 로그인 */}
         <button
+          onClick={() => handleSocialLogin("google")}
           className="w-full h-[40px] bg-white text-[#3A1D1E] border border-gray-300 rounded-full shadow-[4px_4px_8px_rgba(0,0,0,0.25)] hover:opacity-80 transition-opacity duration-300 ease-in-out flex items-center justify-center text-[16px] font-medium"
         >
           <img 
@@ -59,6 +66,7 @@ const Login = () => {
         
         {/* 네이버 로그인 */}
         <button
+          onClick={() => handleSocialLogin("naver")}
           className="w-full h-[40px] bg-[#03C75A] text-white rounded-full shadow-[4px_4px_8px_rgba(0,0,0,0.25)] hover:opacity-80 transition-opacity duration-300 ease-in-out flex items-center justify-center text-[16px] font-medium"
         >
           <img 
