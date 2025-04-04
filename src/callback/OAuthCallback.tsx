@@ -11,14 +11,6 @@ const OAuthCallback = () => {
     const accessToken = searchParams.get('accessToken');
     const refreshToken = searchParams.get('refreshToken');
 
-    // URL에서 토큰 제거 (브라우저 히스토리에서 토큰 노출 방지)
-    if (window.history && window.history.replaceState) {
-      const cleanUrl = window.location.protocol + "//" + 
-                       window.location.host + 
-                       window.location.pathname;
-      window.history.replaceState({}, document.title, cleanUrl);
-    }
-
     if (accessToken) {
       // 토큰을 로컬 스토리지에 저장
       localStorage.setItem('accessToken', accessToken);
@@ -26,12 +18,12 @@ const OAuthCallback = () => {
         localStorage.setItem('refreshToken', refreshToken);
       }
       
-      // 메인 페이지로 리다이렉트
-      navigate('/home');
+      // 메인 페이지로 리다이렉트 (히스토리 대체)
+      navigate('/home', { replace: true });
     } else {
       // 토큰이 없는 경우 로그인 페이지로 리다이렉트
       console.error('OAuth 콜백: 토큰을 찾을 수 없습니다');
-      navigate('/');
+      navigate('/', { replace: true });
     }
   }, [location, navigate]);
 
