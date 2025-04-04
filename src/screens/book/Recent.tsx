@@ -9,15 +9,15 @@ const Recent = () => {
       {/* 모바일 레이아웃 */}
       <div className='md:hidden'>
         <TopBar />
-        <RecentMain />
         <Navbar />
       </div>
 
       {/* 데스크톱 레이아웃 */}
       <div className="hidden md:block">
         <DesktopBar />
-        <RecentMain />
       </div>
+
+      <RecentMain />
     </>
   )
 }

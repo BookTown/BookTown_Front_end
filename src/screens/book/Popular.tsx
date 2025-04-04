@@ -9,15 +9,15 @@ const Popular = () => {
       {/* 모바일 레이아웃 */}
       <div className='md:hidden'>
         <TopBar />
-        <PopularMain />
         <Navbar />
       </div>
 
       {/* 데스크톱 레이아웃 */}
       <div className="hidden md:block">
         <DesktopBar />
-        <PopularMain />
       </div>
+
+      <PopularMain />
     </>
   )
 }
