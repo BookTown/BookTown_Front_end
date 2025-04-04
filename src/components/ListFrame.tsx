@@ -11,12 +11,12 @@ const ListFrame = ({
 }: ListFrameProps) => {
   return (
     <div className="px-4 pb-3">
-      <div className="flex justify-center">
+      <div className="">
         <div
           className={`${
             horizontal
               ? "flex gap-3 overflow-x-auto desktop-scroll"
-              : "grid grid-cols-2 gap-x-4 gap-y-6 place-items-center w-full max-w-screen-md"
+              : "grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-4 gap-y-6 mx-auto place-items-center w-full"
           } p-1 md:p-2 bg-transparent`}
         >
           {children}

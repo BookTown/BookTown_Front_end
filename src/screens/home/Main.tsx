@@ -22,7 +22,7 @@ const Main = () => {
   return (
     <div className="pt-14 pb-16">
       {/* 메인 도서 (index 0) */}
-      <div className="relative w-full h-60 overflow-hidden mb-4">
+      <div className="relative w-full h-60 md:h-[34rem] overflow-hidden mb-4">
         <img
           src={mainBook.imageUrl}
           alt={mainBook.title}
