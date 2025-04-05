@@ -29,14 +29,14 @@ const Main = () => {
   return (
     <div className="pt-14 pb-16 md:pb-0">
       {/* 메인 도서 (index 0) */}
-      <div className="relative w-full h-60 md:h-[34rem] overflow-hidden mb-8">
+      <div className="relative w-full h-60 md:h-[34rem] overflow-hidden mb-4">
         <img
           src={mockBooks[0].imageUrl}
           alt={mockBooks[0].title}
-          className="w-full h-full object-cover"
+          className="w-full h-full object-cover md:rounded-xl"
           loading="eager"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"/>
+        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent md:rounded-xl"/>
         <div className="absolute bottom-4 left-4 text-white drop-shadow-lg">
           <h2 className="text-xl md:text-2xl mb-1">{mockBooks[0].title}</h2>
           <p className="text-sm md:text-base pb-3">{mockBooks[0].author}</p>
@@ -55,7 +55,7 @@ const Main = () => {
       </div>
 
       {/* 인기 고전 섹션 */}
-      <div className="mb-8">
+      <div className="mb-4">
         <div className="px-4 flex items-center justify-between mb-4">
           <h3 className="text-2xl">인기 고전</h3>
           <Link
