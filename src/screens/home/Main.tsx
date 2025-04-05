@@ -136,6 +136,7 @@ const Main = () => {
         <ModalOverlay
           book={selectedBook}
           onClose={() => setIsModalOpen(false)}
+          requireSubmit={false}
         />
       )}
     </div>

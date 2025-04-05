@@ -1,5 +1,13 @@
-import React from "react";
+import React, { useState } from "react";
 import BookCard from "../../components/BookCard";
+import ModalOverlay from "../../components/ModalOverlay";
+
+type Book = {
+  id: number;
+  title: string;
+  author: string;
+  imageUrl: string;
+};
 
 const book = [
   {
@@ -11,15 +19,29 @@ const book = [
 ];
 
 const Search = () => {
+  const [selectedBook, setSelectedBook] = useState<Book | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   return (
     <>
       <div>search</div>
       <BookCard
         key={book[0].id}
         {...book[0]}
-        onClick={() => {console.log("hi")}}
+        onClick={() => {
+          setSelectedBook(book[0]);
+          setIsModalOpen(true);
+        }}
         size="sm"
       />
+
+      {isModalOpen && selectedBook && (
+        <ModalOverlay
+          book={selectedBook}
+          onClose={() => setIsModalOpen(false)}
+          requireSubmit={false}
+        />
+      )}
     </>
   );
 };

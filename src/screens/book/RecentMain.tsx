@@ -38,6 +38,7 @@ const RecentMain = () => {
         <ModalOverlay
           book={selectedBook}
           onClose={() => setIsModalOpen(false)}
+          requireSubmit={false}
         />
       )}
     </div>

@@ -38,6 +38,7 @@ const PopularMain = () => {
         <ModalOverlay
           book={selectedBook}
           onClose={() => setIsModalOpen(false)}
+          requireSubmit={false}
         />
       )}
     </div>
