@@ -2,29 +2,32 @@ import React from "react";
 
 type ButtonProps = {
   size?: "sm" | "md" | "lg";
-  color?: "pink" | "white";
-  type?: "button" | "submit"
+  color?: "pink" | "white" | "gray";
+  type?: "button" | "submit";
   onClick?: () => void;
   children: React.ReactNode;
+  className?: string;
 };
 
 const sizeClasses = {
-  sm: "w-[100px] h-[36px] text-[12px]",
-  md: "w-[7rem] h-[28px] text-sm md:w-[10rem] md: h-[32px] md:text-xl",
-  lg: "w-full h-[40px] text-[20px]",
+  sm: "w-[90px] h-[32px] text-[12px] md:w-[100px] md:h-[36px] md:text-[14px] lg:w-[120px] lg:h-[40px]",
+  md: "w-[120px] h-[36px] text-[14px] md:w-[160px] md:h-[40px] md:text-[16px] lg:w-[200px] lg:h-[44px]",
+  lg: "w-full max-w-[280px] h-[40px] text-[16px] md:h-[48px] md:text-[18px] lg:h-[52px] lg:text-[20px]",
 };
 
 const colorClasses = {
-  pink: "bg-[#C75C5C] text-white",
-  white: "bg-white text-[#C75C5C]",
+  pink: "bg-[#C75C5C] text-white hover:bg-[#b54d4d] active:bg-[#a44444]",
+  white: "bg-white text-[#C75C5C] border border-[#C75C5C] hover:bg-[#fff8f8] hover:border-[#b54d4d] hover:text-[#b54d4d] active:bg-[#fff0f0]",
+  gray: "bg-[#95A5A6] text-white hover:bg-[#7f8c8d] active:bg-[#6c7879]",
 };
 
 const Button: React.FC<ButtonProps> = ({
   size = "lg",
   color = "pink",
-  type,
+  type = "button",
   onClick,
   children,
+  className = "",
 }) => {
   return (
     <button
@@ -34,9 +37,14 @@ const Button: React.FC<ButtonProps> = ({
         ${sizeClasses[size]} 
         ${colorClasses[color]} 
         rounded-full 
-        shadow-[4px_4px_8px_rgba(0,0,0,0.25)] 
-        hover:opacity-80
-        transition-opacity duration-300 ease-in-out
+        font-medium
+        shadow-sm
+        transition-all duration-200 ease-in-out
+        hover:transform hover:scale-[1.02] hover:shadow-md
+        active:transform active:scale-[0.98] active:shadow-sm
+        outline-none
+        disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none disabled:hover:scale-100
+        ${className}
       `}
     >
       {children}
