@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useState } from "react";
+import { Heart } from "lucide-react";
 
 interface BookCardProps {
   id: number;
@@ -16,6 +17,8 @@ const BookCard: React.FC<BookCardProps> = ({
   onClick,
   size = "sm",
 }) => {
+  const [isLiked, setIsLiked] = useState(false);
+
   // 크기별 스타일 설정
   const cardStyles = {
     sm: {
@@ -23,29 +26,47 @@ const BookCard: React.FC<BookCardProps> = ({
       image: "h-48",
       title: "text-sm md:text-base",
       author: "text-xs md:text-sm",
+      heartSize: 20,
     },
     lg: {
       container: "w-full",
       image: "h-56",
       title: "text-base md:text-lg",
       author: "text-sm md:text-base",
+      heartSize: 24,
     },
   };
 
   const styles = cardStyles[size];
+
+  const handleLike = (e: React.MouseEvent) => {
+    e.stopPropagation(); // 북카드 온클릭 이벤트 발생 X
+    setIsLiked(!isLiked);
+  };
 
   return (
     <div
       className={`${styles.container} cursor-pointer transition-transform duration-200 hover:scale-105`}
       onClick={onClick}
     >
-      <div className={`${styles.image} relative rounded-lg overflow-hidden mb-2 shadow-md`}>
+      <div className={`${styles.image} relative rounded-lg overflow-hidden mb-2 shadow-md group`}>
         <img
           src={imageUrl}
           alt={title}
           className="w-full h-full object-cover"
           loading="lazy"
         />
+        {/* 좋아요 버튼 */}
+        <button
+          onClick={handleLike}
+          className="absolute top-2 right-2 p-1.5 rounded-full bg-white/80 hover:bg-white transition-colors duration-200"
+          aria-label={isLiked ? "좋아요 취소" : "좋아요"}
+        >
+          <Heart
+            size={styles.heartSize}
+            className={`${isLiked ? "fill-[#C75C5C] stroke-[#C75C5C]" : "stroke-[#C75C5C]"}`}
+          />
+        </button>
       </div>
       <div className="text-left px-0.5">
         <h3 className={`${styles.title} font-medium truncate`}>{title}</h3>

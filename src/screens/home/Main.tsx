@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import ModalOverlay from "../../components/ModalOverlay";
 import { mockBooks } from "../../mocks/mockBook";
 import { Link } from "react-router-dom";
+import { Heart } from "lucide-react";
 
 type Book = {
   id: number;
@@ -16,6 +17,7 @@ const Main = () => {
   const [selectedBook, setSelectedBook] = useState<Book | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [cardsPerSection, setCardsPerSection] = useState(2);
+  const [isMainBookLiked, setIsMainBookLiked] = useState(false);
 
   useEffect(() => {
     const handleResize = () => {
@@ -40,17 +42,32 @@ const Main = () => {
         <div className="absolute bottom-4 left-4 text-white drop-shadow-lg">
           <h2 className="text-xl md:text-2xl mb-1">{mockBooks[0].title}</h2>
           <p className="text-sm md:text-base pb-3">{mockBooks[0].author}</p>
-          <Button
-            size="md"
-            color="pink"
-            type="submit"
-            onClick={() => {
-              setSelectedBook(mockBooks[0]);
-              setIsModalOpen(true);
-            }}
-          >
-            보러가기
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button
+              size="md"
+              color="pink"
+              type="submit"
+              onClick={() => {
+                setSelectedBook(mockBooks[0]);
+                setIsModalOpen(true);
+              }}
+            >
+              보러가기
+            </Button>
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                setIsMainBookLiked(!isMainBookLiked);
+              }}
+              className="p-1.5 md:p-2 rounded-full bg-white/80 hover:bg-white transition-colors duration-200"
+              aria-label={isMainBookLiked ? "좋아요 취소" : "좋아요"}
+            >
+              <Heart
+                size={20}
+                className={`${isMainBookLiked ? "fill-[#C75C5C] stroke-[#C75C5C]" : "stroke-[#C75C5C]"} md:w-6 md:h-6`}
+              />
+            </button>
+          </div>
         </div>
       </div>
 
