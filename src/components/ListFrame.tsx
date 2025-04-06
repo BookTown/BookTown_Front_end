@@ -8,13 +8,10 @@ interface ListFrameProps {
 const ListFrame = ({ children, itemsPerPage = 8 }: ListFrameProps) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerView, setItemsPerView] = useState(itemsPerPage);
-  const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
     const handleResize = () => {
-      const mobile = window.innerWidth < 768;
-      setIsMobile(mobile);
-      setItemsPerView(mobile ? 8 : 12);
+      setItemsPerView(window.innerWidth < 768 ? 8 : 12);
     };
     handleResize();
     window.addEventListener('resize', handleResize);
@@ -23,12 +20,10 @@ const ListFrame = ({ children, itemsPerPage = 8 }: ListFrameProps) => {
 
   const handlePageChange = (newPage: number) => {
     setCurrentPage(newPage);
-    if (isMobile) {
-      window.scrollTo({
-        top: 0,
-        behavior: 'smooth'
-      });
-    }
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
   };
 
   const totalPages = Math.ceil(children.length / itemsPerView);
