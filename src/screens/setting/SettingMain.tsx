@@ -13,6 +13,7 @@ import { mockUser } from "../../mocks/mockUser";
 interface User {
   email: string;
   name: string;
+  socre?: number;
   introduce: string;
   profileImage: string;
 }
