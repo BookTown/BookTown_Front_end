@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Search, Clock, BarChart, Settings, Home, Menu, X } from "lucide-react";
+import { Search, Clock, BarChart, Settings, Home, Menu, X, LogOut } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 
 const DesktopBar = () => {
@@ -12,6 +12,13 @@ const DesktopBar = () => {
     { name: '랭킹', icon: <BarChart size={28} />, path: '/ranking' },
     { name: '설정', icon: <Settings size={28} />, path: '/settings' },
   ];
+
+  // 로그아웃 처리 함수
+  const handleLogout = () => {
+    // 여기에 로그아웃 로직 구현
+    console.log("로그아웃");
+    // 로그아웃 후 로그인 페이지로 이동 넣기
+  };
 
   return (
     <>
@@ -52,7 +59,7 @@ const DesktopBar = () => {
           
       {/* 사이드바 내용 */}
       <div 
-        className={`fixed top-0 bottom-0 left-0 w-56 bg-white z-50 p-4 shadow-lg transition-transform duration-500 ease-in-out ${
+        className={`fixed top-0 bottom-0 left-0 w-56 bg-white z-50 p-4 shadow-lg transition-transform duration-500 ease-in-out flex flex-col ${
           isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
       >
@@ -64,7 +71,9 @@ const DesktopBar = () => {
             <X size={24} />
           </button>
         </div>
-        <div className="flex flex-col gap-3">
+        
+        {/* 메뉴 항목들 */}
+        <div className="flex-1 flex flex-col gap-3">
           {menus.map((menu) => {
             const isActive = location.pathname === menu.path;
             return (
@@ -81,6 +90,24 @@ const DesktopBar = () => {
               </Link>
             );
           })}
+        </div>
+        
+        {/* 하단 로그아웃 영역 */}
+        <div className="mt-auto">
+          {/* 구분선 */}
+          <div className="border-t border-gray-200 my-2"></div>
+          
+          {/* 로그아웃 버튼 */}
+          <button
+            className="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-100 text-gray-400 w-full"
+            onClick={() => {
+              handleLogout();
+              setIsSidebarOpen(false);
+            }}
+          >
+            <LogOut size={28} />
+            <span className="text-base">로그아웃</span>
+          </button>
         </div>
       </div>
     </>
