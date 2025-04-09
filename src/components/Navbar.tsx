@@ -22,7 +22,7 @@ const Navbar = () => {
               to={menu.path}
               key={menu.name}
               className={`flex flex-col items-center text-xs ${
-                isActive ? 'text-black' : 'text-gray-400'
+                isActive ? 'text-black' : 'text-[#9CAAB9]'
               }`}
             >
               {menu.icon}

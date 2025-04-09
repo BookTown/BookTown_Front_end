@@ -70,7 +70,7 @@ const BookCard: React.FC<BookCardProps> = ({
       </div>
       <div className="text-left px-0.5">
         <h3 className={`${styles.title} font-medium truncate`}>{title}</h3>
-        <p className={`${styles.author} text-gray-600 truncate`}>{author}</p>
+        <p className={`${styles.author} text-[#9CAAB9] truncate`}>{author}</p>
       </div>
     </div>
   );

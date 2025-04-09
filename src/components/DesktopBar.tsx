@@ -81,7 +81,7 @@ const DesktopBar = () => {
                 to={menu.path}
                 key={menu.name}
                 className={`flex items-center gap-3 p-2 rounded-lg hover:bg-gray-100 ${
-                  isActive ? 'text-black' : 'text-gray-400'
+                  isActive ? 'text-black' : 'text-[#9CAAB9]'
                 }`}
                 onClick={() => setIsSidebarOpen(false)}
               >
@@ -99,7 +99,7 @@ const DesktopBar = () => {
           
           {/* 로그아웃 버튼 */}
           <button
-            className="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-100 text-gray-400 w-full"
+            className="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-100 text-[#9CAAB9] w-full"
             onClick={() => {
               handleLogout();
               setIsSidebarOpen(false);

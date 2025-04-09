@@ -73,7 +73,7 @@ const Search = () => {
               className="w-full py-2 px-4 pl-10 rounded-full border border-gray-300 bg-white focus:outline-none focus:ring-2 focus:ring-[#C75C5C] focus:border-transparent"
               autoFocus
             />
-            <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
+            <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 text-[#9CAAB9]" size={20} />
           </div>
         </div>
       </div>
@@ -98,14 +98,14 @@ const Search = () => {
                   />
                   <div>
                     <h3 className="font-medium">{book.title}</h3>
-                    <p className="text-sm text-gray-600">{book.author}</p>
+                    <p className="text-sm text-[#9CAAB9]">{book.author}</p>
                   </div>
                 </div>
               ))}
             </div>
           ) : (
             <div className="text-center py-10">
-              <p className="text-gray-500">검색 결과가 없습니다.</p>
+              <p className="text-[#9CAAB9]">검색 결과가 없습니다.</p>
             </div>
           )
         ) : (
@@ -126,13 +126,13 @@ const Search = () => {
                   />
                   <div>
                     <h3 className="font-medium">{book.title}</h3>
-                    <p className="text-sm text-gray-600">{book.author}</p>
+                    <p className="text-sm text-[#9CAAB9]">{book.author}</p>
                   </div>
                 </div>
               ))
             ) : (
               <div className="text-center py-10">
-                <p className="text-gray-500">최근 검색 내역이 없습니다.</p>
+                <p className="text-[#9CAAB9]">최근 검색 내역이 없습니다.</p>
               </div>
             )}
           </div>

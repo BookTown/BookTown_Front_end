@@ -7,6 +7,7 @@ import Search from "./screens/search/Search";
 import Popular from "./screens/book/Popular";
 import Recent from "./screens/book/Recent";
 import OAuthCallback from "./callback/OAuthCallback";
+import Setting from "./screens/setting/Setting";
 
 const router = createBrowserRouter([
     {
@@ -35,7 +36,7 @@ const router = createBrowserRouter([
             },
             {
                 path: "/settings",
-                element: <Home />,
+                element: <Setting />,
             },
             {
                 path: "/search",
