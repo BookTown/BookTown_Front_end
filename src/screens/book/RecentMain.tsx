@@ -25,9 +25,17 @@ const RecentMain = () => {
         {mockBooks.map((book) => (
           <BookCard
             key={book.id}
-            {...book}
+            bookId={book.id}
+            thumbnailUrl={book.imageUrl}
+            title={book.title}
+            author={book.author}
             onClick={() => {
-              setSelectedBook(book);
+              setSelectedBook({
+                id: book.id,
+                title: book.title,
+                author: book.author,
+                imageUrl: book.imageUrl
+              });
               setIsModalOpen(true);
             }}
             size="lg"
