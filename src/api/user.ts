@@ -2,8 +2,14 @@ import axiosApi from '../axios';
 
 // 내 정보 조회
 export const fetchUserProfile = async () => {
-  const res = await axiosApi.get('/users/me');
-  return res.data;
+  try {
+    const res = await axiosApi.get('/users/me');
+    console.log("✅ 사용자 정보 응답:", res.data); // Debugging log
+    return res.data;
+  } catch (error: any) {
+    console.error("❌ 사용자 정보 요청 실패:", error.response || error.message);
+    throw error;
+  }
 };
 
 // 로그아웃
