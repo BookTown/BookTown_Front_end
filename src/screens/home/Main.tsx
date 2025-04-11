@@ -1,7 +1,7 @@
 import BookCard from "../../components/BookCard";
 import Button from "../../components/Button";
 import { useState, useEffect } from "react";
-import ModalOverlay from "../../components/ModalOverlay";
+import BookModal from "../../components/BookModal";
 import { mockBooks } from "../../mocks/mockBook";
 import { Link } from "react-router-dom";
 import { Heart } from "lucide-react";
@@ -15,7 +15,7 @@ type Book = {
 
 const Main = () => {
   const [selectedBook, setSelectedBook] = useState<Book | null>(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [showModal, setShowModal] = useState(false);
   const [cardsPerSection, setCardsPerSection] = useState(2);
   const [isMainBookLiked, setIsMainBookLiked] = useState(false);
 
@@ -49,7 +49,7 @@ const Main = () => {
               type="submit"
               onClick={() => {
                 setSelectedBook(mockBooks[0]);
-                setIsModalOpen(true);
+                setShowModal(true);
               }}
             >
               보러가기
@@ -89,7 +89,7 @@ const Main = () => {
               {...book}
               onClick={() => {
                 setSelectedBook(book);
-                setIsModalOpen(true);
+                setShowModal(true);
               }}
               size="sm"
             />
@@ -115,7 +115,7 @@ const Main = () => {
               {...book}
               onClick={() => {
                 setSelectedBook(book);
-                setIsModalOpen(true);
+                setShowModal(true);
               }}
               size="sm"
             />
@@ -141,7 +141,7 @@ const Main = () => {
               {...book}
               onClick={() => {
                 setSelectedBook(book);
-                setIsModalOpen(true);
+                setShowModal(true);
               }}
               size="sm"
             />
@@ -149,12 +149,8 @@ const Main = () => {
         </div>
       </div>
 
-      {isModalOpen && selectedBook && (
-        <ModalOverlay
-          book={selectedBook}
-          onClose={() => setIsModalOpen(false)}
-          requireSubmit={false}
-        />
+      {showModal && selectedBook && (
+        <BookModal book={selectedBook} onClose={() => setShowModal(false)} />
       )}
     </div>
   );

@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { ArrowLeft, Search as SearchIcon } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import ModalOverlay from "../../components/ModalOverlay";
 import { mockBooks } from "../../mocks/mockBook";
+import BookModal from "../../components/BookModal";
 
 type Book = {
   id: number;
@@ -16,7 +16,7 @@ const Search = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [searchResults, setSearchResults] = useState<Book[]>([]);
   const [selectedBook, setSelectedBook] = useState<Book | null>(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [showModal, setShowModal] = useState(false);
   const [recentSearches, setRecentSearches] = useState<Book[]>(() => {
     const saved = localStorage.getItem("recentSearches");
     return saved ? JSON.parse(saved) : [];
@@ -39,7 +39,7 @@ const Search = () => {
   // 책 선택 핸들러
   const handleBookSelect = (book: Book) => {
     setSelectedBook(book);
-    setIsModalOpen(true);
+    setShowModal(true);
 
     // 최근 검색 기록에 추가
     const updatedSearches = [
@@ -140,11 +140,8 @@ const Search = () => {
       </div>
 
       {/* 모달 */}
-      {isModalOpen && selectedBook && (
-        <ModalOverlay
-          book={selectedBook}
-          onClose={() => setIsModalOpen(false)}
-        />
+      {showModal && selectedBook && (
+        <BookModal book={selectedBook} onClose={() => setShowModal(false)} />
       )}
     </>
   );

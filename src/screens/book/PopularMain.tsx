@@ -2,7 +2,7 @@ import ListFrame from "../../components/ListFrame";
 import { mockBooks } from "../../mocks/mockBook";
 import BookCard from "../../components/BookCard";
 import { useState } from "react";
-import ModalOverlay from "../../components/ModalOverlay";
+import BookModal from "../../components/BookModal";
 
 type Book = {
   id: number;
@@ -13,7 +13,7 @@ type Book = {
 
 const PopularMain = () => {
   const [selectedBook, setSelectedBook] = useState<Book | null>(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [showModal, setShowModal] = useState(false);
 
   return (
     <div className="pt-14 md:pt-12">
@@ -28,18 +28,14 @@ const PopularMain = () => {
             {...book}
             onClick={() => {
               setSelectedBook(book);
-              setIsModalOpen(true);
+              setShowModal(true);
             }}
             size="lg"
           />
         ))}
       </ListFrame>
-      {isModalOpen && selectedBook && (
-        <ModalOverlay
-          book={selectedBook}
-          onClose={() => setIsModalOpen(false)}
-          requireSubmit={false}
-        />
+      {showModal && selectedBook && (
+        <BookModal book={selectedBook} onClose={() => setShowModal(false)} />
       )}
     </div>
   );
