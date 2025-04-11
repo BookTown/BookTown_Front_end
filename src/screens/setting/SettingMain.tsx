@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import {
   HeartIcon,
   BarChart3Icon,
@@ -8,15 +8,20 @@ import {
   PencilIcon,
 } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
-import { mockUser } from "../../mocks/mockUser";
+import { fetchUserProfile } from "../../api/user";
+import basicProfile from "../../assets/basicProfile.png";
 import { logoutUser } from "../../api/user";
 
-interface User {
+interface UserProfile {
+  id: number;
   email: string;
-  name: string;
-  socre?: number;
-  introduce: string;
-  profileImage: string;
+  provider: string;
+  providerId: string;
+  username: string;
+  profileImage: string | null;
+  difficulty: string;
+  score: number;
+  introduction: string | null;
 }
 
 interface MenuItemProps {
@@ -26,10 +31,22 @@ interface MenuItemProps {
   iconBg?: string;
 }
 
-const user: User = mockUser[0];
-
 const SettingMain = () => {
+  const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const data = await fetchUserProfile();
+        setUserProfile(data);
+      } catch (error) {
+        console.error("Failed to fetch user profile:", error);
+      }
+    };
+
+    fetchProfile();
+  }, []);
 
   // 로그아웃 처리 함수
   const handleLogout = async () => {
@@ -40,7 +57,7 @@ const SettingMain = () => {
       await logoutUser();
     } catch (error) {
       console.error("로그아웃 실패:", error);
-      alert("서버 오류가 발생했습니다. 하지만 보안을 위해 로그아웃합니다.");
+      alert("서버 오류가 발생했습니다. 강제로 로그아웃합니다.");
     } finally {
       localStorage.removeItem("accessToken");
       localStorage.removeItem("refreshToken");
@@ -49,13 +66,13 @@ const SettingMain = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#fef9f3] text-black px-4 pt-20 pb-24 md:pt-20 md:px-6">
+    <div className="min-h-screen bg-[#FFFAF0] text-black px-4 pt-20 pb-24 md:pt-20 md:px-6">
       {/* 프로필 섹션 */}
       <section className="w-full max-w-sm mx-6 md:mx-auto mb-8 md:mb-12 md:max-w-md relative">
         <div className="flex items-center space-x-4">
           {/* 프로필 이미지 */}
           <img
-            src={user.profileImage}
+            src={userProfile?.profileImage || basicProfile}
             alt="profile"
             className="w-24 h-24 md:w-28 md:h-28 rounded-full border-2 border-gray-300"
           />
@@ -63,10 +80,10 @@ const SettingMain = () => {
           {/* 이름 + ID */}
           <div className="flex flex-col">
             <span className="text-lg md:text-xl">
-              {user.name}
+              {userProfile?.username || "사용자"}
             </span>
             <p className="text-sm md:text-base text-[#9CAAB9]">
-              ID: {user.email}
+              ID: {userProfile?.email || "이메일 없음"}
             </p>
           </div>
         </div>
