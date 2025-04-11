@@ -9,6 +9,7 @@ import Recent from "./screens/book/Recent";
 import OAuthCallback from "./callback/OAuthCallback";
 import Setting from "./screens/setting/Setting";
 import Rank from "./screens/rank/Rank";
+import History from "./screens/history/History";
 
 const router = createBrowserRouter([
     {
@@ -29,7 +30,7 @@ const router = createBrowserRouter([
             },
             {
                 path: "/history",
-                element: <Home />,
+                element: <History />,
             },
             {
                 path: "/ranking",

@@ -7,8 +7,9 @@ import {
   LogOutIcon,
   PencilIcon,
 } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { mockUser } from "../../mocks/mockUser";
+import { logoutUser } from "../../api/user";
 
 interface User {
   email: string;
@@ -28,6 +29,25 @@ interface MenuItemProps {
 const user: User = mockUser[0];
 
 const SettingMain = () => {
+  const navigate = useNavigate();
+
+  // 로그아웃 처리 함수
+  const handleLogout = async () => {
+    const isConfirmed = window.confirm("로그아웃 하시겠습니까?");
+    if (!isConfirmed) return;
+  
+    try {
+      await logoutUser();
+    } catch (error) {
+      console.error("로그아웃 실패:", error);
+      alert("서버 오류가 발생했습니다. 하지만 보안을 위해 로그아웃합니다.");
+    } finally {
+      localStorage.removeItem("accessToken");
+      localStorage.removeItem("refreshToken");
+      navigate("/");
+    }
+  };
+
   return (
     <div className="min-h-screen bg-[#fef9f3] text-black px-4 pt-20 pb-24 md:pt-20 md:px-6">
       {/* 프로필 섹션 */}
@@ -93,7 +113,9 @@ const SettingMain = () => {
         </button>
 
         <div className="pt-3 border-t border-gray-200">
-          <button className="w-full flex items-center gap-2 justify-center text-[#9CAAB9] hover:text-gray-700 transition-colors duration-200 pt-1 rounded-lg">
+          <button 
+            onClick={handleLogout}
+            className="w-full flex items-center gap-2 justify-center text-[#9CAAB9] hover:text-gray-700 transition-colors duration-200 pt-1 rounded-lg">
             <span className="text-base">로그아웃</span>
             <LogOutIcon className="w-5 h-5" />
           </button>

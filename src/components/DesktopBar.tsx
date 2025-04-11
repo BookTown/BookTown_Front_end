@@ -1,9 +1,11 @@
 import React, { useState } from "react";
 import { Search, Clock, BarChart, Settings, Home, Menu, X, LogOut } from "lucide-react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { logoutUser } from "../api/user";
 
 const DesktopBar = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   
   const menus = [
@@ -14,10 +16,20 @@ const DesktopBar = () => {
   ];
 
   // 로그아웃 처리 함수
-  const handleLogout = () => {
-    // 여기에 로그아웃 로직 구현
-    console.log("로그아웃");
-    // 로그아웃 후 로그인 페이지로 이동 넣기
+  const handleLogout = async () => {
+    const isConfirmed = window.confirm("로그아웃 하시겠습니까?");
+    if (!isConfirmed) return;
+  
+    try {
+      await logoutUser();
+    } catch (error) {
+      console.error("로그아웃 실패:", error);
+      alert("서버 오류가 발생했습니다. 하지만 보안을 위해 로그아웃합니다.");
+    } finally {
+      localStorage.removeItem("accessToken");
+      localStorage.removeItem("refreshToken");
+      navigate("/");
+    }
   };
 
   return (
