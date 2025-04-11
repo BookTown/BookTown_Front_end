@@ -14,9 +14,16 @@ export const usePopularBooks = () => {
     staleTime: 5 * 60 * 1000, // 5분 동안 데이터 신선도 유지
   });
 
+  console.log('usePopularBooks 훅 내부 - 상태:', { 
+    isLoading: result.isLoading, 
+    isError: result.isError, 
+    data: result.data 
+  });
+
   // 데이터가 변경될 때 Redux 상태 업데이트
   useEffect(() => {
     if (result.data) {
+      console.log('인기 도서 데이터를 Redux에 저장:', result.data);
       dispatch(setPopularBooks(result.data));
     }
   }, [result.data, dispatch]);
@@ -34,8 +41,15 @@ export const useRecentBooks = () => {
     staleTime: 5 * 60 * 1000, // 5분 동안 데이터 신선도 유지
   });
 
+  console.log('useRecentBooks 훅 내부 - 상태:', { 
+    isLoading: result.isLoading, 
+    isError: result.isError, 
+    data: result.data 
+  });
+
   useEffect(() => {
     if (result.data) {
+      console.log('최신 도서 데이터를 Redux에 저장:', result.data);
       dispatch(setRecentBooks(result.data));
     }
   }, [result.data, dispatch]);

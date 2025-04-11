@@ -155,31 +155,25 @@ const Main = () => {
           </Link>
         </div>
         <div className="px-4 grid grid-cols-2 md:grid-cols-4 gap-4 place-items-center">
-          {isRecentBooksArray && recentBooks.length > 0 ? 
-            recentBooks.slice(0, cardsPerSection).map((book) => (
-              <BookCard
-                key={book.bookId}
-                bookId={book.bookId}
-                thumbnailUrl={book.thumbnailUrl}
-                title={book.title}
-                author={book.author}
-                onClick={() => {
-                  setSelectedBook({
-                    id: book.bookId,
-                    title: book.title,
-                    author: book.author,
-                    imageUrl: book.thumbnailUrl
-                  });
-                  setIsModalOpen(true);
-                }}
-                size="sm"
-              />
-            )) : (
-              <div className="col-span-2 md:col-span-4 text-center text-gray-500">
-                최신 도서가 없습니다
-              </div>
-            )
-          }
+          {recentBooks.slice(0, cardsPerSection).map((book) => (
+            <BookCard
+              key={book.bookId}
+              bookId={book.bookId}
+              thumbnailUrl={book.thumbnailUrl}
+              title={book.title}
+              author={book.author}
+              onClick={() => {
+                setSelectedBook({
+                  id: book.bookId,
+                  title: book.title,
+                  author: book.author,
+                  imageUrl: book.thumbnailUrl
+                });
+                setIsModalOpen(true);
+              }}
+              size="sm"
+            />
+          ))}
         </div>
       </div>
 
