@@ -26,8 +26,8 @@ const Main = () => {
   const { isLoading: isLoadingRecent, error: recentError } = useRecentBooks();
   
   // Redux 스토어에서 데이터 가져오기
-  const popularBooks = useAppSelector(state => state.books.popular);
-  const recentBooks = useAppSelector(state => state.books.recent);
+  const popularBooks = useAppSelector(state => state.books.popular) || [];
+  const recentBooks = useAppSelector(state => state.books.recent) || [];
 
   useEffect(() => {
     const handleResize = () => {
@@ -46,8 +46,12 @@ const Main = () => {
     return <div className="pt-14 text-center">데이터를 불러오는데 실패했습니다.</div>;
   }
 
+  // 데이터 확인 및 안전한 액세스
+  const isPopularBooksArray = Array.isArray(popularBooks);
+  const isRecentBooksArray = Array.isArray(recentBooks);
+  
   // 메인 도서로 표시할 첫 번째 인기 도서
-  const mainBook = popularBooks.length > 0 ? popularBooks[0] : null;
+  const mainBook = isPopularBooksArray && popularBooks.length > 0 ? popularBooks[0] : null;
 
   return (
     <div className="pt-14 pb-16 md:pb-0">
@@ -111,25 +115,31 @@ const Main = () => {
           </Link>
         </div>
         <div className="px-4 grid grid-cols-2 md:grid-cols-4 gap-4 place-items-center">
-          {popularBooks.slice(1, 1 + cardsPerSection).map((book) => (
-            <BookCard
-              key={book.bookId}
-              bookId={book.bookId}
-              thumbnailUrl={book.thumbnailUrl}
-              title={book.title}
-              author={book.author}
-              onClick={() => {
-                setSelectedBook({
-                  id: book.bookId,
-                  title: book.title,
-                  author: book.author,
-                  imageUrl: book.thumbnailUrl
-                });
-                setIsModalOpen(true);
-              }}
-              size="sm"
-            />
-          ))}
+          {isPopularBooksArray && popularBooks.length > 1 ? 
+            popularBooks.slice(1, 1 + cardsPerSection).map((book) => (
+              <BookCard
+                key={book.bookId}
+                bookId={book.bookId}
+                thumbnailUrl={book.thumbnailUrl}
+                title={book.title}
+                author={book.author}
+                onClick={() => {
+                  setSelectedBook({
+                    id: book.bookId,
+                    title: book.title,
+                    author: book.author,
+                    imageUrl: book.thumbnailUrl
+                  });
+                  setIsModalOpen(true);
+                }}
+                size="sm"
+              />
+            )) : (
+              <div className="col-span-2 md:col-span-4 text-center text-gray-500">
+                인기 도서가 없습니다
+              </div>
+            )
+          }
         </div>
       </div>
 
@@ -145,25 +155,31 @@ const Main = () => {
           </Link>
         </div>
         <div className="px-4 grid grid-cols-2 md:grid-cols-4 gap-4 place-items-center">
-          {recentBooks.slice(0, cardsPerSection).map((book) => (
-            <BookCard
-              key={book.bookId}
-              bookId={book.bookId}
-              thumbnailUrl={book.thumbnailUrl}
-              title={book.title}
-              author={book.author}
-              onClick={() => {
-                setSelectedBook({
-                  id: book.bookId,
-                  title: book.title,
-                  author: book.author,
-                  imageUrl: book.thumbnailUrl
-                });
-                setIsModalOpen(true);
-              }}
-              size="sm"
-            />
-          ))}
+          {isRecentBooksArray && recentBooks.length > 0 ? 
+            recentBooks.slice(0, cardsPerSection).map((book) => (
+              <BookCard
+                key={book.bookId}
+                bookId={book.bookId}
+                thumbnailUrl={book.thumbnailUrl}
+                title={book.title}
+                author={book.author}
+                onClick={() => {
+                  setSelectedBook({
+                    id: book.bookId,
+                    title: book.title,
+                    author: book.author,
+                    imageUrl: book.thumbnailUrl
+                  });
+                  setIsModalOpen(true);
+                }}
+                size="sm"
+              />
+            )) : (
+              <div className="col-span-2 md:col-span-4 text-center text-gray-500">
+                최신 도서가 없습니다
+              </div>
+            )
+          }
         </div>
       </div>
 
