@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Button from '../../components/Button';
 import { updateProfileInfo } from '../../api/user';
 
@@ -15,6 +15,13 @@ const EditProfileInfo = ({ isOpen, onClose, currentName, currentIntro, onSave, u
   const [name, setName] = useState(currentName);
   const [intro, setIntro] = useState(currentIntro);
   const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    if (isOpen) {
+      setName(currentName);
+      setIntro(currentIntro);
+    }
+  }, [isOpen, currentName, currentIntro]);
 
   if (!isOpen) return null;
 
@@ -40,12 +47,12 @@ const EditProfileInfo = ({ isOpen, onClose, currentName, currentIntro, onSave, u
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
       <div className="bg-white p-6 rounded-lg w-[90%] max-w-md">
-        <h2 className="text-xl font-semibold text-gray-700 text-center mb-5">
+        <h2 className="text-2xl text-black text-center mb-5">
           프로필 정보 수정
         </h2>
         
         <div className="mb-4">
-          <label className="block text-gray-700 mb-2">이름</label>
+          <label className="block text-black mb-2">이름</label>
           <input 
             type="text"
             value={name}
@@ -56,7 +63,7 @@ const EditProfileInfo = ({ isOpen, onClose, currentName, currentIntro, onSave, u
         </div>
 
         <div className="mb-4">
-          <label className="block text-gray-700 mb-2">자기소개</label>
+          <label className="block text-black mb-2">자기소개</label>
           <textarea
             value={intro}
             onChange={(e) => setIntro(e.target.value)}
