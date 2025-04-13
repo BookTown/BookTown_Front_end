@@ -1,5 +1,5 @@
 // 개별 도서 상세 정보
-interface IBookDetail {
+export interface IBookDetail {
   bookId: number;
   title: string;
   author: string;

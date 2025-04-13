@@ -1,8 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
 import { useEffect } from "react";
-import { fetchPopularBooks, fetchRecentBooks } from "../api/api";
+import { fetchPopularBooks, fetchRecentBooks, fetchBannerBook } from "../api/api";
 import { useAppDispatch } from "../redux/hooks";
-import { setPopularBooks, setRecentBooks } from "../redux/slices/bookSlice";
+import { setPopularBooks, setRecentBooks, setBannerBook } from "../redux/slices/bookSlice";
 
 // 인기 도서 조회 
 export const usePopularBooks = () => {
@@ -51,6 +51,32 @@ export const useRecentBooks = () => {
     if (result.data) {
       console.log('최신 도서 데이터를 Redux에 저장:', result.data);
       dispatch(setRecentBooks(result.data));
+    }
+  }, [result.data, dispatch]);
+
+  return result;
+};
+
+// 배너용 랜덤 도서 조회
+export const useBannerBook = () => {
+  const dispatch = useAppDispatch();
+  
+  const result = useQuery({
+    queryKey: ["bannerBook"],
+    queryFn: fetchBannerBook,
+    staleTime: 5 * 60 * 1000, // 5분 동안 데이터 신선도 유지
+  });
+
+  console.log('useBannerBook 훅 내부 - 상태:', { 
+    isLoading: result.isLoading, 
+    isError: result.isError, 
+    data: result.data 
+  });
+
+  useEffect(() => {
+    if (result.data) {
+      console.log('배너 도서 데이터를 Redux에 저장:', result.data);
+      dispatch(setBannerBook(result.data));
     }
   }, [result.data, dispatch]);
 

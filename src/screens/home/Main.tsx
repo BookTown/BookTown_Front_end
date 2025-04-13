@@ -5,7 +5,7 @@ import ModalOverlay from "../../components/ModalOverlay";
 import { mockBooks } from "../../mocks/mockBook";
 import { Link } from "react-router-dom";
 import { Heart } from "lucide-react";
-import { usePopularBooks, useRecentBooks } from "../../hooks/useBookQueries";
+import { usePopularBooks, useRecentBooks, useBannerBook } from "../../hooks/useBookQueries";
 import { useAppSelector } from "../../redux/hooks";
 
 type Book = {
@@ -21,13 +21,15 @@ const Main = () => {
   const [cardsPerSection, setCardsPerSection] = useState(2);
   const [isMainBookLiked, setIsMainBookLiked] = useState(false);
 
-  // React Query로 데이터 가져오기
+  // React Query로 데이터 가져오기 (배너 도서 추가)
   const { isLoading: isLoadingPopular, error: popularError } = usePopularBooks();
   const { isLoading: isLoadingRecent, error: recentError } = useRecentBooks();
+  const { isLoading: isLoadingBanner, error: bannerError } = useBannerBook();
   
   // Redux 스토어에서 데이터 가져오기
   const popularBooks = useAppSelector(state => state.books.popular) || [];
   const recentBooks = useAppSelector(state => state.books.recent) || [];
+  const bannerBook = useAppSelector(state => state.books.banner);
 
   useEffect(() => {
     const handleResize = () => {
@@ -38,11 +40,11 @@ const Main = () => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  if (isLoadingPopular || isLoadingRecent) {
+  if (isLoadingPopular || isLoadingRecent || isLoadingBanner) {
     return <div className="pt-14 text-center">데이터를 불러오는 중...</div>;
   }
 
-  if (popularError || recentError) {
+  if (popularError || recentError || bannerError) {
     return <div className="pt-14 text-center">데이터를 불러오는데 실패했습니다.</div>;
   }
 
@@ -50,8 +52,8 @@ const Main = () => {
   const isPopularBooksArray = Array.isArray(popularBooks);
   const isRecentBooksArray = Array.isArray(recentBooks);
   
-  // 메인 도서로 표시할 첫 번째 인기 도서
-  const mainBook = isPopularBooksArray && popularBooks.length > 0 ? popularBooks[0] : null;
+  // 메인 도서로 배너 도서 사용 (bannerBook이 없으면 첫번째 인기 도서 사용)
+  const mainBook = bannerBook || (isPopularBooksArray && popularBooks.length > 0 ? popularBooks[0] : null);
 
   return (
     <div className="pt-14 pb-16 md:pb-0">
@@ -155,25 +157,31 @@ const Main = () => {
           </Link>
         </div>
         <div className="px-4 grid grid-cols-2 md:grid-cols-4 gap-4 place-items-center">
-          {recentBooks.slice(0, cardsPerSection).map((book) => (
-            <BookCard
-              key={book.bookId}
-              bookId={book.bookId}
-              thumbnailUrl={book.thumbnailUrl}
-              title={book.title}
-              author={book.author}
-              onClick={() => {
-                setSelectedBook({
-                  id: book.bookId,
-                  title: book.title,
-                  author: book.author,
-                  imageUrl: book.thumbnailUrl
-                });
-                setIsModalOpen(true);
-              }}
-              size="sm"
-            />
-          ))}
+          {isRecentBooksArray && recentBooks.length > 0 ? 
+            recentBooks.slice(0, cardsPerSection).map((book) => (
+              <BookCard
+                key={book.bookId}
+                bookId={book.bookId}
+                thumbnailUrl={book.thumbnailUrl}
+                title={book.title}
+                author={book.author}
+                onClick={() => {
+                  setSelectedBook({
+                    id: book.bookId,
+                    title: book.title,
+                    author: book.author,
+                    imageUrl: book.thumbnailUrl
+                  });
+                  setIsModalOpen(true);
+                }}
+                size="sm"
+              />
+            )) : (
+              <div className="col-span-2 md:col-span-4 text-center text-gray-500">
+                최신 등록된 도서가 없습니다
+              </div>
+            )
+          }
         </div>
       </div>
 

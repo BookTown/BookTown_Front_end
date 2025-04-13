@@ -27,3 +27,16 @@ export const fetchRecentBooks = async (): Promise<IBookList> => {
   }
 };
 
+// 배너용 랜덤 도서 조회
+export const fetchBannerBook = async () => {
+  console.log('배너 도서 API 호출 시작');
+  try {
+    const response = await axiosApi.get('/book/banner');
+    console.log('배너 도서 API 응답 성공:', response.data);
+    return response.data;
+  } catch (error) {
+    console.error('배너 도서 API 오류:', error);
+    throw error;
+  }
+};
+
