@@ -5,6 +5,7 @@ type ButtonProps = {
   color?: "pink" | "white" | "gray";
   type?: "button" | "submit";
   onClick?: () => void;
+  disabled?: boolean; // ✅ 추가
   children: React.ReactNode;
   className?: string;
 };
@@ -26,6 +27,7 @@ const Button: React.FC<ButtonProps> = ({
   color = "pink",
   type = "button",
   onClick,
+  disabled = false, // 기본값 설정
   children,
   className = "",
 }) => {
@@ -33,6 +35,7 @@ const Button: React.FC<ButtonProps> = ({
     <button
       onClick={onClick}
       type={type}
+      disabled={disabled} 
       className={`
         ${sizeClasses[size]} 
         ${colorClasses[color]} 

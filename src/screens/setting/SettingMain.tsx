@@ -11,6 +11,8 @@ import { Link, useNavigate } from "react-router-dom";
 import { fetchUserProfile } from "../../api/user";
 import basicProfile from "../../assets/basicProfile.png";
 import { logoutUser } from "../../api/user";
+import EditProfileInfo from './EditProfileInfo';
+import EditProfileImage from './EditProfileImage';
 
 interface UserProfile {
   id: number;
@@ -34,6 +36,8 @@ interface MenuItemProps {
 const SettingMain = () => {
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const navigate = useNavigate();
+  const [isInfoModalOpen, setIsInfoModalOpen] = useState(false);
+  const [isImageModalOpen, setIsImageModalOpen] = useState(false);
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -65,17 +69,49 @@ const SettingMain = () => {
     }
   };
 
+  const handleProfileUpdate = async (name: string, intro: string) => {
+    try {
+      // API 호출 로직 구현
+      console.log('Profile updated:', { name, intro });
+      // 성공 시 프로필 다시 불러오기
+      const data = await fetchUserProfile();
+      setUserProfile(data);
+    } catch (error) {
+      console.error('Failed to update profile:', error);
+    }
+  };
+
+  const handleImageUpdate = async (file: File) => {
+    try {
+      // API 호출 로직 구현
+      console.log('Image updated:', file);
+      // 성공 시 프로필 다시 불러오기
+      const data = await fetchUserProfile();
+      setUserProfile(data);
+    } catch (error) {
+      console.error('Failed to update image:', error);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-[#FFFAF0] text-black px-4 pt-20 pb-24 md:pt-20 md:px-6">
       {/* 프로필 섹션 */}
       <section className="w-full max-w-sm mx-6 md:mx-auto mb-8 md:mb-12 md:max-w-md relative">
         <div className="flex items-center space-x-4">
           {/* 프로필 이미지 */}
-          <img
-            src={userProfile?.profileImage || basicProfile}
-            alt="profile"
-            className="w-24 h-24 md:w-28 md:h-28 rounded-full border-2 border-gray-300"
-          />
+          <div className="relative">
+            <img
+              src={userProfile?.profileImage || basicProfile}
+              alt="profile"
+              className="w-24 h-24 md:w-28 md:h-28 rounded-full border-2 border-gray-300"
+            />
+            <button
+              onClick={() => setIsImageModalOpen(true)}
+              className="text-sm text-gray-500 hover:text-gray-700 mt-2 w-full text-center"
+            >
+              이미지 변경
+            </button>
+          </div>
 
           {/* 이름 + ID */}
           <div className="flex flex-col">
@@ -90,6 +126,7 @@ const SettingMain = () => {
 
         {/* 연필 아이콘 (우측 상단 고정) */}
         <button
+          onClick={() => setIsInfoModalOpen(true)}
           className="absolute top-4 right-4 p-2 rounded-full hover:bg-gray-100 transition-colors duration-200"
           aria-label="프로필 편집"
         >
@@ -138,11 +175,27 @@ const SettingMain = () => {
           </button>
         </div>
       </section>
+
+      <EditProfileInfo
+        isOpen={isInfoModalOpen}
+        onClose={() => setIsInfoModalOpen(false)}
+        currentName={userProfile?.username || ""}
+        currentIntro={userProfile?.introduction || ""}
+        onSave={handleProfileUpdate}
+        userId={userProfile?.id || 0}
+      />
+
+      <EditProfileImage
+        isOpen={isImageModalOpen}
+        onClose={() => setIsImageModalOpen(false)}
+        onSave={handleImageUpdate}
+        userId={userProfile?.id || 0}
+      />
     </div>
   );
 };
 
-function MenuItem(props: MenuItemProps) {
+const MenuItem = (props: MenuItemProps) => {
   const {
     icon,
     label,

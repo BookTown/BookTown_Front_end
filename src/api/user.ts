@@ -1,10 +1,19 @@
+// apis/user.ts
+
 import axiosApi from '../axios';
+
+export interface UpdateProfileInfoPayload {
+  username: string;
+  introduction: string;
+  score: number;
+  difficulty: 'EASY' | 'MEDIUM' | 'HARD';
+}
 
 // 내 정보 조회
 export const fetchUserProfile = async () => {
   try {
     const res = await axiosApi.get('/users/me');
-    console.log("✅ 사용자 정보 응답:", res.data); // Debugging log
+    console.log("✅ 사용자 정보 응답:", res.data);
     return res.data;
   } catch (error: any) {
     console.error("❌ 사용자 정보 요청 실패:", error.response || error.message);
@@ -22,4 +31,38 @@ export const logoutUser = async () => {
 export const deleteUser = async () => {
   const res = await axiosApi.delete('/users/delete');
   return res.data;
+};
+
+// 사용자 프로필 정보 수정
+export const updateProfileInfo = async (
+  userId: number,
+  data: UpdateProfileInfoPayload
+) => {
+  try {
+    const res = await axiosApi.patch(`/profile/update/${userId}`, data);
+    console.log("✅ 프로필 정보 수정 완료:", res.data);
+    return res.data;
+  } catch (error: any) {
+    console.error("❌ 프로필 수정 실패:", error.response || error.message);
+    throw error;
+  }
+};
+
+// 프로필 이미지 업로드 (추정 경로)
+export const updateProfileImage = async (userId: number, file: File) => {
+  const formData = new FormData();
+  formData.append('image', file);
+
+  try {
+    const res = await axiosApi.post("profile/update/image", formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    console.log("✅ 프로필 이미지 업로드 완료:", res.data);
+    return res.data;
+  } catch (error: any) {
+    console.error("❌ 프로필 이미지 업로드 실패:", error.response || error.message);
+    throw error;
+  }
 };
