@@ -189,7 +189,6 @@ const SettingMain = () => {
         isOpen={isImageModalOpen}
         onClose={() => setIsImageModalOpen(false)}
         onSave={handleImageUpdate}
-        userId={userProfile?.id || 0}
       />
     </div>
   );

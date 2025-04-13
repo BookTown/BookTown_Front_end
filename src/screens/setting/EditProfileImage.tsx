@@ -6,10 +6,9 @@ interface EditProfileImageProps {
   isOpen: boolean;
   onClose: () => void;
   onSave: (file: File) => void;
-  userId: number;
 }
 
-const EditProfileImage = ({ isOpen, onClose, onSave, userId }: EditProfileImageProps) => {
+const EditProfileImage = ({ isOpen, onClose, onSave }: EditProfileImageProps) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [previewUrl, setPreviewUrl] = React.useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -34,7 +33,7 @@ const EditProfileImage = ({ isOpen, onClose, onSave, userId }: EditProfileImageP
 
     try {
       setIsLoading(true);
-      await updateProfileImage(userId, selectedFile);
+      await updateProfileImage(selectedFile);
       onSave(selectedFile);
       onClose();
     } catch (error) {

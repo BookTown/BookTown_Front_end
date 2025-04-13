@@ -48,17 +48,13 @@ export const updateProfileInfo = async (
   }
 };
 
-// 프로필 이미지 업로드 (추정 경로)
-export const updateProfileImage = async (userId: number, file: File) => {
+// 프로필 이미지 업로드
+export const updateProfileImage = async (file: File) => {
   const formData = new FormData();
-  formData.append('image', file);
+  formData.append('file', file); // ✅ 정확한 key 이름: file
 
   try {
-    const res = await axiosApi.post("profile/update/image", formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    });
+    const res = await axiosApi.post("/profile/update/image", formData); // ✅ 헤더 생략
     console.log("✅ 프로필 이미지 업로드 완료:", res.data);
     return res.data;
   } catch (error: any) {
