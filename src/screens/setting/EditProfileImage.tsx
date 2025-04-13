@@ -1,6 +1,6 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import Button from '../../components/Button';
-import { updateProfileImage } from '../../api/user';
+import axiosApi from "../../axios"
 
 interface EditProfileImageProps {
   isOpen: boolean;
@@ -8,17 +8,34 @@ interface EditProfileImageProps {
   onSave: (file: File) => void;
 }
 
+const MAX_FILE_SIZE = 1 * 1024 * 1024; // 1MB
+
 const EditProfileImage = ({ isOpen, onClose, onSave }: EditProfileImageProps) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [previewUrl, setPreviewUrl] = React.useState<string | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const controllerRef = useRef<AbortController | null>(null); // AbortController 저장용 ref
+
+  useEffect(() => {
+    if (!isOpen) {
+      // 모달이 닫힐 때 상태 초기화
+      setSelectedFile(null);
+      setPreviewUrl(null);
+      setIsLoading(false);
+      controllerRef.current = null;
+    }
+  }, [isOpen]);
 
   if (!isOpen) return null;
 
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
+      if (file.size > MAX_FILE_SIZE) {
+        alert('파일 크기는 1MB를 초과할 수 없습니다.');
+        return;
+      }
       setSelectedFile(file);
       const reader = new FileReader();
       reader.onloadend = () => {
@@ -33,15 +50,34 @@ const EditProfileImage = ({ isOpen, onClose, onSave }: EditProfileImageProps) =>
 
     try {
       setIsLoading(true);
-      await updateProfileImage(selectedFile);
+
+      const formData = new FormData();
+      formData.append('file', selectedFile);
+
+      const controller = new AbortController();
+      controllerRef.current = controller;
+
+      await axiosApi.post('/profile/update/image', formData, {
+        signal: controller.signal,
+      });
+
       onSave(selectedFile);
       onClose();
-    } catch (error) {
-      console.error('Failed to update profile image:', error);
-      alert('프로필 이미지 업데이트에 실패했습니다.');
+    } catch (error: any) {
+      if (error.code === 'ERR_CANCELED') {
+        console.warn('❌ 업로드가 취소되었습니다.');
+      } else {
+        console.error('❌ 프로필 이미지 업데이트 실패:', error);
+        alert('프로필 이미지 업데이트에 실패했습니다.');
+      }
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleCancel = () => {
+    controllerRef.current?.abort();
+    onClose();
   };
 
   return (
@@ -50,14 +86,20 @@ const EditProfileImage = ({ isOpen, onClose, onSave }: EditProfileImageProps) =>
         <h2 className="text-2xl text-black text-center mb-5">
           프로필 이미지 변경
         </h2>
-        
-        <div className="w-48 h-48 mx-auto mb-5 border-2 border-dashed border-gray-300 rounded-full flex justify-center items-center overflow-hidden">
+
+        <div className="w-48 h-48 mx-auto mb-3 border-2 border-dashed border-gray-300 rounded-full flex justify-center items-center overflow-hidden">
           {previewUrl ? (
             <img src={previewUrl} alt="Preview" className="w-full h-full object-cover" />
           ) : (
             <span className="text-gray-500">이미지를 선택해주세요</span>
           )}
         </div>
+
+        {selectedFile && (
+          <p className="text-center text-sm text-gray-500 mb-4">
+            {selectedFile.name} ({(selectedFile.size / 1024).toFixed(1)} KB)
+          </p>
+        )}
 
         <div className="text-center mb-4">
           <button 
@@ -76,11 +118,13 @@ const EditProfileImage = ({ isOpen, onClose, onSave }: EditProfileImageProps) =>
         </div>
 
         <div className="flex justify-between gap-2 mx-auto">
-          <Button onClick={onClose} color="white" size='md'>취소</Button>
+          <Button onClick={handleCancel} color="white" size="md">
+            {isLoading ? '업로드 취소' : '취소'}
+          </Button>
           <Button 
             onClick={handleSave} 
             color="pink" 
-            size='md' 
+            size="md" 
             disabled={!previewUrl || isLoading}
           >
             {isLoading ? '저장 중...' : '저장'}
