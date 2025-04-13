@@ -40,3 +40,23 @@ export const fetchBannerBook = async () => {
   }
 };
 
+// 전체 인기 도서 조회
+export const fetchAllPopularBooks = async (): Promise<IBookList> => {
+  try {
+    const response = await axiosApi.get<IBookList>('/book/popular/all');
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+// 전체 최신 도서 조회
+export const fetchAllRecentBooks = async (): Promise<IBookList> => {
+  try {
+    const response = await axiosApi.get<IBookList>('/book/recent/all');
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
