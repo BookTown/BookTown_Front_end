@@ -13,6 +13,7 @@ import basicProfile from "../../assets/basicProfile.png";
 import { logoutUser } from "../../api/user";
 import EditProfileInfo from './EditProfileInfo';
 import EditProfileImage from './EditProfileImage';
+import ExitMember from './ExitMember';
 
 interface UserProfile {
   id: number;
@@ -38,6 +39,7 @@ const SettingMain = () => {
   const navigate = useNavigate();
   const [isInfoModalOpen, setIsInfoModalOpen] = useState(false);
   const [isImageModalOpen, setIsImageModalOpen] = useState(false);
+  const [isExitModalOpen, setIsExitModalOpen] = useState(false);
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -157,7 +159,9 @@ const SettingMain = () => {
             iconBg="bg-[#F9A8A8]"
           />
         </button>
-        <button className="w-full">
+        <button 
+          onClick={() => setIsExitModalOpen(true)}
+          className="w-full">
           <MenuItem
             icon={<Trash2Icon className="w-6 h-6 text-white" />}
             label="회원탈퇴"
@@ -190,6 +194,9 @@ const SettingMain = () => {
         onClose={() => setIsImageModalOpen(false)}
         onSave={handleImageUpdate}
       />
+      {isExitModalOpen && (
+      <ExitMember onClose={() => setIsExitModalOpen(false)} />
+      )}
     </div>
   );
 };
