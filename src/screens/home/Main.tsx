@@ -7,6 +7,7 @@ import { Link } from "react-router-dom";
 import { Heart } from "lucide-react";
 import { usePopularBooks, useRecentBooks, useBannerBook } from "../../hooks/useBookQueries";
 import { useAppSelector } from "../../redux/hooks";
+import { IBookDetail } from "../../interfaces/bookInterface";
 
 type Book = {
   id: number;
@@ -118,7 +119,7 @@ const Main = () => {
         </div>
         <div className="px-4 grid grid-cols-2 md:grid-cols-4 gap-4 place-items-center">
           {isPopularBooksArray && popularBooks.length > 1 ? 
-            popularBooks.slice(1, 1 + cardsPerSection).map((book) => (
+            popularBooks.slice(1, 1 + cardsPerSection).map((book: IBookDetail) => (
               <BookCard
                 key={book.bookId}
                 bookId={book.bookId}
@@ -158,7 +159,7 @@ const Main = () => {
         </div>
         <div className="px-4 grid grid-cols-2 md:grid-cols-4 gap-4 place-items-center">
           {isRecentBooksArray && recentBooks.length > 0 ? 
-            recentBooks.slice(0, cardsPerSection).map((book) => (
+            recentBooks.slice(0, cardsPerSection).map((book: IBookDetail) => (
               <BookCard
                 key={book.bookId}
                 bookId={book.bookId}
