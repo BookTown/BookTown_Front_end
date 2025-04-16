@@ -75,6 +75,22 @@ const EditProfileImage = ({ isOpen, onClose, onSave }: EditProfileImageProps) =>
     }
   };
 
+  const handleDeleteImage = async () => {
+    try {
+      setIsLoading(true);
+      await axiosApi.delete('/profile/delete/image');
+      setSelectedFile(null);
+      setPreviewUrl(null);
+      onSave(null as unknown as File);
+      onClose();
+    } catch (error) {
+      console.error('❌ 프로필 이미지 삭제 실패:', error);
+      alert('프로필 이미지 삭제에 실패했습니다.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const handleCancel = () => {
     controllerRef.current?.abort();
     onClose();
@@ -108,6 +124,14 @@ const EditProfileImage = ({ isOpen, onClose, onSave }: EditProfileImageProps) =>
           >
             이미지 선택
           </button>
+          {previewUrl && (
+            <button
+              onClick={handleDeleteImage}
+              className="ml-2 px-4 py-2 bg-red-100 hover:bg-red-200 rounded text-red-600 transition-colors"
+            >
+              이미지 제거
+            </button>
+          )}
           <input 
             type="file"
             ref={fileInputRef}
