@@ -1,8 +1,9 @@
 import ListFrame from "../../components/ListFrame";
-import { mockBooks } from "../../mocks/mockBook";
 import BookCard from "../../components/BookCard";
 import { useState } from "react";
 import BookModal from "../../components/BookModal";
+import { useAllRecentBooks } from "../../hooks/useBookQueries";
+import { IBookDetail } from "../../interfaces/bookInterface";
 
 type Book = {
   id: number;
@@ -14,6 +15,30 @@ type Book = {
 const RecentMain = () => {
   const [selectedBook, setSelectedBook] = useState<Book | null>(null);
   const [showModal, setShowModal] = useState(false);
+  
+  // API 호출
+  const { data: books, isLoading, isError } = useAllRecentBooks();
+  
+  // 데이터 로딩 중
+  if (isLoading) {
+    return (
+      <div className="pt-14 md:pt-12 text-center py-10">
+        <p className="text-[#9CAAB9]">데이터를 불러오는 중...</p>
+      </div>
+    );
+  }
+  
+  // 에러 처리
+  if (isError) {
+    return (
+      <div className="pt-14 md:pt-12 text-center py-10">
+        <p className="text-[#9CAAB9]">데이터를 불러오는데 실패했습니다.</p>
+      </div>
+    );
+  }
+  
+  // 데이터 존재 여부 확인
+  const isBookArray = Array.isArray(books) && books.length > 0;
 
   return (
     <div className="pt-14 md:pt-12">
@@ -22,17 +47,33 @@ const RecentMain = () => {
         <p className="text-xl text-[#A39C9C] pb-6">멘트 추천 좀...</p>
       </div>
       <ListFrame>
-        {mockBooks.map((book) => (
-          <BookCard
-            key={book.id}
-            {...book}
-            onClick={() => {
-              setSelectedBook(book);
-              setShowModal(true);
-            }}
-            size="lg"
-          />
-        ))}
+        {[
+          isBookArray ? (
+            books.map((book: IBookDetail) => (
+              <BookCard
+                key={book.bookId}
+                bookId={book.bookId}
+                thumbnailUrl={book.thumbnailUrl}
+                title={book.title}
+                author={book.author}
+                onClick={() => {
+                  setSelectedBook({
+                    id: book.bookId,
+                    title: book.title,
+                    author: book.author,
+                    imageUrl: book.thumbnailUrl
+                  });
+                  setShowModal(true);
+                }}
+                size="lg"
+              />
+            ))
+          ) : (
+            <div className="w-full text-center py-10" key="no-books">
+              <p className="text-[#9CAAB9]">최신 등록된 도서가 없습니다.</p>
+            </div>
+          )
+        ]}
       </ListFrame>
       {showModal && selectedBook && (
         <BookModal book={selectedBook} onClose={() => setShowModal(false)} />

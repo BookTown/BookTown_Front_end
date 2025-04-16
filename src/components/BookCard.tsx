@@ -1,19 +1,23 @@
 import React, { useState } from "react";
 import { Heart } from "lucide-react";
+import { IBookDetail } from "../interfaces/bookInterface";
 
 interface BookCardProps {
-  id: number;
+  bookId: number;
   title: string;
   author: string;
-  imageUrl: string;
+  thumbnailUrl: string;
   onClick?: () => void;
   size?: "sm" | "lg";
+  summaryUrl?: string;
+  createdAt?: string;
+  likeCount?: number;
 }
 
 const BookCard: React.FC<BookCardProps> = ({
   title,
   author,
-  imageUrl,
+  thumbnailUrl,
   onClick,
   size = "sm",
 }) => {
@@ -51,7 +55,7 @@ const BookCard: React.FC<BookCardProps> = ({
     >
       <div className={`${styles.image} relative rounded-lg overflow-hidden mb-2 shadow-md group`}>
         <img
-          src={imageUrl}
+          src={thumbnailUrl}
           alt={title}
           className="w-full h-full object-cover"
           loading="lazy"
