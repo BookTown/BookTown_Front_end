@@ -5,6 +5,9 @@ import BookModal from "../../components/BookModal";
 import { mockBooks } from "../../mocks/mockBook";
 import { Link } from "react-router-dom";
 import { Heart } from "lucide-react";
+import { usePopularBooks, useRecentBooks, useBannerBook } from "../../hooks/useBookQueries";
+import { useAppSelector } from "../../redux/hooks";
+import { IBookDetail } from "../../interfaces/bookInterface";
 
 type Book = {
   id: number;
@@ -19,6 +22,16 @@ const Main = () => {
   const [cardsPerSection, setCardsPerSection] = useState(2);
   const [isMainBookLiked, setIsMainBookLiked] = useState(false);
 
+  // React Query로 데이터 가져오기 (배너 도서 추가)
+  const { isLoading: isLoadingPopular, error: popularError } = usePopularBooks();
+  const { isLoading: isLoadingRecent, error: recentError } = useRecentBooks();
+  const { isLoading: isLoadingBanner, error: bannerError } = useBannerBook();
+  
+  // Redux 스토어에서 데이터 가져오기
+  const popularBooks = useAppSelector(state => state.books.popular) || [];
+  const recentBooks = useAppSelector(state => state.books.recent) || [];
+  const bannerBook = useAppSelector(state => state.books.banner);
+
   useEffect(() => {
     const handleResize = () => {
       setCardsPerSection(window.innerWidth >= 768 ? 4 : 2);
@@ -28,48 +41,70 @@ const Main = () => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
+  if (isLoadingPopular || isLoadingRecent || isLoadingBanner) {
+    return <div className="pt-14 text-center">데이터를 불러오는 중...</div>;
+  }
+
+  if (popularError || recentError || bannerError) {
+    return <div className="pt-14 text-center">데이터를 불러오는데 실패했습니다.</div>;
+  }
+
+  // 데이터 확인 및 안전한 액세스
+  const isPopularBooksArray = Array.isArray(popularBooks);
+  const isRecentBooksArray = Array.isArray(recentBooks);
+  
+  // 메인 도서로 배너 도서 사용 (bannerBook이 없으면 첫번째 인기 도서 사용)
+  const mainBook = bannerBook || (isPopularBooksArray && popularBooks.length > 0 ? popularBooks[0] : null);
+
   return (
     <div className="pt-14 pb-16 md:pb-0">
       {/* 메인 도서 (index 0) */}
-      <div className="relative w-full h-60 md:h-[34rem] overflow-hidden mb-4">
-        <img
-          src={mockBooks[0].imageUrl}
-          alt={mockBooks[0].title}
-          className="w-full h-full object-cover md:rounded-xl"
-          loading="eager"
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent md:rounded-xl"/>
-        <div className="absolute bottom-4 left-4 text-white drop-shadow-lg">
-          <h2 className="text-xl md:text-2xl mb-1">{mockBooks[0].title}</h2>
-          <p className="text-sm md:text-base pb-3">{mockBooks[0].author}</p>
-          <div className="flex items-center gap-2">
-            <Button
-              size="md"
-              color="pink"
-              type="submit"
-              onClick={() => {
-                setSelectedBook(mockBooks[0]);
-                setShowModal(true);
-              }}
-            >
-              보러가기
-            </Button>
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                setIsMainBookLiked(!isMainBookLiked);
-              }}
-              className="p-1.5 md:p-2 rounded-full bg-white/80 hover:bg-white transition-colors duration-200"
-              aria-label={isMainBookLiked ? "좋아요 취소" : "좋아요"}
-            >
-              <Heart
-                size={20}
-                className={`${isMainBookLiked ? "fill-[#C75C5C] stroke-[#C75C5C]" : "stroke-[#C75C5C]"} md:w-6 md:h-6`}
-              />
-            </button>
+      {mainBook && (
+        <div className="relative w-full h-60 md:h-[34rem] overflow-hidden mb-4">
+          <img
+            src={mainBook.thumbnailUrl}
+            alt={mainBook.title}
+            className="w-full h-full object-cover md:rounded-xl"
+            loading="eager"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent md:rounded-xl"/>
+          <div className="absolute bottom-4 left-4 text-white drop-shadow-lg">
+            <h2 className="text-xl md:text-2xl mb-1">{mainBook.title}</h2>
+            <p className="text-sm md:text-base pb-3">{mainBook.author}</p>
+            <div className="flex items-center gap-2">
+              <Button
+                size="md"
+                color="pink"
+                type="submit"
+                onClick={() => {
+                  setSelectedBook({
+                    id: mainBook.bookId,
+                    title: mainBook.title,
+                    author: mainBook.author,
+                    imageUrl: mainBook.thumbnailUrl
+                  });
+                  setShowModal(true);
+                }}
+              >
+                보러가기
+              </Button>
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setIsMainBookLiked(!isMainBookLiked);
+                }}
+                className="p-1.5 md:p-2 rounded-full bg-white/80 hover:bg-white transition-colors duration-200"
+                aria-label={isMainBookLiked ? "좋아요 취소" : "좋아요"}
+              >
+                <Heart
+                  size={20}
+                  className={`${isMainBookLiked ? "fill-[#C75C5C] stroke-[#C75C5C]" : "stroke-[#C75C5C]"} md:w-6 md:h-6`}
+                />
+              </button>
+            </div>
           </div>
         </div>
-      </div>
+      )}
 
       {/* 인기 고전 섹션 */}
       <div className="mb-4">
@@ -83,17 +118,31 @@ const Main = () => {
           </Link>
         </div>
         <div className="px-4 grid grid-cols-2 md:grid-cols-4 gap-4 place-items-center">
-          {mockBooks.slice(1, 1 + cardsPerSection).map((book) => (
-            <BookCard
-              key={book.id}
-              {...book}
-              onClick={() => {
-                setSelectedBook(book);
-                setShowModal(true);
-              }}
-              size="sm"
-            />
-          ))}
+          {isPopularBooksArray && popularBooks.length > 1 ? 
+            popularBooks.slice(1, 1 + cardsPerSection).map((book: IBookDetail) => (
+              <BookCard
+                key={book.bookId}
+                bookId={book.bookId}
+                thumbnailUrl={book.thumbnailUrl}
+                title={book.title}
+                author={book.author}
+                onClick={() => {
+                  setSelectedBook({
+                    id: book.bookId,
+                    title: book.title,
+                    author: book.author,
+                    imageUrl: book.thumbnailUrl
+                  });
+                  setShowModal(true);
+                }}
+                size="sm"
+              />
+            )) : (
+              <div className="col-span-2 md:col-span-4 text-center text-gray-500">
+                인기 도서가 없습니다
+              </div>
+            )
+          }
         </div>
       </div>
 
@@ -109,17 +158,31 @@ const Main = () => {
           </Link>
         </div>
         <div className="px-4 grid grid-cols-2 md:grid-cols-4 gap-4 place-items-center">
-          {mockBooks.slice(0, cardsPerSection).map((book) => (
-            <BookCard
-              key={book.id}
-              {...book}
-              onClick={() => {
-                setSelectedBook(book);
-                setShowModal(true);
-              }}
-              size="sm"
-            />
-          ))}
+          {isRecentBooksArray && recentBooks.length > 0 ? 
+            recentBooks.slice(0, cardsPerSection).map((book: IBookDetail) => (
+              <BookCard
+                key={book.bookId}
+                bookId={book.bookId}
+                thumbnailUrl={book.thumbnailUrl}
+                title={book.title}
+                author={book.author}
+                onClick={() => {
+                  setSelectedBook({
+                    id: book.bookId,
+                    title: book.title,
+                    author: book.author,
+                    imageUrl: book.thumbnailUrl
+                  });
+                  setShowModal(true);
+                }}
+                size="sm"
+              />
+            )) : (
+              <div className="col-span-2 md:col-span-4 text-center text-gray-500">
+                최신 등록된 도서가 없습니다
+              </div>
+            )
+          }
         </div>
       </div>
 
@@ -138,7 +201,10 @@ const Main = () => {
           {mockBooks.slice(0, cardsPerSection).map((book) => (
             <BookCard
               key={book.id}
-              {...book}
+              bookId={book.id}
+              thumbnailUrl={book.imageUrl}
+              title={book.title}
+              author={book.author}
               onClick={() => {
                 setSelectedBook(book);
                 setShowModal(true);
