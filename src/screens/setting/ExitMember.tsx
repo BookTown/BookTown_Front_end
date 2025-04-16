@@ -13,20 +13,30 @@ const ExitMember: React.FC<ExitMemberProps> = ({ onClose }) => {
   const navigate = useNavigate();
 
   const handleDeleteAccount = async () => {
-    if (!agreed) return;
+    if (!agreed) {
+      console.log('회원탈퇴 동의 체크가 되지 않았습니다.');
+      return;
+    }
 
     try {
+      console.log('회원탈퇴 프로세스 시작');
       setIsLoading(true);
+      console.log('회원탈퇴 API 호출 시작');
       await deleteUser();
+      console.log('회원탈퇴 API 호출 성공');
       
+      console.log('로컬 스토리지 토큰 삭제 시작');
       localStorage.removeItem("accessToken");
       localStorage.removeItem("refreshToken");
+      console.log('로컬 스토리지 토큰 삭제 완료');
       
       alert("회원탈퇴가 완료되었습니다.");
       navigate("/");
     } catch (error) {
+      console.error('회원탈퇴 실패:', error);
       alert("회원탈퇴에 실패했습니다. 다시 시도해주세요.");
     } finally {
+      console.log('회원탈퇴 프로세스 종료');
       setIsLoading(false);
     }
   };
