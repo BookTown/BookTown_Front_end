@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { X } from "lucide-react";
+import { deleteUser } from "../../api/user";
+import { useNavigate } from "react-router-dom";
 
 interface ExitMemberProps {
   onClose: () => void;
@@ -7,6 +9,27 @@ interface ExitMemberProps {
 
 const ExitMember: React.FC<ExitMemberProps> = ({ onClose }) => {
   const [agreed, setAgreed] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
+
+  const handleDeleteAccount = async () => {
+    if (!agreed) return;
+
+    try {
+      setIsLoading(true);
+      await deleteUser();
+      
+      localStorage.removeItem("accessToken");
+      localStorage.removeItem("refreshToken");
+      
+      alert("회원탈퇴가 완료되었습니다.");
+      navigate("/");
+    } catch (error) {
+      alert("회원탈퇴에 실패했습니다. 다시 시도해주세요.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4">
@@ -45,14 +68,15 @@ const ExitMember: React.FC<ExitMemberProps> = ({ onClose }) => {
         </div>
 
         <button
-          disabled={!agreed}
+          onClick={handleDeleteAccount}
+          disabled={!agreed || isLoading}
           className={`w-full py-2 rounded-lg text-white font-medium transition ${
-            agreed
+            agreed && !isLoading
               ? "bg-[#C75C5C] hover:bg-[#b54d4d] active:bg-[#a44444]"
               : "bg-gray-300 cursor-not-allowed"
           }`}
         >
-          회원탈퇴
+          {isLoading ? "처리 중..." : "회원탈퇴"}
         </button>
       </div>
     </div>
