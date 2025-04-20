@@ -1,23 +1,29 @@
 import React from "react";
-import { Search } from "lucide-react";
-import { Link } from "react-router-dom";
+import { useParams } from "react-router-dom";
 
 const TopTitle = () => {
-  return (
-    <div className="fixed top-0 left-1/2 -translate-x-1/2 z-50 w-full max-w-[28rem] flex justify-between items-center bg-[#FFFAF0] border-b border-gray-300">
-      {/* 로고+이름 누르면 홈화면으로 이동 */}
-      <Link to="/home" className="flex items-center">
-        <img
-          src="/images/logo.png"
-          alt="책고을 로고"
-          className="w-20 h-20 -my-3 -ml-1"
-        />
-        <h1 className="text-2xl -ml-1 mt-1">책고을</h1>
-      </Link>
+  const { bookId } = useParams();
+  
+  // Mock 데이터: 실제 구현 시 API 호출이나 Redux 등으로 대체
+  const mockBookTitles: Record<string, string> = {
+    "1": "로빈슨 크루소",
+    "2": "걸리버 여행기",
+    "3": "데미안",
+    "4": "변신",
+    "5": "동물농장",
+    // 더 많은 책 추가 가능
+  };
+  
+  // bookId가 없으면 기본 타이틀, 있으면 해당 책 제목
+  const bookTitle = bookId && mockBookTitles[bookId] 
+    ? mockBookTitles[bookId] 
+    : "책고을";
 
-      <Link to="/search" className="pr-3">
-        <Search size={32} />
-      </Link>
+  return (
+    <div className="fixed top-0 left-0 right-0 z-40 max-w-[1440px] mx-auto bg-[#FFFAF0] border-b border-gray-300">
+      <div className="mx-auto flex justify-center items-center h-[60px]">
+        <h1 className="text-2xl font-medium">{bookTitle}</h1>
+      </div>
     </div>
   );
 };

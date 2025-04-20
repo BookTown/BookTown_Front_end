@@ -14,6 +14,7 @@ const Cartoon = () => {
       
       {/* 데스크톱 레이아웃 */}
       <div className="hidden md:block">
+        <TopTitle />
         <DesktopBar />
       </div>
 
