@@ -10,6 +10,7 @@ import OAuthCallback from "./callback/OAuthCallback";
 import Setting from "./screens/setting/Setting";
 import Rank from "./screens/rank/Rank";
 import History from "./screens/history/History";
+import Cartoon from "./screens/cartoon/Cartoon";
 
 const router = createBrowserRouter([
     {
@@ -51,6 +52,10 @@ const router = createBrowserRouter([
             {
                 path: "/recent",
                 element: <Recent />,
+            },
+            {
+                path: "/cartoon/:bookId",
+                element: <Cartoon />,
             },
             {
                 path: "/oauth/callback",

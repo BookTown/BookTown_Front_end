@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import Button from "./Button";
+import { useNavigate } from "react-router-dom";
 
 type Book = {
   id: number;
@@ -15,6 +16,8 @@ interface BookModalProps {
 }
 
 const BookModal = ({ book, onClose, requireSubmit = false }: BookModalProps) => {
+  const navigate = useNavigate();
+  
   // ESC 키로 닫기
   useEffect(() => {
     const handleEscKey = (event: KeyboardEvent) => {
@@ -34,6 +37,12 @@ const BookModal = ({ book, onClose, requireSubmit = false }: BookModalProps) => 
     if (!requireSubmit) {
       onClose();
     }
+  };
+
+  // 줄거리 보기 버튼 클릭 핸들러
+  const handleViewSummary = () => {
+    onClose(); // 모달 닫기
+    navigate(`/cartoon/${book.id}`); // 줄거리 화면으로 이동
   };
 
   if (!book) return null;
@@ -58,7 +67,7 @@ const BookModal = ({ book, onClose, requireSubmit = false }: BookModalProps) => 
         </div>
 
         <div className="flex justify-between md:justify-around gap-4 md:gap-12 px-3">
-          <Button size="md" color="white" type="button">
+          <Button size="md" color="white" type="button" onClick={handleViewSummary}>
             줄거리 보기
           </Button>
           <Button size="md" color="pink" type="button">

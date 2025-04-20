@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Heart } from "lucide-react";
 import { IBookDetail } from "../interfaces/bookInterface";
 
-interface BookCardProps {
+interface BookCardProps extends Partial<IBookDetail> {
   bookId: number;
   title: string;
   author: string;
@@ -10,7 +10,6 @@ interface BookCardProps {
   onClick?: () => void;
   size?: "sm" | "lg";
   summaryUrl?: string;
-  createdAt?: string;
   likeCount?: number;
 }
 
