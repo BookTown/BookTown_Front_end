@@ -123,7 +123,7 @@ const CartoonMain = () => {
   const isLastScene = currentPage === scenes.length - 1;
   
   return (
-    <div className="pt-14 pb-4 px-4 flex flex-col items-center">
+    <div className="pt-[4.5rem] pb-4 px-4 flex flex-col items-center">
       <div className="w-full max-w-[24rem] md:max-w-[32rem] lg:max-w-[36rem]">
         {/* 만화 장면 */}
         <SceneFrame 
