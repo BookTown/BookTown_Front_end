@@ -181,20 +181,20 @@ const SettingMain = () => {
           </button>
         </div>
       </section>
-
-      <EditProfileInfo
-        isOpen={isInfoModalOpen}
-        onClose={() => setIsInfoModalOpen(false)}
+      
+      <EditProfileInfo 
+        isOpen={isInfoModalOpen} 
+        onClose={() => setIsInfoModalOpen(false)} 
         currentName={userProfile?.username || ""}
         currentIntro={userProfile?.introduction || ""}
         onSave={handleProfileUpdate}
         userId={userProfile?.id || 0}
       />
-
+      {/* 프로필 이미지 수정 모달 */}
       <EditProfileImage
-        isOpen={isImageModalOpen}
-        onClose={() => setIsImageModalOpen(false)}
-        onSave={handleImageUpdate}
+        isOpen={isImageModalOpen} 
+        onClose={() => setIsImageModalOpen(false)} 
+        onSave={handleImageUpdate}  
       />
       {isExitModalOpen && (
       <ExitMember onClose={() => setIsExitModalOpen(false)} />
