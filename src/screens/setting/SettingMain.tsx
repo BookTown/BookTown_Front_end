@@ -84,12 +84,9 @@ const SettingMain = () => {
     }
   };
 
-  const handleImageUpdate = async (file: File | string) => {
+  const handleImageUpdate = async (file: File) => {
     try {
-      // updateProfileImage API 호출
-      await updateProfileImage(file);  // file이 null이면 기본 이미지로 변경됨
-      
-      // 프로필 다시 불러오기
+      await updateProfileImage(file);
       const data = await fetchUserProfile();
       setUserProfile(data);
     } catch (error) {
@@ -195,7 +192,6 @@ const SettingMain = () => {
         isOpen={isImageModalOpen} 
         onClose={() => setIsImageModalOpen(false)} 
         onSave={handleImageUpdate}  
-        currentImage={userProfile?.profileImage || null} // 기본 이미지
       />
       {isExitModalOpen && (
       <ExitMember onClose={() => setIsExitModalOpen(false)} />
