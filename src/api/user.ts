@@ -49,7 +49,7 @@ export const updateProfileInfo = async (
 };
 
 // 프로필 이미지 업로드 또는 기본 이미지로 변경
-export const updateProfileImage = async (file: File | null) => {
+export const updateProfileImage = async (file: File | string) => {
   try {
     const formData = new FormData();
     if (file) {

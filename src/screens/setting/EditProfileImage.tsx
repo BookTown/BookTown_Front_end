@@ -6,7 +6,7 @@ import basicProfile from "../../assets/basicProfile.png";
 interface EditProfileImageProps {
   isOpen: boolean;
   onClose: () => void;
-  onSave: (file: File | null) => void;
+  onSave: (file: File | string) => void; // string으로 타입 변경
   currentImage?: string | null; // 현재 프로필 이미지 URL (없으면 기본 이미지)
 }
 
@@ -18,27 +18,23 @@ const EditProfileImage = ({ isOpen, onClose, onSave, currentImage }: EditProfile
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isDefaultSelected, setIsDefaultSelected] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const controllerRef = useRef<AbortController | null>(null); // 업로드 취소용 AbortController
+  const controllerRef = useRef<AbortController | null>(null);
 
-  // 모달이 열릴 때 현재 프로필 이미지 미리보기 설정 및 상태 초기화
+  // 모달이 열릴 때 상태 초기화
   useEffect(() => {
     if (isOpen) {
-      // 기본 이미지 선택 상태 초기화
       setIsDefaultSelected(false);
-      // 현재 프로필 이미지가 있다면 미리보기 설정, 없으면 미리보기 없음
       if (currentImage) {
         setPreviewUrl(currentImage);
       } else {
         setPreviewUrl(null);
       }
-      // 신규 파일 선택 상태 초기화
       setSelectedFile(null);
     }
   }, [isOpen, currentImage]);
 
   useEffect(() => {
     if (!isOpen) {
-      // 모달이 닫힐 때 상태 초기화
       setSelectedFile(null);
       setPreviewUrl(null);
       setIsDefaultSelected(false);
@@ -56,37 +52,31 @@ const EditProfileImage = ({ isOpen, onClose, onSave, currentImage }: EditProfile
       alert('파일 크기는 1MB를 초과할 수 없습니다.');
       return;
     }
-    // 새 파일 선택 처리
     setSelectedFile(file);
-    setIsDefaultSelected(false); // 새 파일 선택 시 기본 이미지 선택 상태 해제
+    setIsDefaultSelected(false);
     const reader = new FileReader();
     reader.onloadend = () => {
       setPreviewUrl(reader.result as string);
     };
     reader.readAsDataURL(file);
-    // 같은 파일을 다시 선택할 수 있도록 input 값 초기화
     if (event.target) {
       event.target.value = '';
     }
   };
 
   const handleCancelSelection = () => {
-    // 새로 선택한 이미지 취소하고 기존 이미지 미리보기로 복원
     setSelectedFile(null);
     setPreviewUrl(currentImage || null);
     setIsDefaultSelected(false);
-    // 파일 입력 값 초기화
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
     }
   };
 
   const handleSetDefault = () => {
-    // 프로필 이미지를 기본 이미지로 변경 (미리보기 제거)
     setSelectedFile(null);
     setPreviewUrl(null);
     setIsDefaultSelected(true);
-    // 파일 입력 값 초기화
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
     }
@@ -96,9 +86,9 @@ const EditProfileImage = ({ isOpen, onClose, onSave, currentImage }: EditProfile
     try {
       setIsLoading(true);
       if (isDefaultSelected) {
-        // 기본 이미지로 변경
-        await axiosApi.post('/profile/update/image', {}); // 서버에서 null 처리
-        onSave(null);
+        // 빈 문자열로 전송
+        await axiosApi.post('/profile/update/image', { image: "" });
+        onSave("");
         onClose();
         return;
       }
@@ -111,7 +101,7 @@ const EditProfileImage = ({ isOpen, onClose, onSave, currentImage }: EditProfile
       await axiosApi.post('/profile/update/image', formData, {
         signal: controller.signal,
       });
-      onSave(selectedFile);
+      onSave(selectedFile!);
       onClose();
     } catch (error: any) {
       if (error.code === 'ERR_CANCELED') {
@@ -126,7 +116,6 @@ const EditProfileImage = ({ isOpen, onClose, onSave, currentImage }: EditProfile
   };
 
   const handleCancel = () => {
-    // 업로드 진행 중 취소 처리
     controllerRef.current?.abort();
     onClose();
   };

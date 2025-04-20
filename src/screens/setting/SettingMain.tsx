@@ -84,7 +84,7 @@ const SettingMain = () => {
     }
   };
 
-  const handleImageUpdate = async (file: File | null) => {
+  const handleImageUpdate = async (file: File | string) => {
     try {
       // updateProfileImage API 호출
       await updateProfileImage(file);  // file이 null이면 기본 이미지로 변경됨
