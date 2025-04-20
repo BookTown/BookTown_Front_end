@@ -93,12 +93,15 @@ const EditProfileImage = ({ isOpen, onClose, onSave, currentImage }: EditProfile
 
     try {
       setIsLoading(true);
-      // delete API 대신 update API 사용
-      await axiosApi.post('/profile/update/image', new FormData());
-      // 빈 FormData를 보내서 기본 이미지로 변경
+      // 기본 이미지로 변경하기 위해 빈 FormData 전송
+      const formData = new FormData();
+      formData.append('default', 'true'); // 기본 이미지로 변경하기 위한 플래그
+
+      await axiosApi.post('/profile/update/image', formData);
+    
       setSelectedFile(null);
       setPreviewUrl(null);
-      onSave(null);
+      onSave(null); // null을 전달하여 기본 이미지로 변경
       onClose();
     } catch (error) {
       console.error('❌ 프로필 이미지 삭제 실패:', error);
