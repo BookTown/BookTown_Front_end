@@ -192,7 +192,8 @@ const SettingMain = () => {
       <EditProfileImage
         isOpen={isImageModalOpen}
         onClose={() => setIsImageModalOpen(false)}
-        onSave={handleImageUpdate}
+        onSave={(file) => handleImageUpdate(file)}
+        currentImage={userProfile?.profileImage || null}
       />
       {isExitModalOpen && (
       <ExitMember onClose={() => setIsExitModalOpen(false)} />
