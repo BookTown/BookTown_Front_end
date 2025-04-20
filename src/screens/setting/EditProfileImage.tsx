@@ -6,17 +6,25 @@ interface EditProfileImageProps {
   isOpen: boolean;
   onClose: () => void;
   onSave: (file: File) => void;
+  currentImage?: string | null; // 현재 프로필 이미지 URL 추가
 }
 
 const MAX_FILE_SIZE = 1 * 1024 * 1024; // 1MB
 
-const EditProfileImage = ({ isOpen, onClose, onSave }: EditProfileImageProps) => {
+const EditProfileImage = ({ isOpen, onClose, onSave, currentImage }: EditProfileImageProps) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const controllerRef = useRef<AbortController | null>(null); // AbortController 저장용 ref
 
+  // 모달이 열릴 때 현재 이미지 설정
+  useEffect(() => {
+    if (isOpen && currentImage) {
+      setPreviewUrl(currentImage);
+    }
+  }, [isOpen, currentImage]);
+  
   useEffect(() => {
     if (!isOpen) {
       // 모달이 닫힐 때 상태 초기화
@@ -76,6 +84,13 @@ const EditProfileImage = ({ isOpen, onClose, onSave }: EditProfileImageProps) =>
   };
 
   const handleDeleteImage = async () => {
+    // 새로 선택한 이미지가 있는 경우 - 선택 취소
+    if (selectedFile) {
+      setSelectedFile(null);
+      setPreviewUrl(currentImage || null);
+    return;
+  }
+
     try {
       setIsLoading(true);
       await axiosApi.delete('/profile/delete/image');
@@ -124,12 +139,12 @@ const EditProfileImage = ({ isOpen, onClose, onSave }: EditProfileImageProps) =>
           >
             이미지 선택
           </button>
-          {previewUrl && (
+          {(previewUrl || selectedFile) && (
             <button
               onClick={handleDeleteImage}
               className="ml-2 px-4 py-2 bg-red-100 hover:bg-red-200 rounded text-red-600 transition-colors"
             >
-              이미지 제거
+              {selectedFile ? '선택 취소' : '이미지 제거'}
             </button>
           )}
           <input 
