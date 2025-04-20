@@ -95,17 +95,23 @@ const EditProfileImage = ({ isOpen, onClose, onSave, currentImage }: EditProfile
   const handleSave = async () => {
     try {
       setIsLoading(true);
+      if (isDefaultSelected) {
+        // 기본 이미지로 변경
+        await axiosApi.post('/profile/update/image', {}); // 서버에서 null 처리
+        onSave(null);
+        onClose();
+        return;
+      }
       const formData = new FormData();
       if (selectedFile) {
         formData.append('file', selectedFile);
       }
-      // 파일 업로드 또는 기본 이미지로 변경 요청
       const controller = new AbortController();
       controllerRef.current = controller;
       await axiosApi.post('/profile/update/image', formData, {
         signal: controller.signal,
       });
-      onSave(selectedFile); // 파일 또는 null 전달 (null이면 기본 이미지로 변경)
+      onSave(selectedFile);
       onClose();
     } catch (error: any) {
       if (error.code === 'ERR_CANCELED') {
@@ -166,7 +172,7 @@ const EditProfileImage = ({ isOpen, onClose, onSave, currentImage }: EditProfile
               선택 취소
             </button>
           )}
-          {currentImage && (
+          {(currentImage || previewUrl) && (
             <button
               type="button"
               onClick={handleSetDefault}

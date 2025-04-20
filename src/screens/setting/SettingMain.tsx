@@ -195,6 +195,7 @@ const SettingMain = () => {
         isOpen={isImageModalOpen} 
         onClose={() => setIsImageModalOpen(false)} 
         onSave={handleImageUpdate}  
+        currentImage={userProfile?.profileImage || null} // 기본 이미지
       />
       {isExitModalOpen && (
       <ExitMember onClose={() => setIsExitModalOpen(false)} />
