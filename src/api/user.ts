@@ -48,17 +48,19 @@ export const updateProfileInfo = async (
   }
 };
 
-// 프로필 이미지 업로드
-export const updateProfileImage = async (file: File) => {
-  const formData = new FormData();
-  formData.append('file', file); // ✅ 정확한 key 이름: file
-
+// 프로필 이미지 업로드 또는 기본 이미지로 변경
+export const updateProfileImage = async (file: File | null) => {
   try {
-    const res = await axiosApi.post("/profile/update/image", formData); // ✅ 헤더 생략
-    console.log("✅ 프로필 이미지 업로드 완료:", res.data);
+    const formData = new FormData();
+    if (file) {
+      formData.append('file', file);
+    }
+    // file이 null이면 빈 FormData를 보내서 기본 이미지로 변경
+    const res = await axiosApi.post("/profile/update/image", formData);
+    console.log("✅ 프로필 이미지 변경 완료:", res.data);
     return res.data;
   } catch (error: any) {
-    console.error("❌ 프로필 이미지 업로드 실패:", error.response || error.message);
+    console.error("❌ 프로필 이미지 변경 실패:", error.response || error.message);
     throw error;
   }
 };

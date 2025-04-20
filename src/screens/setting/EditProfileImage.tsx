@@ -5,7 +5,7 @@ import axiosApi from "../../axios"
 interface EditProfileImageProps {
   isOpen: boolean;
   onClose: () => void;
-  onSave: (file: File) => void;
+  onSave: (file: File | null) => void;
   currentImage?: string | null; // 현재 프로필 이미지 URL 추가
 }
 
@@ -54,22 +54,22 @@ const EditProfileImage = ({ isOpen, onClose, onSave, currentImage }: EditProfile
   };
 
   const handleSave = async () => {
-    if (!selectedFile) return;
-
     try {
       setIsLoading(true);
-
+  
       const formData = new FormData();
-      formData.append('file', selectedFile);
-
+      if (selectedFile) {
+        formData.append('file', selectedFile);
+      }
+  
       const controller = new AbortController();
       controllerRef.current = controller;
-
+  
       await axiosApi.post('/profile/update/image', formData, {
         signal: controller.signal,
       });
-
-      onSave(selectedFile);
+  
+      onSave(selectedFile);  // null이든 File이든 그대로 전달
       onClose();
     } catch (error: any) {
       if (error.code === 'ERR_CANCELED') {
@@ -88,15 +88,17 @@ const EditProfileImage = ({ isOpen, onClose, onSave, currentImage }: EditProfile
     if (selectedFile) {
       setSelectedFile(null);
       setPreviewUrl(currentImage || null);
-    return;
-  }
+      return;
+    }
 
     try {
       setIsLoading(true);
-      await axiosApi.delete('/profile/delete/image');
+      // delete API 대신 update API 사용
+      await axiosApi.post('/profile/update/image', new FormData());
+      // 빈 FormData를 보내서 기본 이미지로 변경
       setSelectedFile(null);
       setPreviewUrl(null);
-      onSave(null as unknown as File);
+      onSave(null);
       onClose();
     } catch (error) {
       console.error('❌ 프로필 이미지 삭제 실패:', error);

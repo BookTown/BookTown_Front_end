@@ -14,6 +14,7 @@ import { logoutUser } from "../../api/user";
 import EditProfileInfo from './EditProfileInfo';
 import EditProfileImage from './EditProfileImage';
 import ExitMember from './ExitMember';
+import { updateProfileImage } from "../../api/user";
 
 interface UserProfile {
   id: number;
@@ -83,11 +84,12 @@ const SettingMain = () => {
     }
   };
 
-  const handleImageUpdate = async (file: File) => {
+  const handleImageUpdate = async (file: File | null) => {
     try {
-      // API 호출 로직 구현
-      console.log('Image updated:', file);
-      // 성공 시 프로필 다시 불러오기
+      // updateProfileImage API 호출
+      await updateProfileImage(file);  // file이 null이면 기본 이미지로 변경됨
+      
+      // 프로필 다시 불러오기
       const data = await fetchUserProfile();
       setUserProfile(data);
     } catch (error) {
@@ -192,8 +194,7 @@ const SettingMain = () => {
       <EditProfileImage
         isOpen={isImageModalOpen}
         onClose={() => setIsImageModalOpen(false)}
-        onSave={(file) => handleImageUpdate(file)}
-        currentImage={userProfile?.profileImage || null}
+        onSave={handleImageUpdate}
       />
       {isExitModalOpen && (
       <ExitMember onClose={() => setIsExitModalOpen(false)} />
