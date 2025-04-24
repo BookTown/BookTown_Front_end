@@ -35,11 +35,11 @@ const Main = () => {
   // 메인 도서로 배너 도서 사용 (bannerBook이 없으면 첫번째 인기 도서 사용)
   const mainBook = bannerBook || (Array.isArray(popularBooks) && popularBooks.length > 0 ? popularBooks[0] : null);
   // 메인 도서 객체 구조 확인
-  console.log("메인 도서:", mainBook);
+  console.log("메인 도서:", mainBook);  
   
   // 메인 배너 도서의 좋아요 상태 확인
   const isMainBookLiked = useAppSelector(state => 
-    mainBook ? selectIsLiked(state, mainBook.bookId) : false
+    mainBook ? selectIsLiked(state, mainBook.id) : false
   );
 
   useEffect(() => {
@@ -54,17 +54,17 @@ const Main = () => {
   // 배너 도서 좋아요 처리 함수
   const handleMainBookLike = async (e: React.MouseEvent) => {
     e.stopPropagation();
-    if (!mainBook || !mainBook.bookId) {
-      console.error('유효하지 않은 메인 도서 ID:', mainBook?.bookId);
+    if (!mainBook || !mainBook.id) {
+      console.error('유효하지 않은 메인 도서 ID:', mainBook?.id);
       return;
     }
     
     try {
-      console.log(`메인 배너 좋아요 처리 시작: bookId=${mainBook.bookId}, 현재 상태=${isMainBookLiked ? '좋아요 취소' : '좋아요 추가'}`);
+      console.log(`메인 배너 좋아요 처리 시작: bookId=${mainBook.id}, 현재 상태=${isMainBookLiked ? '좋아요 취소' : '좋아요 추가'}`);
       if (isMainBookLiked) {
-        await dispatch(removeLike(mainBook.bookId)).unwrap();
+        await dispatch(removeLike(mainBook.id)).unwrap();
       } else {
-        await dispatch(addLike(mainBook.bookId)).unwrap();
+        await dispatch(addLike(mainBook.id)).unwrap();
       }
       console.log('메인 배너 좋아요 처리 완료');
     } catch (error) {
@@ -106,7 +106,7 @@ const Main = () => {
                 type="submit"
                 onClick={() => {
                   setSelectedBook({
-                    id: mainBook.bookId,
+                    id: mainBook.id,
                     title: mainBook.title,
                     author: mainBook.author,
                     imageUrl: mainBook.thumbnailUrl
@@ -145,17 +145,17 @@ const Main = () => {
         <div className="px-4 grid grid-cols-2 md:grid-cols-4 gap-4 place-items-center">
           {isPopularBooksArray && popularBooks.length > 1 ? 
             popularBooks.slice(1, 1 + cardsPerSection).map((book: IBookDetail) => {
-              console.log('인기 고전 북카드 데이터:', book); // 디버깅: bookId 확인
+              console.log('인기 고전 북카드 데이터:', book); // 디버깅: id 확인
               return (
                 <BookCard
-                  key={book.bookId}
-                  bookId={book.bookId || 0} // bookId가 없으면 0으로 fallback
+                  key={book.id}
+                  id={book.id}
                   thumbnailUrl={book.thumbnailUrl}
                   title={book.title}
                   author={book.author}
                   onClick={() => {
                     setSelectedBook({
-                      id: book.bookId,
+                      id: book.id,
                       title: book.title,
                       author: book.author,
                       imageUrl: book.thumbnailUrl
@@ -188,17 +188,17 @@ const Main = () => {
         <div className="px-4 grid grid-cols-2 md:grid-cols-4 gap-4 place-items-center">
           {isRecentBooksArray && recentBooks.length > 0 ? 
             recentBooks.slice(0, cardsPerSection).map((book: IBookDetail) => {
-              console.log('최신 고전 북카드 데이터:', book); // 디버깅: bookId 확인
+              console.log('최신 고전 북카드 데이터:', book); // 디버깅: id 확인
               return (
                 <BookCard
-                  key={book.bookId}
-                  bookId={book.bookId || 0} // bookId가 없으면 0으로 fallback
+                  key={book.id}
+                  id={book.id}
                   thumbnailUrl={book.thumbnailUrl}
                   title={book.title}
                   author={book.author}
                   onClick={() => {
                     setSelectedBook({
-                      id: book.bookId,
+                      id: book.id,
                       title: book.title,
                       author: book.author,
                       imageUrl: book.thumbnailUrl
@@ -231,17 +231,17 @@ const Main = () => {
         <div className="px-4 grid grid-cols-2 md:grid-cols-4 gap-4 place-items-center">
           {isRecentBooksArray && recentBooks.length > 0 ? 
             recentBooks.slice(0, cardsPerSection).map((book: IBookDetail) => {
-              console.log('히스토리 북카드 데이터:', book); // 디버깅: bookId 확인
+              console.log('히스토리 북카드 데이터:', book); // 디버깅: id 확인
               return (
                 <BookCard
-                  key={book.bookId}
-                  bookId={book.bookId || 0} // bookId가 없으면 0으로 fallback
+                  key={book.id}
+                  id={book.id}
                   thumbnailUrl={book.thumbnailUrl}
                   title={book.title}
                   author={book.author}
                   onClick={() => {
                     setSelectedBook({
-                      id: book.bookId,
+                      id: book.id,
                       title: book.title,
                       author: book.author,
                       imageUrl: book.thumbnailUrl

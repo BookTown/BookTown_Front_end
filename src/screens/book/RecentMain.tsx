@@ -49,25 +49,28 @@ const RecentMain = () => {
       <ListFrame>
         {[
           isBookArray ? (
-            books.map((book: IBookDetail) => (
-              <BookCard
-                key={book.bookId}
-                bookId={book.bookId}
-                thumbnailUrl={book.thumbnailUrl}
-                title={book.title}
-                author={book.author}
-                onClick={() => {
-                  setSelectedBook({
-                    id: book.bookId,
-                    title: book.title,
-                    author: book.author,
-                    imageUrl: book.thumbnailUrl
-                  });
-                  setShowModal(true);
-                }}
-                size="lg"
-              />
-            ))
+            books.map((book: IBookDetail) => {
+              console.log('최신 고전 전체 북카드 데이터:', book); // 디버깅: id 확인
+              return (
+                <BookCard
+                  key={book.id}
+                  id={book.id}
+                  thumbnailUrl={book.thumbnailUrl}
+                  title={book.title}
+                  author={book.author}
+                  onClick={() => {
+                    setSelectedBook({
+                      id: book.id,
+                      title: book.title,
+                      author: book.author,
+                      imageUrl: book.thumbnailUrl
+                    });
+                    setShowModal(true);
+                  }}
+                  size="lg"
+                />
+              );
+            })
           ) : (
             <div className="w-full text-center py-10" key="no-books">
               <p className="text-[#9CAAB9]">최신 등록된 도서가 없습니다.</p>

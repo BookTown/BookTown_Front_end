@@ -1,6 +1,6 @@
 // 개별 도서 상세 정보
 export interface IBookDetail {
-  bookId: number;
+  id: number;  // bookId 대신 API 응답에 맞게 id로 정의
   title: string;
   author: string;
   summaryUrl: string;
@@ -12,4 +12,4 @@ export interface IBookDetail {
 
 // 도서 목록 배열 (API 응답 형식에 맞춤)
 export type IBookList = IBookDetail[];
-  
+
