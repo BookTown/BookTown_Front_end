@@ -60,3 +60,17 @@ export const fetchAllRecentBooks = async (): Promise<IBookList> => {
   }
 };
 
+// 좋아요 설정 (POST /book/like/{bookId})
+export const postLikeBook = (bookId: number) => {
+  return axiosApi.post(`/book/like/${bookId}`);
+};
+
+// 좋아요 해제 (DELETE /book/like/{bookId})
+export const deleteLikeBook = (bookId: number) => {
+  return axiosApi.delete(`/book/like/${bookId}`);
+};
+
+// 관심 책 목록 조회 (GET /profile/me/liked-books)
+export const getLikedBooks = () => {
+  return axiosApi.get<number[]>("/profile/me/liked-books");  // 응답: 책 ID 리스트
+};

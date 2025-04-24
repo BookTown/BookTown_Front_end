@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useEffect } from "react";
 import { Heart } from "lucide-react";
-import { IBookDetail } from "../interfaces/bookInterface";
+import { useAppDispatch, useAppSelector } from "../redux/hooks";
+import { selectIsLiked, addLike, removeLike } from "../redux/slices/likeSlice";
 
 interface BookCardProps {
   bookId: number;
@@ -15,14 +16,16 @@ interface BookCardProps {
 }
 
 const BookCard: React.FC<BookCardProps> = ({
+  bookId,
   title,
   author,
   thumbnailUrl,
   onClick,
   size = "sm",
 }) => {
-  const [isLiked, setIsLiked] = useState(false);
-
+  const dispatch = useAppDispatch();
+  const isLiked = useAppSelector(state => selectIsLiked(state, bookId));
+  
   // 크기별 스타일 설정
   const cardStyles = {
     sm: {
@@ -43,9 +46,18 @@ const BookCard: React.FC<BookCardProps> = ({
 
   const styles = cardStyles[size];
 
-  const handleLike = (e: React.MouseEvent) => {
+  const handleLike = async (e: React.MouseEvent) => {
     e.stopPropagation(); // 북카드 온클릭 이벤트 발생 X
-    setIsLiked(!isLiked);
+    
+    try {
+      if (isLiked) {
+        await dispatch(removeLike(bookId)).unwrap();
+      } else {
+        await dispatch(addLike(bookId)).unwrap();
+      }
+    } catch (error) {
+      console.error("좋아요 처리 실패:", error);
+    }
   };
 
   return (

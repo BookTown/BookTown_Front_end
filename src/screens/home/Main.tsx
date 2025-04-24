@@ -6,8 +6,9 @@ import { mockBooks } from "../../mocks/mockBook";
 import { Link } from "react-router-dom";
 import { Heart } from "lucide-react";
 import { usePopularBooks, useRecentBooks, useBannerBook } from "../../hooks/useBookQueries";
-import { useAppSelector } from "../../redux/hooks";
+import { useAppSelector, useAppDispatch } from "../../redux/hooks";
 import { IBookDetail } from "../../interfaces/bookInterface";
+import { selectIsLiked, addLike, removeLike } from "../../redux/slices/likeSlice"
 
 type Book = {
   id: number;
@@ -20,17 +21,25 @@ const Main = () => {
   const [selectedBook, setSelectedBook] = useState<Book | null>(null);
   const [showModal, setShowModal] = useState(false);
   const [cardsPerSection, setCardsPerSection] = useState(2);
-  const [isMainBookLiked, setIsMainBookLiked] = useState(false);
-
+  
   // React Query로 데이터 가져오기 (배너 도서 추가)
   const { isLoading: isLoadingPopular, error: popularError } = usePopularBooks();
   const { isLoading: isLoadingRecent, error: recentError } = useRecentBooks();
   const { isLoading: isLoadingBanner, error: bannerError } = useBannerBook();
   
   // Redux 스토어에서 데이터 가져오기
+  const dispatch = useAppDispatch();
   const popularBooks = useAppSelector(state => state.books.popular) || [];
   const recentBooks = useAppSelector(state => state.books.recent) || [];
   const bannerBook = useAppSelector(state => state.books.banner);
+
+  // 메인 도서로 배너 도서 사용 (bannerBook이 없으면 첫번째 인기 도서 사용)
+  const mainBook = bannerBook || (Array.isArray(popularBooks) && popularBooks.length > 0 ? popularBooks[0] : null);
+  
+  // 메인 배너 도서의 좋아요 상태 확인
+  const isMainBookLiked = useAppSelector(state => 
+    mainBook ? selectIsLiked(state, mainBook.bookId) : false
+  );
 
   useEffect(() => {
     const handleResize = () => {
@@ -40,6 +49,22 @@ const Main = () => {
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
+
+  // 배너 도서 좋아요 처리 함수
+  const handleMainBookLike = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!mainBook) return;
+    
+    try {
+      if (isMainBookLiked) {
+        await dispatch(removeLike(mainBook.bookId)).unwrap();
+      } else {
+        await dispatch(addLike(mainBook.bookId)).unwrap();
+      }
+    } catch (error) {
+      console.error("좋아요 처리 실패:", error);
+    }
+  };
 
   if (isLoadingPopular || isLoadingRecent || isLoadingBanner) {
     return <div className="pt-14 text-center">데이터를 불러오는 중...</div>;
@@ -53,9 +78,6 @@ const Main = () => {
   const isPopularBooksArray = Array.isArray(popularBooks);
   const isRecentBooksArray = Array.isArray(recentBooks);
   
-  // 메인 도서로 배너 도서 사용 (bannerBook이 없으면 첫번째 인기 도서 사용)
-  const mainBook = bannerBook || (isPopularBooksArray && popularBooks.length > 0 ? popularBooks[0] : null);
-
   return (
     <div className="pt-14 pb-16 md:pb-0">
       {/* 메인 도서 (index 0) */}
@@ -89,10 +111,7 @@ const Main = () => {
                 보러가기
               </Button>
               <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setIsMainBookLiked(!isMainBookLiked);
-                }}
+                onClick={handleMainBookLike}
                 className="p-1.5 md:p-2 rounded-full bg-white/80 hover:bg-white transition-colors duration-200"
                 aria-label={isMainBookLiked ? "좋아요 취소" : "좋아요"}
               >

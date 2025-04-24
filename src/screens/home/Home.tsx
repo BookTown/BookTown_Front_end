@@ -1,8 +1,8 @@
 import React from 'react'
 import TopBar from '../../components/Topbar';
-import Main from './Main';import Navbar from '../../components/Navbar';
+import Main from './Main';
+import Navbar from '../../components/Navbar';
 import DesktopBar from '../../components/DesktopBar';
-
 
 const Home = () => {
   return (
