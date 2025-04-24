@@ -127,6 +127,8 @@ const Main = () => {
               </Button>
               <button
                 onClick={(e) => {
+                  e.stopPropagation();
+                  e.preventDefault();
                   console.log("좋아요 버튼 클릭");
                   handleMainBookLike(e);
                 }}
