@@ -24,7 +24,12 @@ const BookCard: React.FC<BookCardProps> = ({
   size = "sm",
 }) => {
   const dispatch = useAppDispatch();
-  const isLiked = useAppSelector(state => selectIsLiked(state, bookId));
+  
+  // bookId가 유효한지 확인하여 selectIsLiked 호출
+  const isLiked = useAppSelector(state => 
+    typeof bookId === 'number' && !isNaN(bookId) ? 
+    selectIsLiked(state, bookId) : false
+  );
   
   // 크기별 스타일 설정
   const cardStyles = {
@@ -49,12 +54,20 @@ const BookCard: React.FC<BookCardProps> = ({
   const handleLike = async (e: React.MouseEvent) => {
     e.stopPropagation(); // 북카드 온클릭 이벤트 발생 X
     
+    // bookId 유효성 검사 추가
+    if (typeof bookId !== 'number' || isNaN(bookId)) {
+      console.error('유효하지 않은 bookId:', bookId);
+      return;
+    }
+    
     try {
+      console.log(`좋아요 처리 시작: bookId=${bookId}, 현재 상태=${isLiked ? '좋아요 취소' : '좋아요 추가'}`);
       if (isLiked) {
         await dispatch(removeLike(bookId)).unwrap();
       } else {
         await dispatch(addLike(bookId)).unwrap();
       }
+      console.log('좋아요 처리 완료');
     } catch (error) {
       console.error("좋아요 처리 실패:", error);
     }

@@ -62,15 +62,33 @@ export const fetchAllRecentBooks = async (): Promise<IBookList> => {
 
 // 좋아요 설정 (POST /book/like/{bookId})
 export const postLikeBook = (bookId: number) => {
+  if (!bookId) {
+    console.error('좋아요 추가 실패: 유효하지 않은 bookId -', bookId);
+    return Promise.reject('유효하지 않은 bookId입니다.');
+  }
+  console.log('좋아요 추가 요청:', bookId);
   return axiosApi.post(`/book/like/${bookId}`);
 };
 
 // 좋아요 해제 (DELETE /book/like/{bookId})
 export const deleteLikeBook = (bookId: number) => {
+  if (!bookId) {
+    console.error('좋아요 취소 실패: 유효하지 않은 bookId -', bookId);
+    return Promise.reject('유효하지 않은 bookId입니다.');
+  }
+  console.log('좋아요 취소 요청:', bookId);
   return axiosApi.delete(`/book/like/${bookId}`);
 };
 
 // 관심 책 목록 조회 (GET /profile/me/liked-books)
-export const getLikedBooks = () => {
-  return axiosApi.get<number[]>("/profile/me/liked-books");  // 응답: 책 ID 리스트
+export const getLikedBooks = async () => {
+  try {
+    console.log('좋아요 목록 요청 시작');
+    const response = await axiosApi.get<number[]>("/profile/me/liked-books");
+    console.log('좋아요 목록 응답 성공:', response.data);
+    return response;
+  } catch (error) {
+    console.error('좋아요 목록 요청 실패:', error);
+    throw error;
+  }
 };
