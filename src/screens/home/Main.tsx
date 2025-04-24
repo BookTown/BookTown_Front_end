@@ -226,8 +226,8 @@ const Main = () => {
         <div className="px-4 grid grid-cols-2 md:grid-cols-4 gap-4 place-items-center">
           {mockBooks.slice(0, cardsPerSection).map((book) => (
             <BookCard
-              key={book.id}
-              bookId={book.id}
+              key={book.bookId || book.id}
+              bookId={book.bookId || book.id}
               thumbnailUrl={book.imageUrl}
               title={book.title}
               author={book.author}
