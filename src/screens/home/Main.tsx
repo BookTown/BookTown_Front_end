@@ -2,7 +2,6 @@ import BookCard from "../../components/BookCard";
 import Button from "../../components/Button";
 import { useState, useEffect } from "react";
 import BookModal from "../../components/BookModal";
-import { mockBooks } from "../../mocks/mockBook";
 import { Link } from "react-router-dom";
 import { Heart } from "lucide-react";
 import { usePopularBooks, useRecentBooks, useBannerBook } from "../../hooks/useBookQueries";
@@ -145,25 +144,28 @@ const Main = () => {
         </div>
         <div className="px-4 grid grid-cols-2 md:grid-cols-4 gap-4 place-items-center">
           {isPopularBooksArray && popularBooks.length > 1 ? 
-            popularBooks.slice(1, 1 + cardsPerSection).map((book: IBookDetail) => (
-              <BookCard
-                key={book.bookId}
-                bookId={book.bookId}
-                thumbnailUrl={book.thumbnailUrl}
-                title={book.title}
-                author={book.author}
-                onClick={() => {
-                  setSelectedBook({
-                    id: book.bookId,
-                    title: book.title,
-                    author: book.author,
-                    imageUrl: book.thumbnailUrl
-                  });
-                  setShowModal(true);
-                }}
-                size="sm"
-              />
-            )) : (
+            popularBooks.slice(1, 1 + cardsPerSection).map((book: IBookDetail) => {
+              console.log('인기 고전 북카드 데이터:', book); // 디버깅: bookId 확인
+              return (
+                <BookCard
+                  key={book.bookId}
+                  bookId={book.bookId || 0} // bookId가 없으면 0으로 fallback
+                  thumbnailUrl={book.thumbnailUrl}
+                  title={book.title}
+                  author={book.author}
+                  onClick={() => {
+                    setSelectedBook({
+                      id: book.bookId,
+                      title: book.title,
+                      author: book.author,
+                      imageUrl: book.thumbnailUrl
+                    });
+                    setShowModal(true);
+                  }}
+                  size="sm"
+                />
+              );
+            }) : (
               <div className="col-span-2 md:col-span-4 text-center text-gray-500">
                 인기 도서가 없습니다
               </div>
@@ -185,25 +187,28 @@ const Main = () => {
         </div>
         <div className="px-4 grid grid-cols-2 md:grid-cols-4 gap-4 place-items-center">
           {isRecentBooksArray && recentBooks.length > 0 ? 
-            recentBooks.slice(0, cardsPerSection).map((book: IBookDetail) => (
-              <BookCard
-                key={book.bookId}
-                bookId={book.bookId}
-                thumbnailUrl={book.thumbnailUrl}
-                title={book.title}
-                author={book.author}
-                onClick={() => {
-                  setSelectedBook({
-                    id: book.bookId,
-                    title: book.title,
-                    author: book.author,
-                    imageUrl: book.thumbnailUrl
-                  });
-                  setShowModal(true);
-                }}
-                size="sm"
-              />
-            )) : (
+            recentBooks.slice(0, cardsPerSection).map((book: IBookDetail) => {
+              console.log('최신 고전 북카드 데이터:', book); // 디버깅: bookId 확인
+              return (
+                <BookCard
+                  key={book.bookId}
+                  bookId={book.bookId || 0} // bookId가 없으면 0으로 fallback
+                  thumbnailUrl={book.thumbnailUrl}
+                  title={book.title}
+                  author={book.author}
+                  onClick={() => {
+                    setSelectedBook({
+                      id: book.bookId,
+                      title: book.title,
+                      author: book.author,
+                      imageUrl: book.thumbnailUrl
+                    });
+                    setShowModal(true);
+                  }}
+                  size="sm"
+                />
+              );
+            }) : (
               <div className="col-span-2 md:col-span-4 text-center text-gray-500">
                 최신 등록된 도서가 없습니다
               </div>
@@ -224,20 +229,34 @@ const Main = () => {
           </Link>
         </div>
         <div className="px-4 grid grid-cols-2 md:grid-cols-4 gap-4 place-items-center">
-          {mockBooks.slice(0, cardsPerSection).map((book) => (
-            <BookCard
-              key={book.bookId || book.id}
-              bookId={book.bookId || book.id}
-              thumbnailUrl={book.imageUrl}
-              title={book.title}
-              author={book.author}
-              onClick={() => {
-                setSelectedBook(book);
-                setShowModal(true);
-              }}
-              size="sm"
-            />
-          ))}
+          {isRecentBooksArray && recentBooks.length > 0 ? 
+            recentBooks.slice(0, cardsPerSection).map((book: IBookDetail) => {
+              console.log('히스토리 북카드 데이터:', book); // 디버깅: bookId 확인
+              return (
+                <BookCard
+                  key={book.bookId}
+                  bookId={book.bookId || 0} // bookId가 없으면 0으로 fallback
+                  thumbnailUrl={book.thumbnailUrl}
+                  title={book.title}
+                  author={book.author}
+                  onClick={() => {
+                    setSelectedBook({
+                      id: book.bookId,
+                      title: book.title,
+                      author: book.author,
+                      imageUrl: book.thumbnailUrl
+                    });
+                    setShowModal(true);
+                  }}
+                  size="sm"
+                />
+              );
+            }) : (
+              <div className="col-span-2 md:col-span-4 text-center text-gray-500">
+                최신 등록된 도서가 없습니다
+              </div>
+            )
+          }
         </div>
       </div>
 
