@@ -2,6 +2,7 @@ import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import { getLikedBooks, toggleLikeBook } from "../../api/api";
 import { RootState } from "../store";
 import { IBookDetail } from "../../interfaces/bookInterface";
+import { createSelector } from "reselect";
 
 // 상태 인터페이스 정의 개선
 interface LikeState {
@@ -54,8 +55,6 @@ export const toggleLike = createAsyncThunk(
     }
   }
 );
-
-// 기존 addLike와 removeLike는 삭제하거나 주석 처리합니다
 
 // 좋아요 슬라이스
 const likeSlice = createSlice({
@@ -114,10 +113,19 @@ const likeSlice = createSlice({
   },
 });
 
-// Selector: 책이 좋아요 되어있는지 확인
+// Selector: 책이 좋아요 되어있는지 확인 - 일반 선택자
 export const selectIsLiked = (state: RootState, bookId: number) => 
   Array.isArray(state.likes.likedBooks) && state.likes.likedBooks.includes(bookId);
-  
+
+// 메모이제이션된 선택자 - 특정 bookId에 대한 좋아요 상태만 추적
+export const makeSelectIsLiked = () => {
+  return createSelector(
+    [(state: RootState) => state.likes.likedBooks, 
+      (_: RootState, bookId: number) => bookId],
+    (likedBooks, bookId) => 
+      Array.isArray(likedBooks) && likedBooks.includes(bookId)
+  );
+};
 // Selector: 좋아요 ID 목록 반환
 export const selectLikedBooks = (state: RootState) => 
   state.likes.likedBooks;

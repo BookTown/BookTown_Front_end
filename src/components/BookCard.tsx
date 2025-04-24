@@ -1,7 +1,8 @@
 import React from "react";
 import { Heart } from "lucide-react";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
-import { selectIsLiked, toggleLike } from "../redux/slices/likeSlice";
+import { makeSelectIsLiked, toggleLike } from "../redux/slices/likeSlice";
+import { useCallback, useMemo } from "react";
 
 interface BookCardProps {
   id: number;
@@ -24,14 +25,17 @@ const BookCard: React.FC<BookCardProps> = ({
   size = "sm",
 }) => {
   const dispatch = useAppDispatch();
+
+  // 메모이제이션된 선택자 생성 (컴포넌트 내에서)
+  const selectIsBookLiked = useMemo(makeSelectIsLiked, []);
   
   // 컴포넌트 렌더링시 book 객체 구조 확인
   console.log("BookCard 렌더링 - id:", id, "책 제목:", title, "저자:", author, "썸네일 URL:", thumbnailUrl);
   
-  // id가 유효한지 확인하여 selectIsLiked 호출
+  // 이 특정 책에 대한 좋아요 상태만 구독
   const isLiked = useAppSelector(state => 
     typeof id === 'number' && !isNaN(id) ? 
-    selectIsLiked(state, id) : false
+    selectIsBookLiked(state, id) : false
   );
   
   // 크기별 스타일 설정
@@ -54,10 +58,9 @@ const BookCard: React.FC<BookCardProps> = ({
 
   const styles = cardStyles[size];
 
-  const handleLike = async (e: React.MouseEvent) => {
+  // useCallback으로 핸들러 함수 메모이제이션
+  const handleLike = useCallback(async (e: React.MouseEvent) => {
     e.stopPropagation(); // 북카드 온클릭 이벤트 발생 X
-    
-    console.log("👆 좋아요 버튼 클릭 - id:", id, "타입:", typeof id);
     
     // id 유효성 검사 추가
     if (typeof id !== 'number' || isNaN(id)) {
@@ -66,14 +69,13 @@ const BookCard: React.FC<BookCardProps> = ({
     }
     
     try {
-      console.log(`🔄 좋아요 토글 처리 시작: id=${id}, 현재 상태=${isLiked ? '좋아요 상태' : '좋아요 안함 상태'}`);
+      console.log(`🔄 좋아요 토글 처리 시작: id=${id}`);
       // 토글 액션 디스패치
-      const result = await dispatch(toggleLike(id)).unwrap();
-      console.log('좋아요 토글 처리 완료:', result);
+      await dispatch(toggleLike(id)).unwrap();
     } catch (error) {
       console.error("좋아요 토글 처리 실패:", error);
     }
-  };
+  }, [id, dispatch]);
 
   return (
     <div
@@ -107,4 +109,15 @@ const BookCard: React.FC<BookCardProps> = ({
   );
 };
 
-export default React.memo(BookCard);
+// React.memo를 사용하여 props가 변경될 때만 리렌더링
+export default React.memo(BookCard, (prevProps, nextProps) => {
+  // id, title, author, thumbnailUrl, onClick, size가 모두 같으면 리렌더링하지 않음
+  return (
+    prevProps.id === nextProps.id &&
+    prevProps.title === nextProps.title &&
+    prevProps.author === nextProps.author &&
+    prevProps.thumbnailUrl === nextProps.thumbnailUrl &&
+    prevProps.onClick === nextProps.onClick &&
+    prevProps.size === nextProps.size
+  );
+});

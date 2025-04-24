@@ -8,6 +8,7 @@ import { usePopularBooks, useRecentBooks, useBannerBook } from "../../hooks/useB
 import { useAppSelector, useAppDispatch } from "../../redux/hooks";
 import { IBookDetail } from "../../interfaces/bookInterface";
 import { selectIsLiked, toggleLike } from "../../redux/slices/likeSlice";
+import { useCallback } from "react";
 
 type Book = {
   id: number;
@@ -61,23 +62,21 @@ const Main = () => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  // 배너 도서 좋아요 처리 함수 (토글 방식으로 변경)
-  const handleMainBookLike = async (e: React.MouseEvent) => {
-    e.stopPropagation();
-    if (!mainBook || !mainBook.id) {
-      console.error('유효하지 않은 메인 도서 ID:', mainBook?.id);
-      return;
-    }
-    
-    try {
-      console.log(`메인 배너 좋아요 토글 시작: bookId=${mainBook.id}, 현재 상태=${isMainBookLiked ? '좋아요 상태' : '좋아요 안함 상태'}`);
-      // 토글 액션 디스패치 (addLike 및 removeLike 대신 toggleLike 사용)
-      await dispatch(toggleLike(mainBook.id)).unwrap();
-      console.log('메인 배너 좋아요 토글 완료');
-    } catch (error) {
-      console.error("좋아요 토글 처리 실패:", error);
-    }
-  };
+  // handleMainBookLike 함수를 useCallback으로 메모이제이션
+const handleMainBookLike = useCallback(async (e: React.MouseEvent) => {
+  e.stopPropagation();
+  if (!mainBook || !mainBook.id) {
+    console.error('유효하지 않은 메인 도서 ID:', mainBook?.id);
+    return;
+  }
+  
+  try {
+    console.log(`메인 배너 좋아요 토글 시작: bookId=${mainBook.id}`);
+    await dispatch(toggleLike(mainBook.id)).unwrap();
+  } catch (error) {
+    console.error("좋아요 토글 처리 실패:", error);
+  }
+}, [mainBook, dispatch]);
 
   if (isLoadingPopular || isLoadingRecent || isLoadingBanner) {
     return <div className="pt-14 text-center">데이터를 불러오는 중...</div>;
