@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from "react";
+import React, { useCallback, useMemo, useEffect } from "react";
 import { Heart } from "lucide-react";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { makeSelectIsLiked, toggleLike } from "../redux/slices/likeSlice";
@@ -24,6 +24,11 @@ const BookCard: React.FC<BookCardProps> = ({
   size = "sm",
 }) => {
   const dispatch = useAppDispatch();
+
+   // 리렌더링 확인용 로그
+  useEffect(() => {
+    console.log(`📘 BookCard [${id}] "${title}" 렌더링됨`);
+  });
   
   // 메모이제이션된 선택자 생성 (컴포넌트 내에서)
   const selectIsBookLiked = useMemo(makeSelectIsLiked, []);
