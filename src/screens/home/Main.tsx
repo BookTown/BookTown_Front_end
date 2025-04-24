@@ -130,12 +130,12 @@ const Main = () => {
                   console.log("좋아요 버튼 클릭");
                   handleMainBookLike(e);
                 }}
-                className="p-1.5 md:p-2 rounded-full bg-white/80 hover:bg-white transition-colors duration-200"
+                className="p-1.5 md:p-2 rounded-full bg-white/80 hover:bg-white transition-colors duration-200 z-10 relative"
                 aria-label={isMainBookLiked ? "좋아요 취소" : "좋아요"}
               >
                 <Heart
                   size={20}
-                  className={`${isMainBookLiked ? "fill-[#C75C5C] stroke-[#C75C5C]" : "stroke-[#C75C5C]"} md:w-6 md:h-6`}
+                  className={`${isMainBookLiked ? "fill-[#C75C5C] stroke-[#C75C5C]" : "stroke-[#C75C5C]"} md:w-6 md:h-6 pointer-events-none`}
                 />
               </button>
             </div>
