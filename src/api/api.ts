@@ -60,27 +60,17 @@ export const fetchAllRecentBooks = async (): Promise<IBookList> => {
   }
 };
 
-// 좋아요 설정 (POST /book/like/{bookId})
-export const postLikeBook = (bookId: number) => {
+// 토글 API
+export const toggleLikeBook = (bookId: number) => {
   if (!bookId) {
-    console.error('좋아요 추가 실패: 유효하지 않은 bookId -', bookId);
+    console.error('좋아요 토글 실패: 유효하지 않은 bookId -', bookId);
     return Promise.reject('유효하지 않은 bookId입니다.');
   }
-  console.log('좋아요 추가 요청:', bookId);
+  console.log('좋아요 토글 요청:', bookId);
   return axiosApi.post(`/book/like/${bookId}`);
 };
 
-// 좋아요 해제 (DELETE /book/like/{bookId})
-export const deleteLikeBook = (bookId: number) => {
-  if (!bookId) {
-    console.error('좋아요 취소 실패: 유효하지 않은 bookId -', bookId);
-    return Promise.reject('유효하지 않은 bookId입니다.');
-  }
-  console.log('좋아요 취소 요청:', bookId);
-  return axiosApi.delete(`/book/like/${bookId}`);
-};
-
-// 관심 책 목록 조회 (GET /api/profile/{userId}/liked-books)
+// 관심 책 목록 조회 (GET /profile/me/liked-books)
 export const getLikedBooks = async (userId?: number) => {
   try {
     console.log('좋아요 목록 요청 시작');
@@ -89,7 +79,8 @@ export const getLikedBooks = async (userId?: number) => {
     
     // userId가 제공된 경우 해당 사용자의 좋아요 목록을 가져옴
     if (userId !== undefined) {
-      endpoint = `/api/profile/${userId}/liked-books`;
+      // '/api/' 부분 제거 (이미 axios 인스턴스에서 baseURL로 설정됨)
+      endpoint = `/profile/${userId}/liked-books`;
     }
     
     const response = await axiosApi.get<number[]>(endpoint);

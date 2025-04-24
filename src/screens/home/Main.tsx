@@ -7,7 +7,7 @@ import { Heart } from "lucide-react";
 import { usePopularBooks, useRecentBooks, useBannerBook } from "../../hooks/useBookQueries";
 import { useAppSelector, useAppDispatch } from "../../redux/hooks";
 import { IBookDetail } from "../../interfaces/bookInterface";
-import { selectIsLiked, addLike, removeLike } from "../../redux/slices/likeSlice"
+import { selectIsLiked, toggleLike } from "../../redux/slices/likeSlice";
 
 type Book = {
   id: number;
@@ -51,7 +51,7 @@ const Main = () => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  // 배너 도서 좋아요 처리 함수
+  // 배너 도서 좋아요 처리 함수 (토글 방식으로 변경)
   const handleMainBookLike = async (e: React.MouseEvent) => {
     e.stopPropagation();
     if (!mainBook || !mainBook.id) {
@@ -60,15 +60,12 @@ const Main = () => {
     }
     
     try {
-      console.log(`메인 배너 좋아요 처리 시작: bookId=${mainBook.id}, 현재 상태=${isMainBookLiked ? '좋아요 취소' : '좋아요 추가'}`);
-      if (isMainBookLiked) {
-        await dispatch(removeLike(mainBook.id)).unwrap();
-      } else {
-        await dispatch(addLike(mainBook.id)).unwrap();
-      }
-      console.log('메인 배너 좋아요 처리 완료');
+      console.log(`메인 배너 좋아요 토글 시작: bookId=${mainBook.id}, 현재 상태=${isMainBookLiked ? '좋아요 상태' : '좋아요 안함 상태'}`);
+      // 토글 액션 디스패치 (addLike 및 removeLike 대신 toggleLike 사용)
+      await dispatch(toggleLike(mainBook.id)).unwrap();
+      console.log('메인 배너 좋아요 토글 완료');
     } catch (error) {
-      console.error("좋아요 처리 실패:", error);
+      console.error("좋아요 토글 처리 실패:", error);
     }
   };
 
@@ -145,7 +142,7 @@ const Main = () => {
         <div className="px-4 grid grid-cols-2 md:grid-cols-4 gap-4 place-items-center">
           {isPopularBooksArray && popularBooks.length > 1 ? 
             popularBooks.slice(1, 1 + cardsPerSection).map((book: IBookDetail) => {
-              console.log('인기 고전 북카드 데이터:', book); // 디버깅: id 확인
+              console.log('인기 고전 북카드 데이터:', book);
               return (
                 <BookCard
                   key={book.id}
@@ -188,7 +185,7 @@ const Main = () => {
         <div className="px-4 grid grid-cols-2 md:grid-cols-4 gap-4 place-items-center">
           {isRecentBooksArray && recentBooks.length > 0 ? 
             recentBooks.slice(0, cardsPerSection).map((book: IBookDetail) => {
-              console.log('최신 고전 북카드 데이터:', book); // 디버깅: id 확인
+              console.log('최신 고전 북카드 데이터:', book);
               return (
                 <BookCard
                   key={book.id}
@@ -231,7 +228,7 @@ const Main = () => {
         <div className="px-4 grid grid-cols-2 md:grid-cols-4 gap-4 place-items-center">
           {isRecentBooksArray && recentBooks.length > 0 ? 
             recentBooks.slice(0, cardsPerSection).map((book: IBookDetail) => {
-              console.log('히스토리 북카드 데이터:', book); // 디버깅: id 확인
+              console.log('히스토리 북카드 데이터:', book);
               return (
                 <BookCard
                   key={book.id}

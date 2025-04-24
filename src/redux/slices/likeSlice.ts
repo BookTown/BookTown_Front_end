@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
-import { getLikedBooks, postLikeBook, deleteLikeBook } from "../../api/api";
+import { getLikedBooks, toggleLikeBook } from "../../api/api";
 import { RootState } from "../store";
 import { IBookDetail } from "../../interfaces/bookInterface";
 
@@ -34,39 +34,26 @@ export const fetchLikedBooks = createAsyncThunk(
   }
 );
 
-// 비동기 액션: 좋아요 추가
-export const addLike = createAsyncThunk(
-  "likes/addLike",
-  async (bookId: number, { rejectWithValue }) => {
+// 비동기 액션: 좋아요 토글 (추가/삭제 통합)
+export const toggleLike = createAsyncThunk(
+  "likes/toggleLike",
+  async (bookId: number, { rejectWithValue, getState }) => {
     try {
-      const response = await postLikeBook(bookId);
-      if (response.data === true) {
-        return bookId;
-      } else {
-        return rejectWithValue("좋아요 추가에 실패했습니다");
-      }
+      const response = await toggleLikeBook(bookId);
+      
+      // 토글 결과에 따라 처리 - API 응답 확인 필요
+      return {
+        bookId,
+        isLiked: response.data, // API 토글 후 현재 좋아요 상태(true/false)를 반환한다고 가정
+        wasLiked: selectIsLiked(getState() as RootState, bookId) // 이전 상태
+      };
     } catch (error: any) {
-      return rejectWithValue(error.message || "좋아요 추가에 실패했습니다");
+      return rejectWithValue(error.message || "좋아요 토글에 실패했습니다");
     }
   }
 );
 
-// 비동기 액션: 좋아요 제거
-export const removeLike = createAsyncThunk(
-  "likes/removeLike",
-  async (bookId: number, { rejectWithValue }) => {
-    try {
-      const response = await deleteLikeBook(bookId);
-      if (response.data === true) {
-        return bookId;
-      } else {
-        return rejectWithValue("좋아요 제거에 실패했습니다");
-      }
-    } catch (error: any) {
-      return rejectWithValue(error.message || "좋아요 제거에 실패했습니다");
-    }
-  }
-);
+// 기존 addLike와 removeLike는 삭제하거나 주석 처리합니다
 
 // 좋아요 슬라이스
 const likeSlice = createSlice({
@@ -90,32 +77,25 @@ const likeSlice = createSlice({
         state.error = action.payload as string;
       })
       
-      // 좋아요 추가
-      .addCase(addLike.fulfilled, (state, action: PayloadAction<number>) => {
-        // 배열 검사 후 안전하게 추가
-        if (Array.isArray(state.likedBooks)) {
-          if (!state.likedBooks.includes(action.payload)) {
-            state.likedBooks = [...state.likedBooks, action.payload];
+      // 좋아요 토글 (addLike와 removeLike 대체)
+      .addCase(toggleLike.fulfilled, (state, action) => {
+        const { bookId, isLiked } = action.payload;
+        
+        if (isLiked) {
+          // 좋아요 추가
+          if (Array.isArray(state.likedBooks) && !state.likedBooks.includes(bookId)) {
+            state.likedBooks.push(bookId);
           }
         } else {
-          state.likedBooks = [action.payload];
-        }
-      })
-      
-      // 좋아요 제거
-      .addCase(removeLike.fulfilled, (state, action: PayloadAction<number>) => {
-        // 배열 검사 후 필터링
-        if (Array.isArray(state.likedBooks)) {
-          state.likedBooks = state.likedBooks.filter(id => id !== action.payload);
-        } else {
-          state.likedBooks = [];
-        }
-        
-        // 상세 정보도 함께 제거
-        if (Array.isArray(state.likedBookDetails)) {
-          state.likedBookDetails = state.likedBookDetails.filter(book => book.id !== action.payload);
-        } else {
-          state.likedBookDetails = [];
+          // 좋아요 제거
+          if (Array.isArray(state.likedBooks)) {
+            state.likedBooks = state.likedBooks.filter(id => id !== bookId);
+          }
+          
+          // 상세 정보도 함께 제거
+          if (Array.isArray(state.likedBookDetails)) {
+            state.likedBookDetails = state.likedBookDetails.filter(book => book.id !== bookId);
+          }
         }
       });
   },

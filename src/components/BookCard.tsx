@@ -1,7 +1,7 @@
 import React from "react";
 import { Heart } from "lucide-react";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
-import { selectIsLiked, addLike, removeLike } from "../redux/slices/likeSlice";
+import { selectIsLiked, toggleLike } from "../redux/slices/likeSlice";
 
 interface BookCardProps {
   id: number;
@@ -66,15 +66,12 @@ const BookCard: React.FC<BookCardProps> = ({
     }
     
     try {
-      console.log(`좋아요 처리 시작: id=${id}, 현재 상태=${isLiked ? '좋아요 취소' : '좋아요 추가'}`);
-      if (isLiked) {
-        await dispatch(removeLike(id)).unwrap();
-      } else {
-        await dispatch(addLike(id)).unwrap();
-      }
-      console.log('좋아요 처리 완료');
+      console.log(`좋아요 토글 처리 시작: id=${id}, 현재 상태=${isLiked ? '좋아요 상태' : '좋아요 안함 상태'}`);
+      // 토글 액션 디스패치 (addLike 및 removeLike 대신 toggleLike 사용)
+      await dispatch(toggleLike(id)).unwrap();
+      console.log('좋아요 토글 처리 완료');
     } catch (error) {
-      console.error("좋아요 처리 실패:", error);
+      console.error("좋아요 토글 처리 실패:", error);
     }
   };
 
