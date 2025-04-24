@@ -25,6 +25,9 @@ const BookCard: React.FC<BookCardProps> = ({
 }) => {
   const dispatch = useAppDispatch();
   
+  // 컴포넌트 렌더링 시 bookId 로그 추가
+  console.log("BookCard 렌더링 - bookId 확인:", bookId, "타입:", typeof bookId, "책 제목:", title);
+  
   // bookId가 유효한지 확인하여 selectIsLiked 호출
   const isLiked = useAppSelector(state => 
     typeof bookId === 'number' && !isNaN(bookId) ? 
@@ -53,6 +56,8 @@ const BookCard: React.FC<BookCardProps> = ({
 
   const handleLike = async (e: React.MouseEvent) => {
     e.stopPropagation(); // 북카드 온클릭 이벤트 발생 X
+    
+    console.log("좋아요 버튼 클릭 - bookId:", bookId, "타입:", typeof bookId);
     
     // bookId 유효성 검사 추가
     if (typeof bookId !== 'number' || isNaN(bookId)) {

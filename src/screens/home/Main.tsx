@@ -53,14 +53,19 @@ const Main = () => {
   // 배너 도서 좋아요 처리 함수
   const handleMainBookLike = async (e: React.MouseEvent) => {
     e.stopPropagation();
-    if (!mainBook) return;
+    if (!mainBook || !mainBook.bookId) {
+      console.error('유효하지 않은 메인 도서 ID:', mainBook?.bookId);
+      return;
+    }
     
     try {
+      console.log(`메인 배너 좋아요 처리 시작: bookId=${mainBook.bookId}, 현재 상태=${isMainBookLiked ? '좋아요 취소' : '좋아요 추가'}`);
       if (isMainBookLiked) {
         await dispatch(removeLike(mainBook.bookId)).unwrap();
       } else {
         await dispatch(addLike(mainBook.bookId)).unwrap();
       }
+      console.log('메인 배너 좋아요 처리 완료');
     } catch (error) {
       console.error("좋아요 처리 실패:", error);
     }
