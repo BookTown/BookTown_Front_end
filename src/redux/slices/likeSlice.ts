@@ -34,34 +34,12 @@ export const fetchLikedBooks = createAsyncThunk(
   }
 );
 
-// 비동기 액션: 사용자의 관심 책 상세 정보 조회 (새로 추가)
-export const fetchLikedBookDetails = createAsyncThunk(
-  "likes/fetchLikedBookDetails",
-  async (userId: number, { rejectWithValue }) => {
-    try {
-      // API 호출 위치 수정 필요
-      const response = await fetch(`/api/profile/${userId}/liked-books`);
-      
-      if (!response.ok) {
-        throw new Error('관심 책 조회에 실패했습니다');
-      }
-      
-      const data = await response.json();
-      return data;
-    } catch (error: any) {
-      return rejectWithValue(error.message || "관심 책 상세 정보를 불러오는데 실패했습니다");
-    }
-  }
-);
-
 // 비동기 액션: 좋아요 추가
 export const addLike = createAsyncThunk(
   "likes/addLike",
   async (bookId: number, { rejectWithValue }) => {
     try {
-      // API 응답으로 불린값 받는 것 처리
       const response = await postLikeBook(bookId);
-      // API가 성공했을 때만 상태 업데이트
       if (response.data === true) {
         return bookId;
       } else {
@@ -78,9 +56,7 @@ export const removeLike = createAsyncThunk(
   "likes/removeLike",
   async (bookId: number, { rejectWithValue }) => {
     try {
-      // API 응답으로 불린값 받는 것 처리
       const response = await deleteLikeBook(bookId);
-      // API가 성공했을 때만 상태 업데이트
       if (response.data === true) {
         return bookId;
       } else {
@@ -106,52 +82,54 @@ const likeSlice = createSlice({
       })
       .addCase(fetchLikedBooks.fulfilled, (state, action: PayloadAction<number[]>) => {
         state.loading = false;
-        state.likedBooks = action.payload;
+        // 받은 데이터가 배열인지 확인 후 상태 업데이트
+        state.likedBooks = Array.isArray(action.payload) ? action.payload : [];
       })
       .addCase(fetchLikedBooks.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;
       })
       
-      // 좋아요한 책 상세 정보 조회 (새로 추가)
-      .addCase(fetchLikedBookDetails.pending, (state) => {
-        state.detailsLoading = true;
-        state.error = null;
-      })
-      .addCase(fetchLikedBookDetails.fulfilled, (state, action: PayloadAction<IBookDetail[]>) => {
-        state.detailsLoading = false;
-        state.likedBookDetails = action.payload;
-      })
-      .addCase(fetchLikedBookDetails.rejected, (state, action) => {
-        state.detailsLoading = false;
-        state.error = action.payload as string;
-      })
-      
       // 좋아요 추가
       .addCase(addLike.fulfilled, (state, action: PayloadAction<number>) => {
-        if (!state.likedBooks.includes(action.payload)) {
-          state.likedBooks.push(action.payload);
+        // 배열 검사 후 안전하게 추가
+        if (Array.isArray(state.likedBooks)) {
+          if (!state.likedBooks.includes(action.payload)) {
+            state.likedBooks = [...state.likedBooks, action.payload];
+          }
+        } else {
+          state.likedBooks = [action.payload];
         }
       })
       
       // 좋아요 제거
       .addCase(removeLike.fulfilled, (state, action: PayloadAction<number>) => {
-        state.likedBooks = state.likedBooks.filter(id => id !== action.payload);
+        // 배열 검사 후 필터링
+        if (Array.isArray(state.likedBooks)) {
+          state.likedBooks = state.likedBooks.filter(id => id !== action.payload);
+        } else {
+          state.likedBooks = [];
+        }
+        
         // 상세 정보도 함께 제거
-        state.likedBookDetails = state.likedBookDetails.filter(book => book.id !== action.payload);
+        if (Array.isArray(state.likedBookDetails)) {
+          state.likedBookDetails = state.likedBookDetails.filter(book => book.id !== action.payload);
+        } else {
+          state.likedBookDetails = [];
+        }
       });
   },
 });
 
 // Selector: 책이 좋아요 되어있는지 확인
 export const selectIsLiked = (state: RootState, bookId: number) => 
-  state.likes.likedBooks.includes(bookId);
+  Array.isArray(state.likes.likedBooks) && state.likes.likedBooks.includes(bookId);
   
 // Selector: 좋아요 ID 목록 반환
 export const selectLikedBooks = (state: RootState) => 
   state.likes.likedBooks;
 
-// Selector: 좋아요한 책 상세 정보 목록 반환 (새로 추가)
+// Selector: 좋아요한 책 상세 정보 목록 반환
 export const selectLikedBookDetails = (state: RootState) => 
   state.likes.likedBookDetails;
 
