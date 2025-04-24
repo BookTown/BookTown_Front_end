@@ -59,6 +59,7 @@ const Main = () => {
     }
     
     try {
+      console.log(`🔄 좋아요 토글 처리 시작: id=${mainBook.id}`);
       await dispatch(toggleLike(mainBook.id)).unwrap();
     } catch (error) {
       console.error("좋아요 토글 처리 실패:", error);
