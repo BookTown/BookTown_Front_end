@@ -10,6 +10,7 @@ function App() {
   useEffect(() => {
     const token = localStorage.getItem('accessToken');
     if (token) {
+      console.log('토큰 존재: 좋아요 목록 불러오기 시도');
       dispatch(fetchLikedBooks());
     }
   }, [dispatch]);

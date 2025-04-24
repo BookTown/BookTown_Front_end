@@ -79,7 +79,6 @@ export const getLikedBooks = async (userId?: number) => {
     
     // userId가 제공된 경우 해당 사용자의 좋아요 목록을 가져옴
     if (userId !== undefined) {
-      // '/api/' 부분 제거 (이미 axios 인스턴스에서 baseURL로 설정됨)
       endpoint = `/profile/${userId}/liked-books`;
     }
     

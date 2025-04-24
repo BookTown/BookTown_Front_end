@@ -1,9 +1,12 @@
 import React, { useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { useAppDispatch } from '../redux/hooks';
+import { fetchLikedBooks } from '../redux/slices/likeSlice';
 
 const OAuthCallback = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
     // URL에서 토큰 추출
@@ -17,6 +20,9 @@ const OAuthCallback = () => {
       if (refreshToken) {
         localStorage.setItem('refreshToken', refreshToken);
       }
+
+      // 로그인 성공 후 좋아요 목록 가져오기
+      dispatch(fetchLikedBooks());
       
       // 메인 페이지로 리다이렉트
       navigate('/home');
@@ -25,7 +31,7 @@ const OAuthCallback = () => {
       console.error('OAuth 콜백: 토큰을 찾을 수 없습니다');
       navigate('/');
     }
-  }, [location, navigate]);
+  }, [location, navigate, dispatch]);
 
   return (
     <div className="w-full min-h-[100dvh] bg-[#FFFAF0] flex flex-col items-center justify-center">

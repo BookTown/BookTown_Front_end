@@ -59,7 +59,16 @@ export const toggleLike = createAsyncThunk(
 const likeSlice = createSlice({
   name: "likes",
   initialState,
-  reducers: {},
+  reducers: {
+    // 로그아웃 시 상태 초기화를 위한 액션 추가
+    clearLikes: (state) => {
+      state.likedBooks = [];
+      state.likedBookDetails = [];
+      state.loading = false;
+      state.detailsLoading = false;
+      state.error = null;
+    }
+  },
   extraReducers: (builder) => {
     builder
       // 좋아요 목록 조회
@@ -118,3 +127,6 @@ export const selectLikesLoading = (state: RootState) =>
   state.likes.loading || state.likes.detailsLoading;
 
 export default likeSlice.reducer;
+
+// 액션 내보내기
+export const { clearLikes } = likeSlice.actions;
