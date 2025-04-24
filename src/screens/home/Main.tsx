@@ -35,6 +35,8 @@ const Main = () => {
 
   // 메인 도서로 배너 도서 사용 (bannerBook이 없으면 첫번째 인기 도서 사용)
   const mainBook = bannerBook || (Array.isArray(popularBooks) && popularBooks.length > 0 ? popularBooks[0] : null);
+  // 메인 도서 객체 구조 확인
+  console.log("메인 도서:", mainBook);
   
   // 메인 배너 도서의 좋아요 상태 확인
   const isMainBookLiked = useAppSelector(state => 

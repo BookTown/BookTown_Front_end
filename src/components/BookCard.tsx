@@ -25,8 +25,8 @@ const BookCard: React.FC<BookCardProps> = ({
 }) => {
   const dispatch = useAppDispatch();
   
-  // 컴포넌트 렌더링 시 bookId 로그 추가
-  console.log("BookCard 렌더링 - bookId 확인:", bookId, "타입:", typeof bookId, "책 제목:", title);
+  // 컴포넌트 렌더링시 book 객체 구조 확인
+  console.log("BookCard 렌더링 - bookId:", bookId, "책 제목:", title, "저자:", author, "썸네일 URL:", thumbnailUrl);
   
   // bookId가 유효한지 확인하여 selectIsLiked 호출
   const isLiked = useAppSelector(state => 
