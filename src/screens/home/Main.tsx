@@ -1,6 +1,6 @@
 import BookCard from "../../components/BookCard";
 import Button from "../../components/Button";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import BookModal from "../../components/BookModal";
 import { Link } from "react-router-dom";
 import { Heart } from "lucide-react";
@@ -8,7 +8,6 @@ import { usePopularBooks, useRecentBooks, useBannerBook } from "../../hooks/useB
 import { useAppSelector, useAppDispatch } from "../../redux/hooks";
 import { IBookDetail } from "../../interfaces/bookInterface";
 import { selectIsLiked, toggleLike } from "../../redux/slices/likeSlice";
-import { useCallback } from "react";
 
 type Book = {
   id: number;
@@ -22,9 +21,6 @@ const Main = () => {
   const [showModal, setShowModal] = useState(false);
   const [cardsPerSection, setCardsPerSection] = useState(2);
 
-  // 좋아요 상태 로깅
-  const likedBooks = useAppSelector(state => state.likes.likedBooks);
-  
   // React Query로 데이터 가져오기 (배너 도서 추가)
   const { isLoading: isLoadingPopular, error: popularError } = usePopularBooks();
   const { isLoading: isLoadingRecent, error: recentError } = useRecentBooks();
@@ -38,21 +34,13 @@ const Main = () => {
 
   // 메인 도서로 배너 도서 사용 (bannerBook이 없으면 첫번째 인기 도서 사용)
   const mainBook = bannerBook || (Array.isArray(popularBooks) && popularBooks.length > 0 ? popularBooks[0] : null);
-  // 메인 도서 객체 구조 확인
-  console.log("메인 도서:", mainBook);  
   
   // 메인 배너 도서의 좋아요 상태 확인
   const isMainBookLiked = useAppSelector(state => 
     mainBook ? selectIsLiked(state, mainBook.id) : false
   );
 
-  // 좋아요 상태 로깅
-  useEffect(() => {
-    console.log('현재 좋아요한 책 목록 (Redux):', likedBooks);
-  }, [likedBooks]);
-
   // 화면 크기에 따라 카드 개수 조정
-  // 초기값 설정 및 리사이즈 이벤트 핸들러 등록
   useEffect(() => {
     const handleResize = () => {
       setCardsPerSection(window.innerWidth >= 768 ? 4 : 2);
@@ -63,20 +51,43 @@ const Main = () => {
   }, []);
 
   // handleMainBookLike 함수를 useCallback으로 메모이제이션
-const handleMainBookLike = useCallback(async (e: React.MouseEvent) => {
-  e.stopPropagation();
-  if (!mainBook || !mainBook.id) {
-    console.error('유효하지 않은 메인 도서 ID:', mainBook?.id);
-    return;
-  }
-  
-  try {
-    console.log(`메인 배너 좋아요 토글 시작: bookId=${mainBook.id}`);
-    await dispatch(toggleLike(mainBook.id)).unwrap();
-  } catch (error) {
-    console.error("좋아요 토글 처리 실패:", error);
-  }
-}, [mainBook, dispatch]);
+  const handleMainBookLike = useCallback(async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!mainBook || !mainBook.id) {
+      console.error('유효하지 않은 메인 도서 ID:', mainBook?.id);
+      return;
+    }
+    
+    try {
+      await dispatch(toggleLike(mainBook.id)).unwrap();
+    } catch (error) {
+      console.error("좋아요 토글 처리 실패:", error);
+    }
+  }, [mainBook, dispatch]);
+
+  // BookCard 선택 핸들러 메모이제이션
+  const handleBookSelect = useCallback((book: Book) => {
+    setSelectedBook(book);
+    setShowModal(true);
+  }, []);
+
+  // 모달 닫기 핸들러
+  const handleCloseModal = useCallback(() => {
+    setShowModal(false);
+  }, []);
+
+  // 메인 배너 클릭 핸들러
+  const handleMainBannerClick = useCallback(() => {
+    if (mainBook) {
+      setSelectedBook({
+        id: mainBook.id,
+        title: mainBook.title,
+        author: mainBook.author,
+        imageUrl: mainBook.thumbnailUrl
+      });
+      setShowModal(true);
+    }
+  }, [mainBook]);
 
   if (isLoadingPopular || isLoadingRecent || isLoadingBanner) {
     return <div className="pt-14 text-center">데이터를 불러오는 중...</div>;
@@ -109,16 +120,7 @@ const handleMainBookLike = useCallback(async (e: React.MouseEvent) => {
               <Button
                 size="md"
                 color="pink"
-                type="submit"
-                onClick={() => {
-                  setSelectedBook({
-                    id: mainBook.id,
-                    title: mainBook.title,
-                    author: mainBook.author,
-                    imageUrl: mainBook.thumbnailUrl
-                  });
-                  setShowModal(true);
-                }}
+                onClick={handleMainBannerClick}
               >
                 보러가기
               </Button>
@@ -150,28 +152,17 @@ const handleMainBookLike = useCallback(async (e: React.MouseEvent) => {
         </div>
         <div className="px-4 grid grid-cols-2 md:grid-cols-4 gap-4 place-items-center">
           {isPopularBooksArray && popularBooks.length > 1 ? 
-            popularBooks.slice(1, 1 + cardsPerSection).map((book: IBookDetail) => {
-              console.log('인기 고전 북카드 데이터:', book);
-              return (
-                <BookCard
-                  key={book.id}
-                  id={book.id}
-                  thumbnailUrl={book.thumbnailUrl}
-                  title={book.title}
-                  author={book.author}
-                  onClick={() => {
-                    setSelectedBook({
-                      id: book.id,
-                      title: book.title,
-                      author: book.author,
-                      imageUrl: book.thumbnailUrl
-                    });
-                    setShowModal(true);
-                  }}
-                  size="sm"
-                />
-              );
-            }) : (
+            popularBooks.slice(1, 1 + cardsPerSection).map((book: IBookDetail) => (
+              <BookCard
+                key={book.id}
+                id={book.id}
+                thumbnailUrl={book.thumbnailUrl}
+                title={book.title}
+                author={book.author}
+                onBookSelect={handleBookSelect}
+                size="sm"
+              />
+            )) : (
               <div className="col-span-2 md:col-span-4 text-center text-gray-500">
                 인기 도서가 없습니다
               </div>
@@ -193,28 +184,17 @@ const handleMainBookLike = useCallback(async (e: React.MouseEvent) => {
         </div>
         <div className="px-4 grid grid-cols-2 md:grid-cols-4 gap-4 place-items-center">
           {isRecentBooksArray && recentBooks.length > 0 ? 
-            recentBooks.slice(0, cardsPerSection).map((book: IBookDetail) => {
-              console.log('최신 고전 북카드 데이터:', book);
-              return (
-                <BookCard
-                  key={book.id}
-                  id={book.id}
-                  thumbnailUrl={book.thumbnailUrl}
-                  title={book.title}
-                  author={book.author}
-                  onClick={() => {
-                    setSelectedBook({
-                      id: book.id,
-                      title: book.title,
-                      author: book.author,
-                      imageUrl: book.thumbnailUrl
-                    });
-                    setShowModal(true);
-                  }}
-                  size="sm"
-                />
-              );
-            }) : (
+            recentBooks.slice(0, cardsPerSection).map((book: IBookDetail) => (
+              <BookCard
+                key={book.id}
+                id={book.id}
+                thumbnailUrl={book.thumbnailUrl}
+                title={book.title}
+                author={book.author}
+                onBookSelect={handleBookSelect}
+                size="sm"
+              />
+            )) : (
               <div className="col-span-2 md:col-span-4 text-center text-gray-500">
                 최신 등록된 도서가 없습니다
               </div>
@@ -236,28 +216,17 @@ const handleMainBookLike = useCallback(async (e: React.MouseEvent) => {
         </div>
         <div className="px-4 grid grid-cols-2 md:grid-cols-4 gap-4 place-items-center">
           {isRecentBooksArray && recentBooks.length > 0 ? 
-            recentBooks.slice(0, cardsPerSection).map((book: IBookDetail) => {
-              console.log('히스토리 북카드 데이터:', book);
-              return (
-                <BookCard
-                  key={book.id}
-                  id={book.id}
-                  thumbnailUrl={book.thumbnailUrl}
-                  title={book.title}
-                  author={book.author}
-                  onClick={() => {
-                    setSelectedBook({
-                      id: book.id,
-                      title: book.title,
-                      author: book.author,
-                      imageUrl: book.thumbnailUrl
-                    });
-                    setShowModal(true);
-                  }}
-                  size="sm"
-                />
-              );
-            }) : (
+            recentBooks.slice(0, cardsPerSection).map((book: IBookDetail) => (
+              <BookCard
+                key={book.id}
+                id={book.id}
+                thumbnailUrl={book.thumbnailUrl}
+                title={book.title}
+                author={book.author}
+                onBookSelect={handleBookSelect}
+                size="sm"
+              />
+            )) : (
               <div className="col-span-2 md:col-span-4 text-center text-gray-500">
                 최신 등록된 도서가 없습니다
               </div>
@@ -267,7 +236,7 @@ const handleMainBookLike = useCallback(async (e: React.MouseEvent) => {
       </div>
 
       {showModal && selectedBook && (
-        <BookModal book={selectedBook} onClose={() => setShowModal(false)} />
+        <BookModal book={selectedBook} onClose={handleCloseModal} />
       )}
     </div>
   );

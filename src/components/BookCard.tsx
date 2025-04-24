@@ -1,15 +1,14 @@
-import React from "react";
+import React, { useCallback, useMemo } from "react";
 import { Heart } from "lucide-react";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { makeSelectIsLiked, toggleLike } from "../redux/slices/likeSlice";
-import { useCallback, useMemo } from "react";
 
 interface BookCardProps {
   id: number;
   title: string;
   author: string;
   thumbnailUrl: string;
-  onClick?: () => void;
+  onBookSelect?: (book: { id: number; title: string; author: string; imageUrl: string }) => void; // onClick 대신 onBookSelect로 변경
   size?: "sm" | "lg";
   summaryUrl?: string;
   createdAt?: string;
@@ -21,16 +20,13 @@ const BookCard: React.FC<BookCardProps> = ({
   title,
   author,
   thumbnailUrl,
-  onClick,
+  onBookSelect,
   size = "sm",
 }) => {
   const dispatch = useAppDispatch();
-
+  
   // 메모이제이션된 선택자 생성 (컴포넌트 내에서)
   const selectIsBookLiked = useMemo(makeSelectIsLiked, []);
-  
-  // 컴포넌트 렌더링시 book 객체 구조 확인
-  console.log("BookCard 렌더링 - id:", id, "책 제목:", title, "저자:", author, "썸네일 URL:", thumbnailUrl);
   
   // 이 특정 책에 대한 좋아요 상태만 구독
   const isLiked = useAppSelector(state => 
@@ -77,10 +73,22 @@ const BookCard: React.FC<BookCardProps> = ({
     }
   }, [id, dispatch]);
 
+  // onBookSelect 핸들러 메모이제이션
+  const handleCardClick = useCallback(() => {
+    if (onBookSelect) {
+      onBookSelect({
+        id,
+        title,
+        author,
+        imageUrl: thumbnailUrl
+      });
+    }
+  }, [id, title, author, thumbnailUrl, onBookSelect]);
+
   return (
     <div
       className={`${styles.container} cursor-pointer transition-transform duration-200 hover:scale-105`}
-      onClick={onClick}
+      onClick={handleCardClick}
     >
       <div className={`${styles.image} relative rounded-lg overflow-hidden mb-2 shadow-md group`}>
         <img
@@ -110,14 +118,4 @@ const BookCard: React.FC<BookCardProps> = ({
 };
 
 // React.memo를 사용하여 props가 변경될 때만 리렌더링
-export default React.memo(BookCard, (prevProps, nextProps) => {
-  // id, title, author, thumbnailUrl, onClick, size가 모두 같으면 리렌더링하지 않음
-  return (
-    prevProps.id === nextProps.id &&
-    prevProps.title === nextProps.title &&
-    prevProps.author === nextProps.author &&
-    prevProps.thumbnailUrl === nextProps.thumbnailUrl &&
-    prevProps.onClick === nextProps.onClick &&
-    prevProps.size === nextProps.size
-  );
-});
+export default React.memo(BookCard);

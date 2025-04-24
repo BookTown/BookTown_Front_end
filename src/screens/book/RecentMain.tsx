@@ -58,7 +58,7 @@ const RecentMain = () => {
                   thumbnailUrl={book.thumbnailUrl}
                   title={book.title}
                   author={book.author}
-                  onClick={() => {
+                  onBookSelect={() => {
                     setSelectedBook({
                       id: book.id,
                       title: book.title,
