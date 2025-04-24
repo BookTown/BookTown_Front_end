@@ -83,7 +83,8 @@ export const getLikedBooks = async (userId?: number) => {
     }
     
     const response = await axiosApi.get<number[]>(endpoint);
-    console.log('좋아요 목록 응답 성공:', response.data);
+    console.log('서버에서 받은 좋아요 책 목록:', response.data);
+    console.log(' 좋아요 ID 목록:', JSON.stringify(response.data));
     return response;
   } catch (error) {
     console.error('좋아요 목록 요청 실패:', error);

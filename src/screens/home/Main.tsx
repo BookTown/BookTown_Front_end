@@ -20,6 +20,9 @@ const Main = () => {
   const [selectedBook, setSelectedBook] = useState<Book | null>(null);
   const [showModal, setShowModal] = useState(false);
   const [cardsPerSection, setCardsPerSection] = useState(2);
+
+  // 좋아요 상태 로깅
+  const likedBooks = useAppSelector(state => state.likes.likedBooks);
   
   // React Query로 데이터 가져오기 (배너 도서 추가)
   const { isLoading: isLoadingPopular, error: popularError } = usePopularBooks();
@@ -42,6 +45,13 @@ const Main = () => {
     mainBook ? selectIsLiked(state, mainBook.id) : false
   );
 
+  // 좋아요 상태 로깅
+  useEffect(() => {
+    console.log('현재 좋아요한 책 목록 (Redux):', likedBooks);
+  }, [likedBooks]);
+
+  // 화면 크기에 따라 카드 개수 조정
+  // 초기값 설정 및 리사이즈 이벤트 핸들러 등록
   useEffect(() => {
     const handleResize = () => {
       setCardsPerSection(window.innerWidth >= 768 ? 4 : 2);

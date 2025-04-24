@@ -57,7 +57,7 @@ const BookCard: React.FC<BookCardProps> = ({
   const handleLike = async (e: React.MouseEvent) => {
     e.stopPropagation(); // 북카드 온클릭 이벤트 발생 X
     
-    console.log("좋아요 버튼 클릭 - id:", id, "타입:", typeof id);
+    console.log("👆 좋아요 버튼 클릭 - id:", id, "타입:", typeof id);
     
     // id 유효성 검사 추가
     if (typeof id !== 'number' || isNaN(id)) {
@@ -66,10 +66,10 @@ const BookCard: React.FC<BookCardProps> = ({
     }
     
     try {
-      console.log(`좋아요 토글 처리 시작: id=${id}, 현재 상태=${isLiked ? '좋아요 상태' : '좋아요 안함 상태'}`);
-      // 토글 액션 디스패치 (addLike 및 removeLike 대신 toggleLike 사용)
-      await dispatch(toggleLike(id)).unwrap();
-      console.log('좋아요 토글 처리 완료');
+      console.log(`🔄 좋아요 토글 처리 시작: id=${id}, 현재 상태=${isLiked ? '좋아요 상태' : '좋아요 안함 상태'}`);
+      // 토글 액션 디스패치
+      const result = await dispatch(toggleLike(id)).unwrap();
+      console.log('좋아요 토글 처리 완료:', result);
     } catch (error) {
       console.error("좋아요 토글 처리 실패:", error);
     }

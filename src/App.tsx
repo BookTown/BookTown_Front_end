@@ -11,7 +11,21 @@ function App() {
     const token = localStorage.getItem('accessToken');
     if (token) {
       console.log('토큰 존재: 좋아요 목록 불러오기 시도');
-      dispatch(fetchLikedBooks());
+      // 먼저 비동기 액션을 디스패치하고 Promise를 반환받음
+      dispatch(fetchLikedBooks())
+        .then((result) => {
+          // 성공한 경우
+          if (fetchLikedBooks.fulfilled.match(result)) {
+            console.log('좋아요 목록 로드 성공:', result.payload);
+          } 
+          // 실패한 경우
+          else {
+            console.error('좋아요 목록 로드 실패:', result.payload);
+          }
+        })
+        .catch(error => {
+          console.error('좋아요 목록 요청 오류:', error);
+        });
     }
   }, [dispatch]);
 

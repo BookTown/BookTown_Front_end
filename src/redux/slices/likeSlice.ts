@@ -27,8 +27,10 @@ export const fetchLikedBooks = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const response = await getLikedBooks();
+      console.log('서버에서 좋아요 목록을 가져왔습니다:', response.data);
       return response.data;
     } catch (error: any) {
+      console.error('좋아요 목록 가져오기 실패:', error);
       return rejectWithValue(error.message || "좋아요 목록을 불러오는데 실패했습니다");
     }
   }
@@ -78,8 +80,10 @@ const likeSlice = createSlice({
       })
       .addCase(fetchLikedBooks.fulfilled, (state, action: PayloadAction<number[]>) => {
         state.loading = false;
+        console.log('fetchLikedBooks 액션 데이터:', action.payload);
         // 받은 데이터가 배열인지 확인 후 상태 업데이트
         state.likedBooks = Array.isArray(action.payload) ? action.payload : [];
+        console.log('상태 업데이트 후 likedBooks:', state.likedBooks);
       })
       .addCase(fetchLikedBooks.rejected, (state, action) => {
         state.loading = false;
