@@ -80,11 +80,19 @@ export const deleteLikeBook = (bookId: number) => {
   return axiosApi.delete(`/book/like/${bookId}`);
 };
 
-// 관심 책 목록 조회 (GET /profile/me/liked-books)
-export const getLikedBooks = async () => {
+// 관심 책 목록 조회 (GET /api/profile/{userId}/liked-books)
+export const getLikedBooks = async (userId?: number) => {
   try {
     console.log('좋아요 목록 요청 시작');
-    const response = await axiosApi.get<number[]>("/profile/me/liked-books");
+    
+    let endpoint = "/profile/me/liked-books"; // 기본적으로 현재 로그인한 사용자('me')의 좋아요 목록을 가져옴
+    
+    // userId가 제공된 경우 해당 사용자의 좋아요 목록을 가져옴
+    if (userId !== undefined) {
+      endpoint = `/api/profile/${userId}/liked-books`;
+    }
+    
+    const response = await axiosApi.get<number[]>(endpoint);
     console.log('좋아요 목록 응답 성공:', response.data);
     return response;
   } catch (error) {

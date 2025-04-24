@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { Heart } from "lucide-react";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { selectIsLiked, addLike, removeLike } from "../redux/slices/likeSlice";
@@ -26,9 +26,9 @@ const BookCard: React.FC<BookCardProps> = ({
   const dispatch = useAppDispatch();
   
   // 컴포넌트 렌더링시 book 객체 구조 확인
-  console.log("BookCard 렌더링 - bookId:", id, "책 제목:", title, "저자:", author, "썸네일 URL:", thumbnailUrl);
+  console.log("BookCard 렌더링 - id:", id, "책 제목:", title, "저자:", author, "썸네일 URL:", thumbnailUrl);
   
-  // bookId가 유효한지 확인하여 selectIsLiked 호출
+  // id가 유효한지 확인하여 selectIsLiked 호출
   const isLiked = useAppSelector(state => 
     typeof id === 'number' && !isNaN(id) ? 
     selectIsLiked(state, id) : false
@@ -57,16 +57,16 @@ const BookCard: React.FC<BookCardProps> = ({
   const handleLike = async (e: React.MouseEvent) => {
     e.stopPropagation(); // 북카드 온클릭 이벤트 발생 X
     
-    console.log("좋아요 버튼 클릭 - bookId:", id, "타입:", typeof id);
+    console.log("좋아요 버튼 클릭 - id:", id, "타입:", typeof id);
     
-    // bookId 유효성 검사 추가
+    // id 유효성 검사 추가
     if (typeof id !== 'number' || isNaN(id)) {
-      console.error('유효하지 않은 bookId:', id);
+      console.error('유효하지 않은 도서 ID:', id);
       return;
     }
     
     try {
-      console.log(`좋아요 처리 시작: bookId=${id}, 현재 상태=${isLiked ? '좋아요 취소' : '좋아요 추가'}`);
+      console.log(`좋아요 처리 시작: id=${id}, 현재 상태=${isLiked ? '좋아요 취소' : '좋아요 추가'}`);
       if (isLiked) {
         await dispatch(removeLike(id)).unwrap();
       } else {
