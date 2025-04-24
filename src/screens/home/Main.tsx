@@ -126,7 +126,10 @@ const Main = () => {
                 보러가기
               </Button>
               <button
-                onClick={handleMainBookLike}
+                onClick={(e) => {
+                  console.log("좋아요 버튼 클릭");
+                  handleMainBookLike(e);
+                }}
                 className="p-1.5 md:p-2 rounded-full bg-white/80 hover:bg-white transition-colors duration-200"
                 aria-label={isMainBookLiked ? "좋아요 취소" : "좋아요"}
               >
