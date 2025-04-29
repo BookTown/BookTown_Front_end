@@ -29,6 +29,9 @@ const EditProfileImage = ({
   
   // 현재 사용자가 프로필 이미지를 가지고 있는지 확인
   const hasCurrentProfileImage = !!currentProfileImage;
+  
+  // 이미지가 변경되었는지 여부 확인 (새 이미지 선택 또는 기존 이미지 제거)
+  const hasChanges = selectedFile !== null || (hasCurrentProfileImage && previewUrl === null);
 
   useEffect(() => {
     if (!isOpen) {
@@ -38,8 +41,15 @@ const EditProfileImage = ({
       setIsLoading(false);
       setIsDeletingImage(false);
       controllerRef.current = null;
+    } else {
+      // 모달이 열릴 때 현재 프로필 이미지가 있으면 미리보기로 설정
+      if (currentProfileImage) {
+        setPreviewUrl(currentProfileImage);
+      } else {
+        setPreviewUrl(null);
+      }
     }
-  }, [isOpen]);
+  }, [isOpen, currentProfileImage]);
 
   if (!isOpen) return null;
 
@@ -113,6 +123,32 @@ const EditProfileImage = ({
     controllerRef.current?.abort();
     onClose();
   };
+  
+  // 저장 버튼 클릭 시 실행할 함수 결정
+  const handleActionButton = () => {
+    if (selectedFile) {
+      // 새 이미지가 선택된 경우 - 업로드
+      return handleSave();
+    } else if (previewUrl === null && hasCurrentProfileImage) {
+      // 이미지를 삭제하려는 경우
+      return handleDeleteImage();
+    }
+  };
+  
+  // 저장 버튼의 텍스트 결정
+  const getActionButtonText = () => {
+    if (isLoading) return '저장 중...';
+    if (isDeletingImage) return '삭제 중...';
+    if (selectedFile) return '저장';
+    if (previewUrl === null && hasCurrentProfileImage) return '이미지 삭제';
+    return '저장';
+  };
+
+  // 이미지 미리보기 초기화 (삭제하기로 결정)
+  const handleClearPreview = () => {
+    setPreviewUrl(null);
+    setSelectedFile(null);
+  };
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
@@ -143,14 +179,13 @@ const EditProfileImage = ({
             이미지 선택
           </button>
           
-          {/* 프로필 이미지가 있을 때만 삭제 버튼 표시 */}
-          {hasCurrentProfileImage && (
+          {/* 프리뷰가 있을 때만 삭제 버튼 표시 */}
+          {previewUrl && (
             <button 
-              onClick={handleDeleteImage}
-              disabled={isDeletingImage}
-              className="px-4 py-2 bg-red-100 hover:bg-red-200 rounded text-red-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              onClick={handleClearPreview}
+              className="px-4 py-2 bg-red-100 hover:bg-red-200 rounded text-red-600 transition-colors"
             >
-              {isDeletingImage ? '삭제 중...' : '이미지 삭제'}
+              이미지 제거
             </button>
           )}
           
@@ -165,15 +200,15 @@ const EditProfileImage = ({
 
         <div className="flex justify-between gap-2 mx-auto">
           <Button onClick={handleCancel} color="white" size="md">
-            {isLoading ? '업로드 취소' : '취소'}
+            취소
           </Button>
           <Button 
-            onClick={handleSave} 
+            onClick={handleActionButton} 
             color="pink" 
             size="md" 
-            disabled={!previewUrl || isLoading}
+            disabled={!hasChanges || isLoading || isDeletingImage}
           >
-            {isLoading ? '저장 중...' : '저장'}
+            {getActionButtonText()}
           </Button>
         </div>
       </div>
