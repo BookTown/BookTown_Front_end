@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { useEffect } from "react";
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 <<<<<<< HEAD
 import { fetchPopularBooks, fetchRecentBooks } from "../api/api";
@@ -17,6 +18,11 @@ import { selectLikedBooks } from "../redux/slices/likeSlice";
 =======
 >>>>>>> feat/home
 >>>>>>> 42e69f9 (Merge feat/home into develop)
+=======
+import { fetchPopularBooks, fetchRecentBooks, fetchBannerBook } from "../api/api";
+import { useAppDispatch } from "../redux/hooks";
+import { setPopularBooks, setRecentBooks, setBannerBook } from "../redux/slices/bookSlice";
+>>>>>>> 8a84753 (test: main.tsx 랜덤, 인기, 최신 순 책 정보 fetch 테스트 #7)
 
 // 인기 도서 조회 
 export const usePopularBooks = () => {
@@ -93,10 +99,13 @@ export const useRecentBooks = () => {
   return result;
 };
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 <<<<<<< HEAD
 =======
 >>>>>>> 42e69f9 (Merge feat/home into develop)
+=======
+>>>>>>> 8a84753 (test: main.tsx 랜덤, 인기, 최신 순 책 정보 fetch 테스트 #7)
 
 // 배너용 랜덤 도서 조회
 export const useBannerBook = () => {
@@ -108,6 +117,15 @@ export const useBannerBook = () => {
     staleTime: 5 * 60 * 1000, // 5분 동안 데이터 신선도 유지
   });
 
+<<<<<<< HEAD
+=======
+  console.log('useBannerBook 훅 내부 - 상태:', { 
+    isLoading: result.isLoading, 
+    isError: result.isError, 
+    data: result.data 
+  });
+
+>>>>>>> 8a84753 (test: main.tsx 랜덤, 인기, 최신 순 책 정보 fetch 테스트 #7)
   useEffect(() => {
     if (result.data) {
       console.log('배너 도서 데이터를 Redux에 저장:', result.data);
@@ -117,6 +135,7 @@ export const useBannerBook = () => {
 
   return result;
 };
+<<<<<<< HEAD
 
 // 전체 인기 도서 조회
 export const useAllPopularBooks = () => {
@@ -180,3 +199,5 @@ export const useLikedBooks = () => {
 };
 >>>>>>> feat/home
 >>>>>>> 42e69f9 (Merge feat/home into develop)
+=======
+>>>>>>> 8a84753 (test: main.tsx 랜덤, 인기, 최신 순 책 정보 fetch 테스트 #7)
