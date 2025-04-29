@@ -1,11 +1,14 @@
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { useState, useEffect, useRef } from "react";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { IScene } from "../../interfaces/bookInterface";
+import { useSelector } from "react-redux";
+import { RootState } from "../../redux/store";
+import { fetchBookSummary } from "../../api/api"; 
 
 // 장면 프레임 컴포넌트
-const SceneFrame = ({ imageUrl, onPrev, onNext, isFirst, isLast }: {
-  imageUrl: string;
+const SceneFrame = ({ illustrationUrl, onPrev, onNext, isFirst, isLast }: {
+  illustrationUrl: string;
   onPrev: () => void;
   onNext: () => void;
   isFirst: boolean;
@@ -142,7 +145,7 @@ const SceneFrame = ({ imageUrl, onPrev, onNext, isFirst, isLast }: {
         onMouseLeave={onMouseLeave}
       >
         <img 
-          src={imageUrl} 
+          src={illustrationUrl} 
           alt="장면 이미지" 
           className="w-full h-full object-cover absolute inset-0 select-none pointer-events-none will-change-transform"
           draggable="false"
@@ -190,44 +193,30 @@ const PromptFrame = ({ content }: { content: string }) => {
 
 const CartoonMain = () => {
   const { bookId } = useParams();
-  const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState(0);
-  const [bookTitle, setBookTitle] = useState(""); // 책 제목 상태 추가
-  const [scenes, setScenes] = useState<IScene[]>([
-    // 임시 데이터 (실제로는 API에서 가져올 것입니다)
-    {
-      id: 1,
-      pageNumber: 1,
-      content: "나뭇가지와 나뭇잎으로 임시 피난처를 만드는 청년의 얼굴에는 결연한 의지가 담겨있으며, 흡사 만화에서 본것처럼 묘사되어 있습니다. 나뭇가지와 나뭇잎으로 임시 피난처를 만드는 청년의 얼굴에는 결연한 의지가 담겨있으며, 흡사 만화에서 본것처럼 묘사되어 있습니다. 나뭇가지와 나뭇잎으로 임시 피난처를 만드는 청년의 얼굴에는 결연한 의지가 담겨있으며, 흡사 만화에서 본것처럼 묘사되어 있습니다.",
-      imageUrl: "/images/Lusts of the Libertines.png",
-    },
-    {
-      id: 2,
-      pageNumber: 2,
-      content: "두 번째 장면입니다. 스토리가 계속됩니다.",
-      imageUrl: "/images/Die Verwandlung.png",
-    },
-    {
-      id: 3,
-      pageNumber: 3,
-      content: "세 번째 장면입니다. 더 많은 내용이 이어집니다.",
-      imageUrl: "/images/demian.png",
-    },
-  ]);
+  
+  // Redux 스토어에서 cartoon 데이터 가져오기
+  const { cartoon } = useSelector((state: RootState) => state.cartoon);
+  const [scenes, setScenes] = useState<IScene[]>([]);
   
   useEffect(() => {
-    // 실제로는 여기서 책 ID로 장면 데이터를 가져옵니다
-    console.log(`책 ID ${bookId}에 대한 장면 데이터를 가져옵니다`);
-    
-    // 예시: API 호출
-    // fetchBookDetail(bookId).then(data => {
-    //   setScenes(data.scenes);
-    //   setBookTitle(data.title);
-    // });
-    
-    // 임시로 책 제목 설정
-    setBookTitle("로빈슨 크루소");
-  }, [bookId]);
+    // 스토어에 데이터가 있으면 사용, 없으면 API 호출
+    if (cartoon.scenes.length > 0 && cartoon.bookId.toString() === bookId) {
+      setScenes(cartoon.scenes);
+    } else {
+      // API에서 줄거리 데이터 불러오기
+      const loadSummary = async () => {
+        try {
+          const summaryData = await fetchBookSummary(bookId);
+          setScenes(summaryData);
+        } catch (error) {
+          console.error("줄거리를 불러오는 중 오류가 발생했습니다:", error);
+        }
+      };
+      
+      loadSummary();
+    }
+  }, [bookId, cartoon]);
   
   const goToPrevPage = () => {
     if (currentPage > 0) {
@@ -254,7 +243,8 @@ const CartoonMain = () => {
       <div className="w-full max-w-[24rem] md:max-w-[32rem] lg:max-w-[36rem]">
         {/* 만화 장면 */}
         <SceneFrame 
-          imageUrl={currentScene.imageUrl || `/images/${bookTitle}.png`} 
+          illustrationUrl={currentScene.illustrationUrl || 
+            (cartoon.thumbnailUrl ? cartoon.thumbnailUrl : "/images/default-book.png")} 
           onPrev={goToPrevPage} 
           onNext={goToNextPage}
           isFirst={isFirstScene}

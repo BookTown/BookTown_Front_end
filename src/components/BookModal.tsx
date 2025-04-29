@@ -1,6 +1,9 @@
 import { useEffect } from "react";
 import Button from "./Button";
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { setCartoon } from "../redux/slices/cartoonSlice";
+import { fetchBookSummary } from "../api/api";
 
 type Book = {
   id: number;
@@ -17,6 +20,7 @@ interface BookModalProps {
 
 const BookModal = ({ book, onClose, requireSubmit = false }: BookModalProps) => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   
   // ESC 키로 닫기
   useEffect(() => {
@@ -40,9 +44,29 @@ const BookModal = ({ book, onClose, requireSubmit = false }: BookModalProps) => 
   };
 
   // 줄거리 보기 버튼 클릭 핸들러
-  const handleViewSummary = () => {
-    onClose(); // 모달 닫기
-    navigate(`/cartoon/${book.id}`); // 줄거리 화면으로 이동
+  const handleViewSummary = async () => {
+    try {
+      // 줄거리 데이터 불러오기
+      const summaryData = await fetchBookSummary(book.id.toString());
+      
+      // 책 정보와 줄거리 데이터를 Redux 스토어에 저장
+      dispatch(setCartoon({
+        bookId: book.id,
+        title: book.title,
+        author: book.author,
+        summaryUrl: "",
+        thumbnailUrl: book.imageUrl,
+        createdAt: new Date().toISOString(),
+        scenes: summaryData,
+        likeCount: 0
+      }));
+      
+      onClose(); // 모달 닫기
+      navigate(`/cartoon/${book.id}`); // 줄거리 화면으로 이동
+    } catch (error) {
+      console.error("줄거리를 불러오는 중 오류가 발생했습니다:", error);
+      // 오류 처리 (예: 알림 표시)
+    }
   };
 
   if (!book) return null;

@@ -1,12 +1,11 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { IBookDetail } from "../../interfaces/bookInterface";
 
-
-interface cartoonState {
+interface CartoonState {
     cartoon: IBookDetail;
 }
 
-const initialState: cartoonState = {
+const initialState: CartoonState = {
     cartoon: {
         bookId: 0,
         title: "",

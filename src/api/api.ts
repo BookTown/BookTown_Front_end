@@ -1,5 +1,5 @@
 import axiosApi from "../axios";
-import { IBookList } from "../interfaces/bookInterface";
+import { IBookList, IScene } from "../interfaces/bookInterface";
 
 // 인기 도서 조회 (좋아요 수 기준)
 export const fetchPopularBooks = async (): Promise<IBookList> => {
@@ -56,6 +56,22 @@ export const fetchAllRecentBooks = async (): Promise<IBookList> => {
     const response = await axiosApi.get<IBookList>('/book/recent/all');
     return response.data;
   } catch (error) {
+    throw error;
+  }
+};
+
+// 도서 줄거리 조회
+export const fetchBookSummary = async (bookId: string | undefined): Promise<IScene[]> => {
+  console.log('도서 줄거리 API 호출 시작');
+  try {
+    if (!bookId) {
+      throw new Error('도서 ID가 없습니다');
+    }
+    const response = await axiosApi.post<IScene[]>('/summaries', { bookId });
+    console.log('도서 줄거리 API 응답 성공:', response.data);
+    return response.data;
+  } catch (error) {
+    console.error('도서 줄거리 API 오류:', error);
     throw error;
   }
 };

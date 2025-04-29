@@ -1,9 +1,9 @@
 export interface IScene {
-  id: number;           // 장면 ID
-  bookSummary?: string; 
-  pageNumber: number;   // 페이지 번호
-  content: string;      // 장면 내용
-  imageUrl?: string;    // 장면 이미지 URL (선택적)
+  id?: number;           // 장면 ID (선택적)
+  bookSummary?: string;  // 책 요약 (선택적)
+  pageNumber: number;    // 페이지 번호
+  content: string;       // 장면 내용
+  illustrationUrl: string; // 장면 이미지 URL (선택적)
 }
 
 // 개별 도서 상세 정보
