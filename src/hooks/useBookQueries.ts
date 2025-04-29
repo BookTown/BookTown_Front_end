@@ -1,28 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
 import { useEffect } from "react";
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
-import { fetchPopularBooks, fetchRecentBooks } from "../api/api";
-import { useAppDispatch } from "../redux/hooks";
-import { setPopularBooks, setRecentBooks } from "../redux/slices/bookSlice";
-=======
->>>>>>> 42e69f9 (Merge feat/home into develop)
 import { fetchPopularBooks, fetchRecentBooks, fetchBannerBook, fetchAllPopularBooks, fetchAllRecentBooks, getLikedBooks } from "../api/api";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { setPopularBooks, setRecentBooks, setBannerBook } from "../redux/slices/bookSlice";
 import { useQueryClient } from "@tanstack/react-query";
 import { selectLikedBooks } from "../redux/slices/likeSlice";
-<<<<<<< HEAD
-=======
->>>>>>> feat/home
->>>>>>> 42e69f9 (Merge feat/home into develop)
-=======
-import { fetchPopularBooks, fetchRecentBooks, fetchBannerBook } from "../api/api";
-import { useAppDispatch } from "../redux/hooks";
-import { setPopularBooks, setRecentBooks, setBannerBook } from "../redux/slices/bookSlice";
->>>>>>> 8a84753 (test: main.tsx 랜덤, 인기, 최신 순 책 정보 fetch 테스트 #7)
 
 // 인기 도서 조회 
 export const usePopularBooks = () => {
@@ -34,27 +16,10 @@ export const usePopularBooks = () => {
     staleTime: 5 * 60 * 1000, // 5분 동안 데이터 신선도 유지
   });
 
-  console.log('usePopularBooks 훅 내부 - 상태:', { 
-    isLoading: result.isLoading, 
-    isError: result.isError, 
-    data: result.data 
-  });
-
   // 데이터가 변경될 때 Redux 상태 업데이트
   useEffect(() => {
     if (result.data) {
-<<<<<<< HEAD
-<<<<<<< HEAD
       console.log('인기 도서 데이터를 Redux에 저장:', result.data);
-=======
-<<<<<<< HEAD
-=======
-      console.log('인기 도서 데이터를 Redux에 저장:', result.data);
->>>>>>> feat/home
->>>>>>> 42e69f9 (Merge feat/home into develop)
-=======
-      console.log('인기 도서 데이터를 Redux에 저장:', result.data);
->>>>>>> e60010b (test: API 요청, 데이터 렌더링까지 전체 흐름 추적 #7)
       dispatch(setPopularBooks(result.data));
     }
   }, [result.data, dispatch]);
@@ -72,40 +37,15 @@ export const useRecentBooks = () => {
     staleTime: 5 * 60 * 1000, // 5분 동안 데이터 신선도 유지
   });
 
-  console.log('useRecentBooks 훅 내부 - 상태:', { 
-    isLoading: result.isLoading, 
-    isError: result.isError, 
-    data: result.data 
-  });
-
   useEffect(() => {
     if (result.data) {
-<<<<<<< HEAD
-<<<<<<< HEAD
       console.log('최신 도서 데이터를 Redux에 저장:', result.data);
-=======
-<<<<<<< HEAD
-=======
-      console.log('최신 도서 데이터를 Redux에 저장:', result.data);
->>>>>>> feat/home
->>>>>>> 42e69f9 (Merge feat/home into develop)
-=======
-      console.log('최신 도서 데이터를 Redux에 저장:', result.data);
->>>>>>> e60010b (test: API 요청, 데이터 렌더링까지 전체 흐름 추적 #7)
       dispatch(setRecentBooks(result.data));
     }
   }, [result.data, dispatch]);
 
   return result;
 };
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
-=======
->>>>>>> 42e69f9 (Merge feat/home into develop)
-=======
->>>>>>> 8a84753 (test: main.tsx 랜덤, 인기, 최신 순 책 정보 fetch 테스트 #7)
 
 // 배너용 랜덤 도서 조회
 export const useBannerBook = () => {
@@ -117,15 +57,6 @@ export const useBannerBook = () => {
     staleTime: 5 * 60 * 1000, // 5분 동안 데이터 신선도 유지
   });
 
-<<<<<<< HEAD
-=======
-  console.log('useBannerBook 훅 내부 - 상태:', { 
-    isLoading: result.isLoading, 
-    isError: result.isError, 
-    data: result.data 
-  });
-
->>>>>>> 8a84753 (test: main.tsx 랜덤, 인기, 최신 순 책 정보 fetch 테스트 #7)
   useEffect(() => {
     if (result.data) {
       console.log('배너 도서 데이터를 Redux에 저장:', result.data);
@@ -135,7 +66,6 @@ export const useBannerBook = () => {
 
   return result;
 };
-<<<<<<< HEAD
 
 // 전체 인기 도서 조회
 export const useAllPopularBooks = () => {
@@ -193,11 +123,4 @@ export const useLikedBooks = () => {
   }, [likedBooksState, queryClient]);
   
   return result;
-<<<<<<< HEAD
 };
-=======
-};
->>>>>>> feat/home
->>>>>>> 42e69f9 (Merge feat/home into develop)
-=======
->>>>>>> 8a84753 (test: main.tsx 랜덤, 인기, 최신 순 책 정보 fetch 테스트 #7)
