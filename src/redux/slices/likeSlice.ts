@@ -50,15 +50,17 @@ export const fetchLikedBooks = createAsyncThunk(
 // 비동기 액션: 좋아요 토글 (추가/삭제 통합)
 export const toggleLike = createAsyncThunk(
   "likes/toggleLike",
-  async (bookId: number, { rejectWithValue, getState }) => {
+  async (bookId: number, { rejectWithValue, getState, dispatch }) => {
     try {
       const response = await toggleLikeBook(bookId);
       
-      // 토글 결과에 따라 처리 - API 응답 확인 필요
+      // 토글 후 좋아요 목록 다시 요청
+      await dispatch(fetchLikedBooks());
+      
       return {
         bookId,
-        isLiked: response.data, // API 토글 후 현재 좋아요 상태(true/false)를 반환한다고 가정
-        wasLiked: selectIsLiked(getState() as RootState, bookId) // 이전 상태
+        isLiked: response.data,
+        wasLiked: selectIsLiked(getState() as RootState, bookId)
       };
     } catch (error: any) {
       return rejectWithValue(error.message || "좋아요 토글에 실패했습니다");
