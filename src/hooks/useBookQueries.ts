@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { useEffect } from "react";
-import { fetchPopularBooks, fetchRecentBooks, fetchBannerBook, fetchAllPopularBooks, fetchAllRecentBooks } from "../api/api";
+import { fetchPopularBooks, fetchRecentBooks, fetchBannerBook, fetchAllPopularBooks, fetchAllRecentBooks, getLikedBooks } from "../api/api";
 import { useAppDispatch } from "../redux/hooks";
 import { setPopularBooks, setRecentBooks, setBannerBook } from "../redux/slices/bookSlice";
 
@@ -81,6 +81,17 @@ export const useAllRecentBooks = () => {
   const result = useQuery({
     queryKey: ["allRecentBooks"],
     queryFn: fetchAllRecentBooks,
+    staleTime: 5 * 60 * 1000, // 5분 동안 데이터 신선도 유지
+  });
+
+  return result;
+};
+
+// 좋아요한 도서 목록 조회
+export const useLikedBooks = () => {
+  const result = useQuery({
+    queryKey: ["likedBooks"],
+    queryFn: () => getLikedBooks(),
     staleTime: 5 * 60 * 1000, // 5분 동안 데이터 신선도 유지
   });
 

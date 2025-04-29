@@ -142,7 +142,7 @@ const SettingMain = () => {
 
       {/* 메뉴 카드 */}
       <section className="w-full max-w-sm mx-auto bg-white rounded-2xl shadow-lg p-6 space-y-4 md:max-w-md">
-        <Link to="/home">
+        <Link to="/LikedBooks">
           <MenuItem
             icon={<HeartIcon className="w-6 h-6 text-white" />}
             label="관심작품"
