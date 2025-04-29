@@ -12,4 +12,3 @@ export interface IBookDetail {
 
 // 도서 목록 배열 (API 응답 형식에 맞춤)
 export type IBookList = IBookDetail[];
-

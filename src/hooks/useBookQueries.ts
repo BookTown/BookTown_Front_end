@@ -1,10 +1,22 @@
 import { useQuery } from "@tanstack/react-query";
 import { useEffect } from "react";
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+import { fetchPopularBooks, fetchRecentBooks } from "../api/api";
+import { useAppDispatch } from "../redux/hooks";
+import { setPopularBooks, setRecentBooks } from "../redux/slices/bookSlice";
+=======
+>>>>>>> 42e69f9 (Merge feat/home into develop)
 import { fetchPopularBooks, fetchRecentBooks, fetchBannerBook, fetchAllPopularBooks, fetchAllRecentBooks, getLikedBooks } from "../api/api";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { setPopularBooks, setRecentBooks, setBannerBook } from "../redux/slices/bookSlice";
 import { useQueryClient } from "@tanstack/react-query";
 import { selectLikedBooks } from "../redux/slices/likeSlice";
+<<<<<<< HEAD
+=======
+>>>>>>> feat/home
+>>>>>>> 42e69f9 (Merge feat/home into develop)
 
 // 인기 도서 조회 
 export const usePopularBooks = () => {
@@ -19,7 +31,14 @@ export const usePopularBooks = () => {
   // 데이터가 변경될 때 Redux 상태 업데이트
   useEffect(() => {
     if (result.data) {
+<<<<<<< HEAD
       console.log('인기 도서 데이터를 Redux에 저장:', result.data);
+=======
+<<<<<<< HEAD
+=======
+      console.log('인기 도서 데이터를 Redux에 저장:', result.data);
+>>>>>>> feat/home
+>>>>>>> 42e69f9 (Merge feat/home into develop)
       dispatch(setPopularBooks(result.data));
     }
   }, [result.data, dispatch]);
@@ -39,13 +58,25 @@ export const useRecentBooks = () => {
 
   useEffect(() => {
     if (result.data) {
+<<<<<<< HEAD
       console.log('최신 도서 데이터를 Redux에 저장:', result.data);
+=======
+<<<<<<< HEAD
+=======
+      console.log('최신 도서 데이터를 Redux에 저장:', result.data);
+>>>>>>> feat/home
+>>>>>>> 42e69f9 (Merge feat/home into develop)
       dispatch(setRecentBooks(result.data));
     }
   }, [result.data, dispatch]);
 
   return result;
 };
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+>>>>>>> 42e69f9 (Merge feat/home into develop)
 
 // 배너용 랜덤 도서 조회
 export const useBannerBook = () => {
@@ -123,4 +154,9 @@ export const useLikedBooks = () => {
   }, [likedBooksState, queryClient]);
   
   return result;
+<<<<<<< HEAD
 };
+=======
+};
+>>>>>>> feat/home
+>>>>>>> 42e69f9 (Merge feat/home into develop)

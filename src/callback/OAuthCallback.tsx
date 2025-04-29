@@ -21,7 +21,6 @@ const OAuthCallback = () => {
       if (refreshToken) {
         localStorage.setItem('refreshToken', refreshToken);
       }
-
       // 로그인 성공 후 좋아요 목록 가져오기
       console.log('🔄 OAuth 로그인 후 좋아요 목록 요청 시작');
       dispatch(fetchLikedBooks())
