@@ -1,5 +1,5 @@
 import { useParams, useNavigate } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { IScene } from "../../interfaces/bookInterface";
 
@@ -11,14 +11,141 @@ const SceneFrame = ({ imageUrl, onPrev, onNext, isFirst, isLast }: {
   isFirst: boolean;
   isLast: boolean;
 }) => {
+  const [touchStart, setTouchStart] = useState<number | null>(null);
+  const [touchEnd, setTouchEnd] = useState<number | null>(null);
+  const [isDragging, setIsDragging] = useState(false);
+  const imageRef = useRef<HTMLDivElement>(null);
+  
+  // 최소 스와이프 거리 설정
+  const minSwipeDistance = 50;
+
+  // 터치 이벤트 핸들러
+  const onTouchStart = (e: React.TouchEvent) => {
+    setTouchStart(e.targetTouches[0].clientX);
+    setTouchEnd(null);
+    setIsDragging(true);
+  };
+
+  const onTouchMove = (e: React.TouchEvent) => {
+    if (isDragging) {
+      setTouchEnd(e.targetTouches[0].clientX);
+      
+      // 드래그 중 슬라이드 효과
+      if (imageRef.current && touchStart !== null) {
+        const xDiff = (e.targetTouches[0].clientX - touchStart) / 3; // 이동 거리 조절
+        imageRef.current.style.transform = `translateX(${xDiff}px)`;
+      }
+    }
+  };
+
+  const onTouchEnd = () => {
+    setIsDragging(false);
+    
+    // 이미지 위치 초기화 (부드러운 애니메이션 추가)
+    if (imageRef.current) {
+      imageRef.current.style.transition = 'transform 0.3s ease';
+      imageRef.current.style.transform = 'translateX(0)';
+      setTimeout(() => {
+        if (imageRef.current) {
+          imageRef.current.style.transition = '';
+        }
+      }, 300);
+    }
+    
+    if (!touchStart || !touchEnd) return;
+    
+    const distance = touchStart - touchEnd;
+    const isLeftSwipe = distance > minSwipeDistance;
+    const isRightSwipe = distance < -minSwipeDistance;
+    
+    if (isLeftSwipe && !isLast) {
+      onNext();
+    } else if (isRightSwipe && !isFirst) {
+      onPrev();
+    }
+  };
+
+  // 마우스 이벤트 핸들러
+  const [mouseStart, setMouseStart] = useState<number | null>(null);
+  
+  const onMouseDown = (e: React.MouseEvent) => {
+    e.preventDefault(); // 기본 드래그 동작 방지
+    setMouseStart(e.clientX);
+    setIsDragging(true);
+  };
+  
+  const onMouseMove = (e: React.MouseEvent) => {
+    if (isDragging && mouseStart !== null) {
+      const xDiff = (e.clientX - mouseStart) / 3;
+      if (imageRef.current) {
+        imageRef.current.style.transform = `translateX(${xDiff}px)`;
+      }
+    }
+  };
+  
+  const onMouseUp = (e: React.MouseEvent) => {
+    if (isDragging && mouseStart !== null) {
+      const distance = mouseStart - e.clientX;
+      const isLeftSwipe = distance > minSwipeDistance;
+      const isRightSwipe = distance < -minSwipeDistance;
+      
+      if (isLeftSwipe && !isLast) {
+        onNext();
+      } else if (isRightSwipe && !isFirst) {
+        onPrev();
+      }
+    }
+    
+    // 이미지 위치 초기화
+    if (imageRef.current) {
+      imageRef.current.style.transition = 'transform 0.3s ease';
+      imageRef.current.style.transform = 'translateX(0)';
+      setTimeout(() => {
+        if (imageRef.current) {
+          imageRef.current.style.transition = '';
+        }
+      }, 300);
+    }
+    
+    setIsDragging(false);
+    setMouseStart(null);
+  };
+  
+  const onMouseLeave = () => {
+    if (isDragging) {
+      setIsDragging(false);
+      if (imageRef.current) {
+        imageRef.current.style.transition = 'transform 0.3s ease';
+        imageRef.current.style.transform = 'translateX(0)';
+        setTimeout(() => {
+          if (imageRef.current) {
+            imageRef.current.style.transition = '';
+          }
+        }, 300);
+      }
+    }
+    setMouseStart(null);
+  };
+
   return (
-    <div className="w-full flex flex-col">  
+    <div className="w-full flex flex-col">   
       {/* 이미지 컨테이너 */}
-      <div className="w-full aspect-square relative overflow-hidden">
+      <div 
+        className="w-full aspect-square relative overflow-hidden cursor-grab select-none touch-none"
+        ref={imageRef}
+        onTouchStart={onTouchStart}
+        onTouchMove={onTouchMove}
+        onTouchEnd={onTouchEnd}
+        onMouseDown={onMouseDown}
+        onMouseMove={onMouseMove}
+        onMouseUp={onMouseUp}
+        onMouseLeave={onMouseLeave}
+      >
         <img 
           src={imageUrl} 
           alt="장면 이미지" 
-          className="w-full h-full object-cover absolute inset-0" 
+          className="w-full h-full object-cover absolute inset-0 select-none pointer-events-none will-change-transform"
+          draggable="false"
         />
       </div>
       
