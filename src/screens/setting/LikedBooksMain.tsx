@@ -47,36 +47,36 @@ const LikedBooksMain = () => {
         <h1 className="text-3xl">관심 작품</h1>
         <p className="text-xl text-[#A39C9C] pb-6">좋아요를 누른 작품들을 모아봤어요</p>
       </div>
-      <ListFrame>
-        {[
-          hasBooks ? (
-            books.map((book) => (
-              <BookCard
-                key={book.bookId}
-                id={book.bookId}
-                thumbnailUrl={book.thumbnailUrl || '/images/default-book.png'}
-                title={book.title}
-                author={book.author || '작가 미상'}
-                onBookSelect={() => {
-                  setSelectedBook({
-                    id: book.bookId,
-                    title: book.title,
-                    author: book.author || '작가 미상',
-                    imageUrl: book.thumbnailUrl || '/images/default-book.png'
-                  });
-                  setShowModal(true);
-                }}
-                size="lg"
-              />
-            ))
-          ) : (
-            <div className="w-full text-center py-10" key="empty-list">
-              <p className="text-[#9CAAB9]">아직 관심 작품이 없습니다.</p>
-              <p className="text-[#9CAAB9] mt-2">마음에 드는 작품에 좋아요를 눌러보세요!</p>
-            </div>
-          )
-        ]}
-      </ListFrame>
+      
+      {hasBooks ? (
+        <ListFrame>
+          {books.map((book) => (
+            <BookCard
+              key={book.bookId}
+              id={book.bookId}
+              thumbnailUrl={book.thumbnailUrl || '/images/default-book.png'}
+              title={book.title}
+              author={book.author || '작가 미상'}
+              onBookSelect={() => {
+                setSelectedBook({
+                  id: book.bookId,
+                  title: book.title,
+                  author: book.author || '작가 미상',
+                  imageUrl: book.thumbnailUrl || '/images/default-book.png'
+                });
+                setShowModal(true);
+              }}
+              size="lg"
+            />
+          ))}
+        </ListFrame>
+      ) : (
+        <div className="w-full text-center py-10">
+          <p className="text-[#9CAAB9]">아직 관심 작품이 없습니다.</p>
+          <p className="text-[#9CAAB9] mt-2">마음에 드는 작품에 좋아요를 눌러보세요!</p>
+        </div>
+      )}
+      
       {showModal && selectedBook && (
         <BookModal book={selectedBook} onClose={() => setShowModal(false)} />
       )}
