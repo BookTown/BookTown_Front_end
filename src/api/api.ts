@@ -70,19 +70,12 @@ export const toggleLikeBook = (bookId: number) => {
   return axiosApi.post(`/book/like/${bookId}`);
 };
 
-// 관심 책 목록 조회 (GET /profile/me/liked-books)
+// 관심 책 목록 조회 (GET /book/like/view)
 export const getLikedBooks = async (userId?: number) => {
   try {
     console.log('좋아요 목록 요청 시작');
     
-    let endpoint = "/profile/me/liked-books"; // 기본적으로 현재 로그인한 사용자('me')의 좋아요 목록을 가져옴
-    
-    // userId가 제공된 경우 해당 사용자의 좋아요 목록을 가져옴
-    if (userId !== undefined) {
-      endpoint = `/profile/${userId}/liked-books`;
-    }
-    
-    const response = await axiosApi.get<number[]>(endpoint);
+    const response = await axiosApi.get<number[]>("/book/like/view");
     console.log('서버에서 받은 좋아요 책 목록:', response.data);
     console.log(' 좋아요 ID 목록:', JSON.stringify(response.data));
     return response;
