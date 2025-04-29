@@ -1,6 +1,5 @@
 import axiosApi from "../axios";
 import { IBookList } from "../interfaces/bookInterface";
-import { AxiosResponse } from "axios";
 
 // 인기 도서 조회 (좋아요 수 기준)
 export const fetchPopularBooks = async (): Promise<IBookList> => {
@@ -73,14 +72,13 @@ export const toggleLikeBook = (bookId: number) => {
 
 
 // 관심 책 목록 조회 (GET /book/like/view)
-export const getLikedBooks = async (userId?: number): Promise<AxiosResponse<{bookId: number, title: string, author: string|null}[]>> => {
+export const getLikedBooks = async () => {
   try {
     console.log('좋아요 목록 요청 시작');
     
-    const response = await axiosApi.get<{bookId: number, title: string, author: string|null}[]>("/book/like/view");
+    const response = await axiosApi.get("/book/like/view");
     console.log('서버에서 받은 좋아요 책 목록:', response.data);
-    console.log('좋아요 ID 목록:', JSON.stringify(response.data));
-    return response;
+    return response.data; // data 속성만 반환하도록 수정
   } catch (error) {
     console.error('좋아요 목록 요청 실패:', error);
     throw error;

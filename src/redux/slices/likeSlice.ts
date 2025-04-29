@@ -28,17 +28,17 @@ export const fetchLikedBooks = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const response = await getLikedBooks();
-      console.log('서버에서 좋아요 목록을 가져왔습니다:', response.data);
+      console.log('서버에서 좋아요 목록을 가져왔습니다:', response);
       
       // 서버 응답이 객체 배열인 경우 bookId만 추출
-      if (Array.isArray(response.data)) {
-        const bookIds = response.data.map(book => book.bookId);
+      if (Array.isArray(response)) {
+        const bookIds = response.map(book => book.bookId);
         console.log('추출한 북 ID 목록:', bookIds);
         return bookIds;
       }
       
       // 응답이 예상과 다를 경우 빈 배열 반환
-      console.warn('예상치 못한 응답 형식:', response.data);
+      console.warn('예상치 못한 응답 형식:', response);
       return [];
     } catch (error: any) {
       console.error('좋아요 목록 가져오기 실패:', error);

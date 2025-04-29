@@ -91,7 +91,7 @@ export const useAllRecentBooks = () => {
 export const useLikedBooks = () => {
   const result = useQuery({
     queryKey: ["likedBooks"],
-    queryFn: () => getLikedBooks(),
+    queryFn: () => getLikedBooks(), // 함수를 래핑하여 매개변수 없이 호출
     staleTime: 5 * 60 * 1000, // 5분 동안 데이터 신선도 유지
   });
 
