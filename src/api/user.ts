@@ -62,3 +62,15 @@ export const updateProfileImage = async (file: File) => {
     throw error;
   }
 };
+
+// 이미지 업로드 삭제
+export const deleteProfileImage = async () => {
+  try {
+    const res = await axiosApi.delete("/profile/delete/image");
+    console.log("✅ 프로필 이미지 삭제 완료:", res.data);
+    return res.data;
+  } catch (error: any) {
+    console.error("❌ 프로필 이미지 삭제 실패:", error.response || error.message);
+    throw error;
+  }
+};

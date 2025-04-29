@@ -1,22 +1,34 @@
 import React, { useRef, useState, useEffect } from 'react';
 import Button from '../../components/Button';
-import { updateProfileImage } from '../../api/user';
+import { updateProfileImage, deleteProfileImage } from '../../api/user';
 
 
 interface EditProfileImageProps {
   isOpen: boolean;
   onClose: () => void;
   onSave: (file: File) => void;
+  onDelete?: () => void;
+  currentProfileImage?: string | null;
 }
 
 const MAX_FILE_SIZE = 1 * 1024 * 1024; // 1MB
 
-const EditProfileImage = ({ isOpen, onClose, onSave }: EditProfileImageProps) => {
+const EditProfileImage = ({ 
+  isOpen, 
+  onClose, 
+  onSave, 
+  onDelete,
+  currentProfileImage 
+}: EditProfileImageProps) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [isDeletingImage, setIsDeletingImage] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const controllerRef = useRef<AbortController | null>(null); // AbortController 저장용 ref
+  
+  // 현재 사용자가 프로필 이미지를 가지고 있는지 확인
+  const hasCurrentProfileImage = !!currentProfileImage;
 
   useEffect(() => {
     if (!isOpen) {
@@ -24,6 +36,7 @@ const EditProfileImage = ({ isOpen, onClose, onSave }: EditProfileImageProps) =>
       setSelectedFile(null);
       setPreviewUrl(null);
       setIsLoading(false);
+      setIsDeletingImage(false);
       controllerRef.current = null;
     }
   }, [isOpen]);
@@ -70,6 +83,32 @@ const EditProfileImage = ({ isOpen, onClose, onSave }: EditProfileImageProps) =>
     }
   };
 
+  // 프로필 이미지 삭제 처리 함수
+  const handleDeleteImage = async () => {
+    if (!window.confirm('프로필 이미지를 삭제하시겠습니까?')) {
+      return;
+    }
+    
+    try {
+      setIsDeletingImage(true);
+      await deleteProfileImage();
+      console.log('✅ 프로필 이미지 삭제 완료');
+      alert('프로필 이미지가 삭제되었습니다.');
+      
+      // 상위 컴포넌트에 삭제 알림 (있는 경우)
+      if (onDelete) {
+        onDelete();
+      }
+      
+      onClose();
+    } catch (error) {
+      console.error('❌ 프로필 이미지 삭제 실패:', error);
+      alert('프로필 이미지 삭제에 실패했습니다.');
+    } finally {
+      setIsDeletingImage(false);
+    }
+  };
+
   const handleCancel = () => {
     controllerRef.current?.abort();
     onClose();
@@ -96,13 +135,25 @@ const EditProfileImage = ({ isOpen, onClose, onSave }: EditProfileImageProps) =>
           </p>
         )}
 
-        <div className="text-center mb-4">
+        <div className="text-center mb-4 flex justify-center gap-2">
           <button 
             onClick={() => fileInputRef.current?.click()}
             className="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded text-gray-600 transition-colors"
           >
             이미지 선택
           </button>
+          
+          {/* 프로필 이미지가 있을 때만 삭제 버튼 표시 */}
+          {hasCurrentProfileImage && (
+            <button 
+              onClick={handleDeleteImage}
+              disabled={isDeletingImage}
+              className="px-4 py-2 bg-red-100 hover:bg-red-200 rounded text-red-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {isDeletingImage ? '삭제 중...' : '이미지 삭제'}
+            </button>
+          )}
+          
           <input 
             type="file"
             ref={fileInputRef}
