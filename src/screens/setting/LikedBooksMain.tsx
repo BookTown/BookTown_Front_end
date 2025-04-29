@@ -1,8 +1,10 @@
 import ListFrame from "../../components/ListFrame";
 import BookCard from "../../components/BookCard";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import BookModal from "../../components/BookModal";
 import { useLikedBooks } from "../../hooks/useBookQueries";
+import { useAppSelector } from "../../redux/hooks";
+import { selectLikedBooks } from "../../redux/slices/likeSlice";
 
 type Book = {
   id: number;
@@ -15,10 +17,24 @@ const LikedBooksMain = () => {
   const [selectedBook, setSelectedBook] = useState<Book | null>(null);
   const [showModal, setShowModal] = useState(false);
   
-  // 좋아요 한 도서 목록 API 호출
-  const { data: books, isLoading, isError } = useLikedBooks();
+  // Redux에서 좋아요 상태 구독
+  const likedBookIds = useAppSelector(selectLikedBooks);
   
-  console.log("받은 책 목록:", books); // 디버깅용
+  // React Query로 좋아요 도서 목록 가져오기 (캐시 & 서버 동기화)
+  const { 
+    data: books, 
+    isLoading, 
+    isError, 
+    refetch 
+  } = useLikedBooks();
+  
+  // 컴포넌트 마운트 또는 좋아요 목록 변경 시 데이터 새로고침
+  useEffect(() => {
+    console.log("LikedBooksMain: 좋아요 목록 조회 요청");
+    refetch();
+  }, [likedBookIds, refetch]);
+  
+  console.log("LikedBooksMain 렌더링 - 받은 책 목록:", books); 
   
   // 데이터 로딩 중
   if (isLoading) {
@@ -34,12 +50,23 @@ const LikedBooksMain = () => {
     return (
       <div className="pt-14 md:pt-12 text-center py-10">
         <p className="text-[#9CAAB9]">데이터를 불러오는데 실패했습니다.</p>
+        <button 
+          onClick={() => refetch()} 
+          className="mt-4 px-4 py-2 bg-[#C75C5C] text-white rounded-lg hover:bg-[#b54d4d]"
+        >
+          다시 시도
+        </button>
       </div>
     );
   }
   
   // 데이터 존재 여부 확인
   const hasBooks = Array.isArray(books) && books.length > 0;
+
+  const handleBookSelect = (book: Book) => {
+    setSelectedBook(book);
+    setShowModal(true);
+  };
 
   return (
     <div className="pt-14 md:pt-12">
@@ -57,15 +84,12 @@ const LikedBooksMain = () => {
               thumbnailUrl={book.thumbnailUrl || '/images/default-book.png'}
               title={book.title}
               author={book.author || '작가 미상'}
-              onBookSelect={() => {
-                setSelectedBook({
-                  id: book.bookId,
-                  title: book.title,
-                  author: book.author || '작가 미상',
-                  imageUrl: book.thumbnailUrl || '/images/default-book.png'
-                });
-                setShowModal(true);
-              }}
+              onBookSelect={() => handleBookSelect({
+                id: book.bookId,
+                title: book.title,
+                author: book.author || '작가 미상',
+                imageUrl: book.thumbnailUrl || '/images/default-book.png'
+              })}
               size="lg"
             />
           ))}
