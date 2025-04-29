@@ -15,6 +15,8 @@ import EditProfileInfo from "./EditProfileInfo";
 import EditProfileImage from "./EditProfileImage";
 import ExitMember from "./ExitMember";
 import { updateProfileImage } from "../../api/user";
+import { useAppDispatch } from "../../redux/hooks";
+import { clearLikes } from "../../redux/slices/likeSlice";
 
 interface UserProfile {
   id: number;
@@ -38,6 +40,7 @@ interface MenuItemProps {
 const SettingMain = () => {
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
   const [isInfoModalOpen, setIsInfoModalOpen] = useState(false);
   const [isImageModalOpen, setIsImageModalOpen] = useState(false);
   const [isExitModalOpen, setIsExitModalOpen] = useState(false);
@@ -68,6 +71,8 @@ const SettingMain = () => {
     } finally {
       localStorage.removeItem("accessToken");
       localStorage.removeItem("refreshToken");
+      // 좋아요 상태 초기화
+      dispatch(clearLikes());
       navigate("/");
     }
   };
@@ -137,7 +142,7 @@ const SettingMain = () => {
 
       {/* 메뉴 카드 */}
       <section className="w-full max-w-sm mx-auto bg-white rounded-2xl shadow-lg p-6 space-y-4 md:max-w-md">
-        <Link to="/home">
+        <Link to="/LikedBooks">
           <MenuItem
             icon={<HeartIcon className="w-6 h-6 text-white" />}
             label="관심작품"

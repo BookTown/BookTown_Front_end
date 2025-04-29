@@ -60,3 +60,27 @@ export const fetchAllRecentBooks = async (): Promise<IBookList> => {
   }
 };
 
+// 토글 API
+export const toggleLikeBook = (bookId: number) => {
+  if (!bookId) {
+    console.error('좋아요 토글 실패: 유효하지 않은 bookId -', bookId);
+    return Promise.reject('유효하지 않은 bookId입니다.');
+  }
+  console.log('좋아요 토글 요청:', bookId);
+  return axiosApi.post(`/book/like/${bookId}`);
+};
+
+
+// 관심 책 목록 조회 (GET /book/like/view)
+export const getLikedBooks = async () => {
+  try {
+    console.log('좋아요 목록 요청 시작');
+    
+    const response = await axiosApi.get("/book/like/view");
+    console.log('서버에서 받은 좋아요 책 목록:', response.data);
+    return response.data; // data 속성만 반환하도록 수정
+  } catch (error) {
+    console.error('좋아요 목록 요청 실패:', error);
+    throw error;
+  }
+};

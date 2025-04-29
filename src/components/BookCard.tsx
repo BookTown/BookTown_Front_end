@@ -1,13 +1,14 @@
-import React, { useState } from "react";
+import React, { useCallback, useMemo, useEffect } from "react";
 import { Heart } from "lucide-react";
-import { IBookDetail } from "../interfaces/bookInterface";
+import { useAppDispatch, useAppSelector } from "../redux/hooks";
+import { makeSelectIsLiked, toggleLike } from "../redux/slices/likeSlice";
 
 interface BookCardProps {
-  bookId: number;
+  id: number;
   title: string;
   author: string;
   thumbnailUrl: string;
-  onClick?: () => void;
+  onBookSelect?: (book: { id: number; title: string; author: string; imageUrl: string }) => void; // onClick 대신 onBookSelect로 변경
   size?: "sm" | "lg";
   summaryUrl?: string;
   createdAt?: string;
@@ -15,14 +16,29 @@ interface BookCardProps {
 }
 
 const BookCard: React.FC<BookCardProps> = ({
+  id,
   title,
   author,
   thumbnailUrl,
-  onClick,
+  onBookSelect,
   size = "sm",
 }) => {
-  const [isLiked, setIsLiked] = useState(false);
+  const dispatch = useAppDispatch();
 
+   // 리렌더링 확인용 로그
+  useEffect(() => {
+    console.log(`📘 BookCard [${id}] "${title}" 렌더링됨`);
+  });
+  
+  // 메모이제이션된 선택자 생성 (컴포넌트 내에서)
+  const selectIsBookLiked = useMemo(makeSelectIsLiked, []);
+  
+  // 이 특정 책에 대한 좋아요 상태만 구독
+  const isLiked = useAppSelector(state => 
+    typeof id === 'number' && !isNaN(id) ? 
+    selectIsBookLiked(state, id) : false
+  );
+  
   // 크기별 스타일 설정
   const cardStyles = {
     sm: {
@@ -43,15 +59,41 @@ const BookCard: React.FC<BookCardProps> = ({
 
   const styles = cardStyles[size];
 
-  const handleLike = (e: React.MouseEvent) => {
+  // useCallback으로 핸들러 함수 메모이제이션
+  const handleLike = useCallback(async (e: React.MouseEvent) => {
     e.stopPropagation(); // 북카드 온클릭 이벤트 발생 X
-    setIsLiked(!isLiked);
-  };
+    
+    // id 유효성 검사 추가
+    if (typeof id !== 'number' || isNaN(id)) {
+      console.error('유효하지 않은 도서 ID:', id);
+      return;
+    }
+    
+    try {
+      console.log(`🔄 좋아요 토글 처리 시작: id=${id}`);
+      // 토글 액션 디스패치
+      await dispatch(toggleLike(id)).unwrap();
+    } catch (error) {
+      console.error("좋아요 토글 처리 실패:", error);
+    }
+  }, [id, dispatch]);
+
+  // onBookSelect 핸들러 메모이제이션
+  const handleCardClick = useCallback(() => {
+    if (onBookSelect) {
+      onBookSelect({
+        id,
+        title,
+        author,
+        imageUrl: thumbnailUrl
+      });
+    }
+  }, [id, title, author, thumbnailUrl, onBookSelect]);
 
   return (
     <div
       className={`${styles.container} cursor-pointer transition-transform duration-200 hover:scale-105`}
-      onClick={onClick}
+      onClick={handleCardClick}
     >
       <div className={`${styles.image} relative rounded-lg overflow-hidden mb-2 shadow-md group`}>
         <img
@@ -80,4 +122,5 @@ const BookCard: React.FC<BookCardProps> = ({
   );
 };
 
+// React.memo를 사용하여 props가 변경될 때만 리렌더링
 export default React.memo(BookCard);
