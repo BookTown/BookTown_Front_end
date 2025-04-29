@@ -95,10 +95,6 @@ const EditProfileImage = ({
 
   // 프로필 이미지 삭제 처리 함수
   const handleDeleteImage = async () => {
-    if (!window.confirm('프로필 이미지를 삭제하시겠습니까?')) {
-      return;
-    }
-    
     try {
       setIsDeletingImage(true);
       await deleteProfileImage();
