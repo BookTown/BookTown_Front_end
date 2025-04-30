@@ -25,7 +25,7 @@ const Search = () => {
     return saved ? JSON.parse(saved) : [];
   });
 
-  // 검색 처리 - API 통신으로 변경
+  // 검색 처리
   useEffect(() => {
     // 디바운스 처리
     const debounceTimer = setTimeout(async () => {
