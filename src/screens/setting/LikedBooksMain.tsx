@@ -5,6 +5,7 @@ import BookModal from "../../components/BookModal";
 import { useLikedBooks } from "../../hooks/useBookQueries";
 import { useAppDispatch } from "../../redux/hooks";
 import { toggleLike } from "../../redux/slices/likeSlice";
+import { useQueryClient } from "@tanstack/react-query";
 
 type Book = {
   id: number;
@@ -17,6 +18,7 @@ const LikedBooksMain = () => {
   const [selectedBook, setSelectedBook] = useState<Book | null>(null);
   const [showModal, setShowModal] = useState(false);
   const dispatch = useAppDispatch();
+  const queryClient = useQueryClient();
   
   // React Query로 좋아요 도서 목록 가져오기 (캐시 & 서버 동기화)
   const { data: books = [], isLoading, isError, refetch } = useLikedBooks();
@@ -33,7 +35,9 @@ const LikedBooksMain = () => {
   // 좋아요 처리를 컴포넌트 내부에서 처리 (메모이제이션)
   const handleToggleLike = useCallback(async (bookId: number) => {
     await dispatch(toggleLike(bookId));
-  }, [dispatch]);
+    // 좋아요 목록 갱신을 위해 쿼리 무효화
+    queryClient.invalidateQueries({ queryKey: ["likedBooks"] });
+  }, [dispatch, queryClient]);
 
   // 데이터 로딩 중
   if (isLoading) {
