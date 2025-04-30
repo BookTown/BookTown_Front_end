@@ -13,3 +13,13 @@ export interface IBookDetail {
 // 도서 목록 배열 (API 응답 형식에 맞춤)
 export type IBookList = IBookDetail[];
 
+export interface IBookSearchResponse {
+  bookId: number;
+  title: string;
+  author: string;
+  summaryUrl: string;
+  thumbnailUrl: string;
+  likeCount: number;
+}
+
+export type IBookSearch = IBookSearchResponse[];

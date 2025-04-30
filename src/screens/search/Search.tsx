@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { ArrowLeft, Search as SearchIcon } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { mockBooks } from "../../mocks/mockBook";
 import BookModal from "../../components/BookModal";
+import { searchBooks } from "../../api/api";
+import { IBookSearchResponse } from "../../interfaces/bookInterface";
 
 type Book = {
   id: number;
@@ -14,37 +15,58 @@ type Book = {
 const Search = () => {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
-  const [searchResults, setSearchResults] = useState<Book[]>([]);
+  const [searchResults, setSearchResults] = useState<IBookSearchResponse[]>([]);
   const [selectedBook, setSelectedBook] = useState<Book | null>(null);
   const [showModal, setShowModal] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [recentSearches, setRecentSearches] = useState<Book[]>(() => {
     const saved = localStorage.getItem("recentSearches");
     return saved ? JSON.parse(saved) : [];
   });
 
-  // 검색 처리
+  // 검색 처리 - API 통신으로 변경
   useEffect(() => {
-    if (searchTerm.trim()) {
-      const results = mockBooks.filter(
-        book =>
-          book.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          book.author.toLowerCase().includes(searchTerm.toLowerCase())
-      );
-      setSearchResults(results);
-    } else {
-      setSearchResults([]);
-    }
+    // 디바운스 처리
+    const debounceTimer = setTimeout(async () => {
+      if (searchTerm.trim()) {
+        setIsLoading(true);
+        setError(null);
+        
+        try {
+          const results = await searchBooks(searchTerm);
+          setSearchResults(results);
+        } catch (err) {
+          console.error("검색 중 오류 발생:", err);
+          setError("검색 중 오류가 발생했습니다. 다시 시도해주세요.");
+          setSearchResults([]);
+        } finally {
+          setIsLoading(false);
+        }
+      } else {
+        setSearchResults([]);
+      }
+    }, 300); // 300ms 디바운스
+
+    return () => clearTimeout(debounceTimer);
   }, [searchTerm]);
 
   // 책 선택 핸들러
-  const handleBookSelect = (book: Book) => {
-    setSelectedBook(book);
+  const handleBookSelect = (book: IBookSearchResponse) => {
+    const bookData: Book = {
+      id: book.bookId,
+      title: book.title,
+      author: book.author,
+      imageUrl: book.thumbnailUrl,
+    };
+    
+    setSelectedBook(bookData);
     setShowModal(true);
 
     // 최근 검색 기록에 추가
     const updatedSearches = [
-      book,
-      ...recentSearches.filter(item => item.id !== book.id)
+      bookData,
+      ...recentSearches.filter(item => item.id !== book.bookId)
     ].slice(0, 8); // 최대 8개까지만 저장
 
     setRecentSearches(updatedSearches);
@@ -82,17 +104,25 @@ const Search = () => {
         {/* 검색 결과 또는 최근 검색 목록 */}
         {searchTerm.trim() ? (
           // 검색 결과
-          searchResults.length > 0 ? (
+          isLoading ? (
+            <div className="text-center py-10">
+              <p className="text-[#9CAAB9]">검색 중...</p>
+            </div>
+          ) : error ? (
+            <div className="text-center py-10">
+              <p className="text-red-500">{error}</p>
+            </div>
+          ) : searchResults.length > 0 ? (
             <div>
               <h2 className="text-xl mb-4">검색 결과 ({searchResults.length})</h2>
               {searchResults.map((book) => (
                 <div
-                  key={book.id}
+                  key={book.bookId}
                   onClick={() => handleBookSelect(book)}
                   className="flex items-center gap-4 p-4 border-b border-gray-200 cursor-pointer hover:bg-gray-50"
                 >
                   <img
-                    src={book.imageUrl}
+                    src={book.thumbnailUrl}
                     alt={book.title}
                     className="w-12 h-12 object-cover rounded"
                   />
@@ -116,7 +146,10 @@ const Search = () => {
               recentSearches.map((book) => (
                 <div
                   key={book.id}
-                  onClick={() => handleBookSelect(book)}
+                  onClick={() => {
+                    setSelectedBook(book);
+                    setShowModal(true);
+                  }}
                   className="flex items-center gap-4 p-4 border-b border-gray-200 cursor-pointer hover:bg-gray-50"
                 >
                   <img

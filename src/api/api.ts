@@ -1,5 +1,6 @@
 import axiosApi from "../axios";
 import { IBookList } from "../interfaces/bookInterface";
+import { IBookSearch } from "../interfaces/bookInterface";
 
 // 인기 도서 조회 (좋아요 수 기준)
 export const fetchPopularBooks = async (): Promise<IBookList> => {
@@ -82,5 +83,25 @@ export const getLikedBooks = async () => {
   } catch (error) {
     console.error('좋아요 목록 요청 실패:', error);
     throw error;
+  }
+};
+
+// 책 검색 API
+export const searchBooks = async (query: string): Promise<IBookSearch> => {
+  const trimmed = query.trim();
+  if (!trimmed) return [];
+
+  try {
+    console.log(`🔍 검색 API 호출 시작: "${trimmed}"`);
+    
+    const response = await axiosApi.get<IBookSearch>(
+      `/book/search?query=${encodeURIComponent(trimmed)}`
+    );
+
+    console.log("검색 결과:", response.data);
+    return response.data;
+  } catch (error) {
+    console.error("검색 API 오류:", error);
+    return []; // 에러 시 빈 배열 반환해도 무방 (앱 크래시 방지)
   }
 };
