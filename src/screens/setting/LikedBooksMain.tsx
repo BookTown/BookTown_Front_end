@@ -1,8 +1,10 @@
 import ListFrame from "../../components/ListFrame";
 import BookCard from "../../components/BookCard";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import BookModal from "../../components/BookModal";
 import { useLikedBooks } from "../../hooks/useBookQueries";
+import { useAppSelector } from "../../redux/hooks";
+import { selectLikedBooks } from "../../redux/slices/likeSlice";
 
 type Book = {
   id: number;
@@ -14,7 +16,9 @@ type Book = {
 const LikedBooksMain = () => {
   const [selectedBook, setSelectedBook] = useState<Book | null>(null);
   const [showModal, setShowModal] = useState(false);
-
+  
+  // Redux에서 좋아요 상태 구독
+  const likedBookIds = useAppSelector(selectLikedBooks);
   
   // React Query로 좋아요 도서 목록 가져오기 (캐시 & 서버 동기화)
   const { 
@@ -24,6 +28,13 @@ const LikedBooksMain = () => {
     refetch 
   } = useLikedBooks();
   
+  // 컴포넌트 마운트 또는 좋아요 목록 변경 시 데이터 새로고침
+  useEffect(() => {
+    console.log("LikedBooksMain: 좋아요 목록 조회 요청");
+    refetch();
+  }, [likedBookIds, refetch]);
+  
+  console.log("LikedBooksMain 렌더링 - 받은 책 목록:", books); 
   
   // 데이터 로딩 중
   if (isLoading) {
