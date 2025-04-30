@@ -7,7 +7,7 @@ import { Link } from "react-router-dom";
 import { Heart } from "lucide-react";
 import { usePopularBooks, useRecentBooks, useBannerBook } from "../../hooks/useBookQueries";
 import { useAppSelector } from "../../redux/hooks";
-import { IBookDetail } from "../../interfaces/bookInterface";
+import { IBook } from "../../interfaces/bookInterface";
 
 type Book = {
   id: number;
@@ -78,7 +78,7 @@ const Main = () => {
                 type="submit"
                 onClick={() => {
                   setSelectedBook({
-                    id: mainBook.bookId,
+                    id: mainBook.id,
                     title: mainBook.title,
                     author: mainBook.author,
                     imageUrl: mainBook.thumbnailUrl
@@ -119,16 +119,16 @@ const Main = () => {
         </div>
         <div className="px-4 grid grid-cols-2 md:grid-cols-4 gap-4 place-items-center">
           {isPopularBooksArray && popularBooks.length > 1 ? 
-            popularBooks.slice(1, 1 + cardsPerSection).map((book: IBookDetail) => (
+            popularBooks.slice(1, 1 + cardsPerSection).map((book: IBook) => (
               <BookCard
-                key={book.bookId}
-                bookId={book.bookId}
+                key={book.id}
+                bookId={book.id}
                 thumbnailUrl={book.thumbnailUrl}
                 title={book.title}
                 author={book.author}
                 onClick={() => {
                   setSelectedBook({
-                    id: book.bookId,
+                    id: book.id,
                     title: book.title,
                     author: book.author,
                     imageUrl: book.thumbnailUrl
@@ -159,16 +159,16 @@ const Main = () => {
         </div>
         <div className="px-4 grid grid-cols-2 md:grid-cols-4 gap-4 place-items-center">
           {isRecentBooksArray && recentBooks.length > 0 ? 
-            recentBooks.slice(0, cardsPerSection).map((book: IBookDetail) => (
+            recentBooks.slice(0, cardsPerSection).map((book: IBook) => (
               <BookCard
-                key={book.bookId}
-                bookId={book.bookId}
+                key={book.id}
+                bookId={book.id}
                 thumbnailUrl={book.thumbnailUrl}
                 title={book.title}
                 author={book.author}
                 onClick={() => {
                   setSelectedBook({
-                    id: book.bookId,
+                    id: book.id,
                     title: book.title,
                     author: book.author,
                     imageUrl: book.thumbnailUrl
