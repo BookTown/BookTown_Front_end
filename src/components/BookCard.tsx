@@ -13,6 +13,7 @@ interface BookCardProps {
   summaryUrl?: string;
   createdAt?: string;
   likeCount?: number;
+  onToggleLike?: (bookId: number) => void; // 추가
 }
 
 const BookCard: React.FC<BookCardProps> = ({
@@ -22,6 +23,7 @@ const BookCard: React.FC<BookCardProps> = ({
   thumbnailUrl,
   onBookSelect,
   size = "sm",
+  onToggleLike
 }) => {
   const dispatch = useAppDispatch();
 
@@ -61,9 +63,8 @@ const BookCard: React.FC<BookCardProps> = ({
 
   // useCallback으로 핸들러 함수 메모이제이션
   const handleLike = useCallback(async (e: React.MouseEvent) => {
-    e.stopPropagation(); // 북카드 온클릭 이벤트 발생 X
+    e.stopPropagation();
     
-    // id 유효성 검사 추가
     if (typeof id !== 'number' || isNaN(id)) {
       console.error('유효하지 않은 도서 ID:', id);
       return;
@@ -71,12 +72,17 @@ const BookCard: React.FC<BookCardProps> = ({
     
     try {
       console.log(`🔄 좋아요 토글 처리 시작: id=${id}`);
-      // 토글 액션 디스패치
-      await dispatch(toggleLike(id)).unwrap();
+      
+      // onToggleLike가 제공된 경우 해당 핸들러 사용, 아니면 기본 토글 동작
+      if (onToggleLike) {
+        await onToggleLike(id);
+      } else {
+        await dispatch(toggleLike(id)).unwrap();
+      }
     } catch (error) {
       console.error("좋아요 토글 처리 실패:", error);
     }
-  }, [id, dispatch]);
+  }, [id, dispatch, onToggleLike]);
 
   // onBookSelect 핸들러 메모이제이션
   const handleCardClick = useCallback(() => {
