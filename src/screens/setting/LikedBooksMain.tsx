@@ -1,10 +1,10 @@
 import ListFrame from "../../components/ListFrame";
 import BookCard from "../../components/BookCard";
-import { useState, useEffect } from "react";
+import { useState, useCallback } from "react";
 import BookModal from "../../components/BookModal";
 import { useLikedBooks } from "../../hooks/useBookQueries";
-import { useAppSelector, useAppDispatch } from "../../redux/hooks";
-import { selectLikedBooks, toggleLike } from "../../redux/slices/likeSlice";
+import { useAppDispatch } from "../../redux/hooks";
+import { toggleLike } from "../../redux/slices/likeSlice";
 
 type Book = {
   id: number;
@@ -18,23 +18,23 @@ const LikedBooksMain = () => {
   const [showModal, setShowModal] = useState(false);
   const dispatch = useAppDispatch();
   
-  // Redux에서 좋아요 상태 구독
-  const likedBookIds = useAppSelector(selectLikedBooks);
-  
   // React Query로 좋아요 도서 목록 가져오기 (캐시 & 서버 동기화)
-  const { data: serverBooks, isLoading, isError, refetch } = useLikedBooks();
+  const { data: books = [], isLoading, isError, refetch } = useLikedBooks();
   
-  // 서버에서 가져온 도서 데이터를 현재 좋아요 ID 목록에 따라 필터링
-  const books = Array.isArray(serverBooks) 
-    ? serverBooks.filter(book => likedBookIds.includes(book.bookId)) 
-    : [];
-  
-  // 컴포넌트 마운트 시 데이터 새로고침
-  useEffect(() => {
-    console.log("LikedBooksMain: 좋아요 목록 조회 요청");
-    refetch();
-  }, [refetch]);
-  
+  // 책이 있는지 확인
+  const hasBooks = Array.isArray(books) && books.length > 0;
+
+  // useCallback으로 핸들러 메모이제이션
+  const handleBookSelect = useCallback((book: Book) => {
+    setSelectedBook(book);
+    setShowModal(true);
+  }, []);
+
+  // 좋아요 처리를 컴포넌트 내부에서 처리 (메모이제이션)
+  const handleToggleLike = useCallback(async (bookId: number) => {
+    await dispatch(toggleLike(bookId));
+  }, [dispatch]);
+
   // 데이터 로딩 중
   if (isLoading) {
     return (
@@ -58,20 +58,6 @@ const LikedBooksMain = () => {
       </div>
     );
   }
-  
-  // 책이 있는지 확인
-  const hasBooks = books.length > 0;
-
-  const handleBookSelect = (book: Book) => {
-    setSelectedBook(book);
-    setShowModal(true);
-  };
-
-  // 좋아요 처리를 컴포넌트 내부에서 처리
-  const handleToggleLike = async (bookId: number) => {
-    await dispatch(toggleLike(bookId));
-    // 좋아요 취소 후 UI 즉시 업데이트 - 별도 리페치 불필요
-  };
 
   return (
     <div className="pt-14 md:pt-12">
@@ -96,7 +82,6 @@ const LikedBooksMain = () => {
                 imageUrl: book.thumbnailUrl || '/images/default-book.png'
               })}
               size="lg"
-              // 좋아요 핸들러를 직접 전달 (선택 사항)
               onToggleLike={handleToggleLike}
             />
           ))}

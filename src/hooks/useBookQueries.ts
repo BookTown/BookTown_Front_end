@@ -96,8 +96,8 @@ export const useLikedBooks = () => {
   const result = useQuery({
     queryKey: ["likedBooks"],
     queryFn: getLikedBooks,
-    staleTime: 1 * 60 * 1000, // 1분으로 증가
-    refetchOnWindowFocus: false, // 창 포커스 시 자동 새로고침 방지
+    staleTime: 5 * 60 * 1000, 
+    refetchOnWindowFocus: false, 
     refetchOnMount: true,
   });
   return {
