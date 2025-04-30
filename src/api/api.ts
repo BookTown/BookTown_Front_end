@@ -67,7 +67,7 @@ export const fetchBookSummary = async (bookId: string | undefined): Promise<ISce
     if (!bookId) {
       throw new Error('도서 ID가 없습니다');
     }
-    const response = await axiosApi.post<IScene[]>('/summaries', { bookId: Number(bookId) });
+    const response = await axiosApi.post<IScene[]>('/summaries', { id: Number(bookId) });
     console.log('도서 줄거리 API 응답 성공:', response.data);
     return response.data;
   } catch (error) {

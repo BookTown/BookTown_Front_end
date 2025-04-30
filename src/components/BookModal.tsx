@@ -4,11 +4,11 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { setCartoon } from "../redux/slices/cartoonSlice";
 import { fetchBookSummary } from "../api/api";
-import { IBookDetail, IScene, IBook } from "../interfaces/bookInterface";
+import { IBookDetail } from "../interfaces/bookInterface";
 
 interface BookModalProps {
   book: {
-    id: number;         // 백엔드 API에서는 bookId로 사용
+    id: number;         // 백엔드 API에서 id로 사용
     title: string;
     author: string;
     imageUrl: string;   // 백엔드 API에서는 thumbnailUrl로 사용
@@ -65,7 +65,7 @@ const BookModal = ({ book, onClose, requireSubmit = false }: BookModalProps) => 
       
       console.log('📚 Redux 스토어에 데이터 저장 시작');
       // 책 정보와 줄거리 데이터를 Redux 스토어에 저장
-      dispatch(setCartoon({
+      const bookDetail: IBookDetail = {
         id: book.id,
         title: book.title,
         author: book.author,
@@ -74,7 +74,9 @@ const BookModal = ({ book, onClose, requireSubmit = false }: BookModalProps) => 
         createdAt: new Date().toISOString(),
         scenes: summaryData,
         likeCount: 0
-      }));
+      };
+      
+      dispatch(setCartoon(bookDetail));
       
       console.log('📚 Redux 스토어 저장 완료, 페이지 이동 준비');
       
