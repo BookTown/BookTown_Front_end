@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { setCartoon } from "../redux/slices/cartoonSlice";
 import { fetchBookSummary } from "../api/api";
+import { IBookDetail, IScene } from "../interfaces/bookInterface";
 
 type Book = {
   id: number;
@@ -13,7 +14,12 @@ type Book = {
 };
 
 interface BookModalProps {
-  book: Book;
+  book: {
+    id: number;         // 백엔드 API에서는 bookId로 사용
+    title: string;
+    author: string;
+    imageUrl: string;   // 백엔드 API에서는 thumbnailUrl로 사용
+  };
   onClose: () => void;
   requireSubmit?: boolean;
 }
@@ -45,6 +51,12 @@ const BookModal = ({ book, onClose, requireSubmit = false }: BookModalProps) => 
 
   // 줄거리 보기 버튼 클릭 핸들러
   const handleViewSummary = async () => {
+    // book.id 확인
+    if (!book || book.id === undefined) {
+      console.error('📚 오류: 책 ID가 없습니다.', book);
+      return; // 함수 실행 중단
+    }
+    
     console.log('📚 줄거리 보기 버튼 클릭', { bookId: book.id });
     
     try {
@@ -60,16 +72,8 @@ const BookModal = ({ book, onClose, requireSubmit = false }: BookModalProps) => 
       
       console.log('📚 Redux 스토어에 데이터 저장 시작');
       // 책 정보와 줄거리 데이터를 Redux 스토어에 저장
-      dispatch(setCartoon({
-        bookId: book.id,
-        title: book.title,
-        author: book.author,
-        summaryUrl: "",
-        thumbnailUrl: book.imageUrl,
-        createdAt: new Date().toISOString(),
-        scenes: summaryData,
-        likeCount: 0
-      }));
+      const bookDetail: IBookDetail = convertBookToBookDetail(book, summaryData);
+      dispatch(setCartoon(bookDetail));
       
       console.log('📚 Redux 스토어 저장 완료, 페이지 이동 준비');
       
@@ -80,6 +84,20 @@ const BookModal = ({ book, onClose, requireSubmit = false }: BookModalProps) => 
       console.error("줄거리를 불러오는 중 오류가 발생했습니다:", error);
       // 오류 처리 (예: 알림 표시)
     }
+  };
+
+  // 타입 변환 함수 (필요시)
+  const convertBookToBookDetail = (book: Book, scenes: IScene[]): IBookDetail => {
+    return {
+      bookId: book.id,
+      title: book.title,
+      author: book.author,
+      summaryUrl: "",
+      thumbnailUrl: book.imageUrl,
+      createdAt: new Date().toISOString(),
+      scenes: scenes,
+      likeCount: 0
+    };
   };
 
   if (!book) return null;
