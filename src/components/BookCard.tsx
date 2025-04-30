@@ -1,15 +1,14 @@
 import React, { useCallback, useMemo, useEffect } from "react";
 import { Heart } from "lucide-react";
-import { useAppSelector } from "../redux/hooks";
-import { makeSelectIsLiked } from "../redux/slices/likeSlice";
-import useLikeToggle from "../hooks/useLikeToggle";
+import { useAppDispatch, useAppSelector } from "../redux/hooks";
+import { makeSelectIsLiked, toggleLike } from "../redux/slices/likeSlice";
 
 interface BookCardProps {
   id: number;
   title: string;
   author: string;
   thumbnailUrl: string;
-  onBookSelect?: (book: { id: number; title: string; author: string; imageUrl: string }) => void;
+  onBookSelect?: (book: { id: number; title: string; author: string; imageUrl: string }) => void; // onClick 대신 onBookSelect로 변경
   size?: "sm" | "lg";
   summaryUrl?: string;
   createdAt?: string;
@@ -24,10 +23,9 @@ const BookCard: React.FC<BookCardProps> = ({
   onBookSelect,
   size = "sm",
 }) => {
-  // 커스텀 훅을 사용하여 좋아요 토글 기능 가져오기
-  const { toggleLike } = useLikeToggle();
+  const dispatch = useAppDispatch();
 
-  // 리렌더링 확인용 로그
+   // 리렌더링 확인용 로그
   useEffect(() => {
     console.log(`📘 BookCard [${id}] "${title}" 렌더링됨`);
   });
@@ -62,8 +60,8 @@ const BookCard: React.FC<BookCardProps> = ({
   const styles = cardStyles[size];
 
   // useCallback으로 핸들러 함수 메모이제이션
-  const handleLike = useCallback((e: React.MouseEvent) => {
-    e.stopPropagation(); // 북카드 온클릭 이벤트 발생 방지
+  const handleLike = useCallback(async (e: React.MouseEvent) => {
+    e.stopPropagation(); // 북카드 온클릭 이벤트 발생 X
     
     // id 유효성 검사 추가
     if (typeof id !== 'number' || isNaN(id)) {
@@ -71,9 +69,14 @@ const BookCard: React.FC<BookCardProps> = ({
       return;
     }
     
-    // 새로운 훅의 toggleLike 함수 사용
-    toggleLike(id);
-  }, [id, toggleLike]);
+    try {
+      console.log(`🔄 좋아요 토글 처리 시작: id=${id}`);
+      // 토글 액션 디스패치
+      await dispatch(toggleLike(id)).unwrap();
+    } catch (error) {
+      console.error("좋아요 토글 처리 실패:", error);
+    }
+  }, [id, dispatch]);
 
   // onBookSelect 핸들러 메모이제이션
   const handleCardClick = useCallback(() => {

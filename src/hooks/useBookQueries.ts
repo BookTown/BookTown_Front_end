@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { useEffect, useCallback } from "react";
+import { useEffect } from "react";
 import { fetchPopularBooks, fetchRecentBooks, fetchBannerBook, fetchAllPopularBooks, fetchAllRecentBooks, getLikedBooks } from "../api/api";
 import { useAppDispatch } from "../redux/hooks";
 import { setPopularBooks, setRecentBooks, setBannerBook } from "../redux/slices/bookSlice";
@@ -88,24 +88,25 @@ export const useAllRecentBooks = () => {
   return result;
 };
 
-// 좋아요한 도서 목록 조회 - 최적화 버전
+// 좋아요한 도서 목록 조회
 export const useLikedBooks = () => {
   const queryClient = useQueryClient();
   
-  // React Query 설정 - 캐시 활용 최적화
+  // React Query 설정
   const result = useQuery({
     queryKey: ["likedBooks"],
     queryFn: getLikedBooks,
-    staleTime: 5 * 60 * 1000, // 5분으로 증가시켜 불필요한 재요청 방지
+    staleTime: 1 * 60 * 1000, // 1분으로 증가
     refetchOnWindowFocus: false, // 창 포커스 시 자동 새로고침 방지
-    refetchOnMount: true, // 컴포넌트 마운트 시에는 최신 데이터 로드
+    refetchOnMount: true,
   });
+  
+  // Redux 상태 변화 감지 제거
+  // useEffect 제거
   
   return {
     ...result,
-    // 명시적으로만 호출할 수 있는 리프레시 함수 제공
-    refreshLikedBooks: useCallback(() => 
-      queryClient.invalidateQueries({ queryKey: ["likedBooks"] }),
-    [queryClient])
+    // 필요할 때만 명시적으로 호출할 수 있는 리프레시 함수 제공
+    refreshLikedBooks: () => queryClient.invalidateQueries({ queryKey: ["likedBooks"] })
   };
 };
