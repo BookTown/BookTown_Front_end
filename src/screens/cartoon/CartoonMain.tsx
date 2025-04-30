@@ -201,7 +201,7 @@ const CartoonMain = () => {
   
   useEffect(() => {
     // 스토어에 데이터가 있으면 사용, 없으면 API 호출
-    if (cartoon.scenes.length > 0 && cartoon.bookId.toString() === bookId) {
+    if (cartoon.scenes.length > 0 && cartoon.id.toString() === bookId) {
       setScenes(cartoon.scenes);
     } else {
       // API에서 줄거리 데이터 불러오기

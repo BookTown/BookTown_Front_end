@@ -7,7 +7,7 @@ interface CartoonState {
 
 const initialState: CartoonState = {
     cartoon: {
-        bookId: 0,
+        id: 0,
         title: "",
         author: "",
         summaryUrl: "",

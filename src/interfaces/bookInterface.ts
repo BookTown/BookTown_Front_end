@@ -3,10 +3,9 @@ export interface IScene {
   content: string;       // 장면 내용
   illustrationUrl: string; // 장면 이미지 URL (선택적)
 }
-
 // 개별 도서 상세 정보
 export interface IBookDetail {
-  bookId: number;
+  id: number;
   title: string;
   author: string;
   summaryUrl: string;
@@ -17,5 +16,16 @@ export interface IBookDetail {
 }
 
 // 도서 목록 배열 (API 응답 형식에 맞춤)
-export type IBookList = IBookDetail[];
+export interface IBook {
+  id: number;
+  title: string;
+  author: string;
+  summaryUrl: string;
+  thumbnailUrl: string;
+  createdAt: string;
+  likeCount: number;
+  bookSummary: null | any;
+}
+
+export type IBookList = IBook[];
   

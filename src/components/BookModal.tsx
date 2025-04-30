@@ -4,14 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { setCartoon } from "../redux/slices/cartoonSlice";
 import { fetchBookSummary } from "../api/api";
-import { IBookDetail, IScene } from "../interfaces/bookInterface";
-
-type Book = {
-  id: number;
-  title: string;
-  author: string;
-  imageUrl: string;
-};
+import { IBookDetail, IScene, IBook } from "../interfaces/bookInterface";
 
 interface BookModalProps {
   book: {
@@ -57,7 +50,7 @@ const BookModal = ({ book, onClose, requireSubmit = false }: BookModalProps) => 
       return; // 함수 실행 중단
     }
     
-    console.log('📚 줄거리 보기 버튼 클릭', { bookId: book.id });
+    console.log('📚 줄거리 보기 버튼 클릭', { id: book.id });
     
     try {
       console.log('📚 줄거리 데이터 요청 시작');
@@ -72,8 +65,16 @@ const BookModal = ({ book, onClose, requireSubmit = false }: BookModalProps) => 
       
       console.log('📚 Redux 스토어에 데이터 저장 시작');
       // 책 정보와 줄거리 데이터를 Redux 스토어에 저장
-      const bookDetail: IBookDetail = convertBookToBookDetail(book, summaryData);
-      dispatch(setCartoon(bookDetail));
+      dispatch(setCartoon({
+        id: book.id,
+        title: book.title,
+        author: book.author,
+        summaryUrl: "",
+        thumbnailUrl: book.imageUrl,
+        createdAt: new Date().toISOString(),
+        scenes: summaryData,
+        likeCount: 0
+      }));
       
       console.log('📚 Redux 스토어 저장 완료, 페이지 이동 준비');
       
@@ -84,20 +85,6 @@ const BookModal = ({ book, onClose, requireSubmit = false }: BookModalProps) => 
       console.error("줄거리를 불러오는 중 오류가 발생했습니다:", error);
       // 오류 처리 (예: 알림 표시)
     }
-  };
-
-  // 타입 변환 함수 (필요시)
-  const convertBookToBookDetail = (book: Book, scenes: IScene[]): IBookDetail => {
-    return {
-      bookId: book.id,
-      title: book.title,
-      author: book.author,
-      summaryUrl: "",
-      thumbnailUrl: book.imageUrl,
-      createdAt: new Date().toISOString(),
-      scenes: scenes,
-      likeCount: 0
-    };
   };
 
   if (!book) return null;
