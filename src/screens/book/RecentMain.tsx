@@ -3,7 +3,7 @@ import BookCard from "../../components/BookCard";
 import { useState } from "react";
 import BookModal from "../../components/BookModal";
 import { useAllRecentBooks } from "../../hooks/useBookQueries";
-import { IBookDetail } from "../../interfaces/bookInterface";
+import { IBook } from "../../interfaces/bookInterface";
 
 type Book = {
   id: number;
@@ -49,16 +49,16 @@ const RecentMain = () => {
       <ListFrame>
         {[
           isBookArray ? (
-            books.map((book: IBookDetail) => (
+            books.map((book: IBook) => (
               <BookCard
-                key={book.bookId}
-                bookId={book.bookId}
+                key={book.id}
+                bookId={book.id}
                 thumbnailUrl={book.thumbnailUrl}
                 title={book.title}
                 author={book.author}
                 onClick={() => {
                   setSelectedBook({
-                    id: book.bookId,
+                    id: book.id,
                     title: book.title,
                     author: book.author,
                     imageUrl: book.thumbnailUrl
