@@ -5,7 +5,7 @@ export interface IScene {
 }
 // 개별 도서 상세 정보
 export interface IBookDetail {
-  id: number;
+  id: number;  // bookId 대신 API 응답에 맞게 id로 정의
   title: string;
   author: string;
   summaryUrl: string;

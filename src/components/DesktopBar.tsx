@@ -2,10 +2,13 @@ import React, { useState } from "react";
 import { Search, Clock, BarChart, Settings, Home, Menu, X, LogOut } from "lucide-react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { logoutUser } from "../api/user";
+import { useAppDispatch } from "../redux/hooks";
+import { clearLikes } from "../redux/slices/likeSlice";
 
 const DesktopBar = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   
   const menus = [
@@ -24,10 +27,12 @@ const DesktopBar = () => {
       await logoutUser();
     } catch (error) {
       console.error("로그아웃 실패:", error);
-      alert("서버 오류가 발생했습니다. 하지만 보안을 위해 로그아웃합니다.");
+      alert("서버 오류가 발생했습니다. 강제로 로그아웃합니다.");
     } finally {
       localStorage.removeItem("accessToken");
       localStorage.removeItem("refreshToken");
+      // 좋아요 상태 초기화
+      dispatch(clearLikes());
       navigate("/");
     }
   };

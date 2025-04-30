@@ -1,21 +1,37 @@
 import React, { useRef, useState, useEffect } from 'react';
 import Button from '../../components/Button';
-import axiosApi from "../../axios"
+import { updateProfileImage, deleteProfileImage } from '../../api/user';
+
 
 interface EditProfileImageProps {
   isOpen: boolean;
   onClose: () => void;
   onSave: (file: File) => void;
+  onDelete?: () => void;
+  currentProfileImage?: string | null;
 }
 
 const MAX_FILE_SIZE = 1 * 1024 * 1024; // 1MB
 
-const EditProfileImage = ({ isOpen, onClose, onSave }: EditProfileImageProps) => {
+const EditProfileImage = ({ 
+  isOpen, 
+  onClose, 
+  onSave, 
+  onDelete,
+  currentProfileImage 
+}: EditProfileImageProps) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [isDeletingImage, setIsDeletingImage] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const controllerRef = useRef<AbortController | null>(null); // AbortController 저장용 ref
+  
+  // 현재 사용자가 프로필 이미지를 가지고 있는지 확인
+  const hasCurrentProfileImage = !!currentProfileImage;
+  
+  // 이미지가 변경되었는지 여부 확인 (새 이미지 선택 또는 기존 이미지 제거)
+  const hasChanges = selectedFile !== null || (hasCurrentProfileImage && previewUrl === null);
 
   useEffect(() => {
     if (!isOpen) {
@@ -23,9 +39,17 @@ const EditProfileImage = ({ isOpen, onClose, onSave }: EditProfileImageProps) =>
       setSelectedFile(null);
       setPreviewUrl(null);
       setIsLoading(false);
+      setIsDeletingImage(false);
       controllerRef.current = null;
+    } else {
+      // 모달이 열릴 때 현재 프로필 이미지가 있으면 미리보기로 설정
+      if (currentProfileImage) {
+        setPreviewUrl(currentProfileImage);
+      } else {
+        setPreviewUrl(null);
+      }
     }
-  }, [isOpen]);
+  }, [isOpen, currentProfileImage]);
 
   if (!isOpen) return null;
 
@@ -47,20 +71,14 @@ const EditProfileImage = ({ isOpen, onClose, onSave }: EditProfileImageProps) =>
 
   const handleSave = async () => {
     if (!selectedFile) return;
-
+  
     try {
       setIsLoading(true);
-
-      const formData = new FormData();
-      formData.append('file', selectedFile);
-
-      const controller = new AbortController();
-      controllerRef.current = controller;
-
-      await axiosApi.post('/profile/update/image', formData, {
-        signal: controller.signal,
-      });
-
+      await updateProfileImage(selectedFile);
+      console.log('✅ 프로필 이미지 업로드 완료');
+      alert('프로필 이미지가 업데이트되었습니다.');
+      setPreviewUrl(null);
+      setSelectedFile(null);
       onSave(selectedFile);
       onClose();
     } catch (error: any) {
@@ -75,25 +93,57 @@ const EditProfileImage = ({ isOpen, onClose, onSave }: EditProfileImageProps) =>
     }
   };
 
+  // 프로필 이미지 삭제 처리 함수
   const handleDeleteImage = async () => {
     try {
-      setIsLoading(true);
-      await axiosApi.delete('/profile/delete/image');
-      setSelectedFile(null);
-      setPreviewUrl(null);
-      onSave(null as unknown as File);
+      setIsDeletingImage(true);
+      await deleteProfileImage();
+      console.log('✅ 프로필 이미지 삭제 완료');
+      alert('프로필 이미지가 삭제되었습니다.');
+      
+      // 상위 컴포넌트에 삭제 알림 (있는 경우)
+      if (onDelete) {
+        onDelete();
+      }
+      
       onClose();
     } catch (error) {
       console.error('❌ 프로필 이미지 삭제 실패:', error);
       alert('프로필 이미지 삭제에 실패했습니다.');
     } finally {
-      setIsLoading(false);
+      setIsDeletingImage(false);
     }
   };
 
   const handleCancel = () => {
     controllerRef.current?.abort();
     onClose();
+  };
+  
+  // 저장 버튼 클릭 시 실행할 함수 결정
+  const handleActionButton = () => {
+    if (selectedFile) {
+      // 새 이미지가 선택된 경우 - 업로드
+      return handleSave();
+    } else if (previewUrl === null && hasCurrentProfileImage) {
+      // 이미지를 삭제하려는 경우
+      return handleDeleteImage();
+    }
+  };
+  
+  // 저장 버튼의 텍스트 결정
+  const getActionButtonText = () => {
+    if (isLoading) return '저장 중...';
+    if (isDeletingImage) return '삭제 중...';
+    if (selectedFile) return '저장';
+    if (previewUrl === null && hasCurrentProfileImage) return '이미지 삭제';
+    return '저장';
+  };
+
+  // 이미지 미리보기 초기화 (삭제하기로 결정)
+  const handleClearPreview = () => {
+    setPreviewUrl(null);
+    setSelectedFile(null);
   };
 
   return (
@@ -117,21 +167,24 @@ const EditProfileImage = ({ isOpen, onClose, onSave }: EditProfileImageProps) =>
           </p>
         )}
 
-        <div className="text-center mb-4">
+        <div className="text-center mb-4 flex justify-center gap-2">
           <button 
             onClick={() => fileInputRef.current?.click()}
             className="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded text-gray-600 transition-colors"
           >
             이미지 선택
           </button>
+          
+          {/* 프리뷰가 있을 때만 삭제 버튼 표시 */}
           {previewUrl && (
-            <button
-              onClick={handleDeleteImage}
-              className="ml-2 px-4 py-2 bg-red-100 hover:bg-red-200 rounded text-red-600 transition-colors"
+            <button 
+              onClick={handleClearPreview}
+              className="px-4 py-2 bg-red-100 hover:bg-red-200 rounded text-red-600 transition-colors"
             >
               이미지 제거
             </button>
           )}
+          
           <input 
             type="file"
             ref={fileInputRef}
@@ -143,15 +196,15 @@ const EditProfileImage = ({ isOpen, onClose, onSave }: EditProfileImageProps) =>
 
         <div className="flex justify-between gap-2 mx-auto">
           <Button onClick={handleCancel} color="white" size="md">
-            {isLoading ? '업로드 취소' : '취소'}
+            취소
           </Button>
           <Button 
-            onClick={handleSave} 
+            onClick={handleActionButton} 
             color="pink" 
             size="md" 
-            disabled={!previewUrl || isLoading}
+            disabled={!hasChanges || isLoading || isDeletingImage}
           >
-            {isLoading ? '저장 중...' : '저장'}
+            {getActionButtonText()}
           </Button>
         </div>
       </div>

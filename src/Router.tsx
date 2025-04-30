@@ -11,6 +11,7 @@ import Setting from "./screens/setting/Setting";
 import Rank from "./screens/rank/Rank";
 import History from "./screens/history/History";
 import Cartoon from "./screens/cartoon/Cartoon";
+import LikedBooks from "./screens/setting/LikedBooks";
 
 const router = createBrowserRouter([
     {
@@ -60,6 +61,10 @@ const router = createBrowserRouter([
             {
                 path: "/oauth/callback",
                 element: <OAuthCallback />,
+            },
+            {
+                path: "/likedBooks",
+                element: <LikedBooks />,
             }
         ]
     },

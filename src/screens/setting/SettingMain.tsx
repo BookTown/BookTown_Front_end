@@ -11,9 +11,12 @@ import { Link, useNavigate } from "react-router-dom";
 import { fetchUserProfile } from "../../api/user";
 import basicProfile from "../../assets/basicProfile.png";
 import { logoutUser } from "../../api/user";
-import EditProfileInfo from './EditProfileInfo';
-import EditProfileImage from './EditProfileImage';
-import ExitMember from './ExitMember';
+import EditProfileInfo from "./EditProfileInfo";
+import EditProfileImage from "./EditProfileImage";
+import ExitMember from "./ExitMember";
+import { updateProfileImage } from "../../api/user";
+import { useAppDispatch } from "../../redux/hooks";
+import { clearLikes } from "../../redux/slices/likeSlice";
 
 interface UserProfile {
   id: number;
@@ -37,6 +40,7 @@ interface MenuItemProps {
 const SettingMain = () => {
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
   const [isInfoModalOpen, setIsInfoModalOpen] = useState(false);
   const [isImageModalOpen, setIsImageModalOpen] = useState(false);
   const [isExitModalOpen, setIsExitModalOpen] = useState(false);
@@ -58,7 +62,7 @@ const SettingMain = () => {
   const handleLogout = async () => {
     const isConfirmed = window.confirm("로그아웃 하시겠습니까?");
     if (!isConfirmed) return;
-  
+
     try {
       await logoutUser();
     } catch (error) {
@@ -67,6 +71,8 @@ const SettingMain = () => {
     } finally {
       localStorage.removeItem("accessToken");
       localStorage.removeItem("refreshToken");
+      // 좋아요 상태 초기화
+      dispatch(clearLikes());
       navigate("/");
     }
   };
@@ -74,24 +80,22 @@ const SettingMain = () => {
   const handleProfileUpdate = async (name: string, intro: string) => {
     try {
       // API 호출 로직 구현
-      console.log('Profile updated:', { name, intro });
+      console.log("Profile updated:", { name, intro });
       // 성공 시 프로필 다시 불러오기
       const data = await fetchUserProfile();
       setUserProfile(data);
     } catch (error) {
-      console.error('Failed to update profile:', error);
+      console.error("Failed to update profile:", error);
     }
   };
 
   const handleImageUpdate = async (file: File) => {
     try {
-      // API 호출 로직 구현
-      console.log('Image updated:', file);
-      // 성공 시 프로필 다시 불러오기
+      await updateProfileImage(file);
       const data = await fetchUserProfile();
       setUserProfile(data);
     } catch (error) {
-      console.error('Failed to update image:', error);
+      console.error("Failed to update image:", error);
     }
   };
 
@@ -138,7 +142,7 @@ const SettingMain = () => {
 
       {/* 메뉴 카드 */}
       <section className="w-full max-w-sm mx-auto bg-white rounded-2xl shadow-lg p-6 space-y-4 md:max-w-md">
-        <Link to="/home">
+        <Link to="/LikedBooks">
           <MenuItem
             icon={<HeartIcon className="w-6 h-6 text-white" />}
             label="관심작품"
@@ -159,9 +163,7 @@ const SettingMain = () => {
             iconBg="bg-[#F9A8A8]"
           />
         </button>
-        <button 
-          onClick={() => setIsExitModalOpen(true)}
-          className="w-full">
+        <button onClick={() => setIsExitModalOpen(true)} className="w-full">
           <MenuItem
             icon={<Trash2Icon className="w-6 h-6 text-white" />}
             label="회원탈퇴"
@@ -171,9 +173,10 @@ const SettingMain = () => {
         </button>
 
         <div className="pt-3 border-t border-gray-200">
-          <button 
+          <button
             onClick={handleLogout}
-            className="w-full flex items-center gap-2 justify-center text-[#9CAAB9] hover:text-gray-700 transition-colors duration-200 pt-1 rounded-lg">
+            className="w-full flex items-center gap-2 justify-center text-[#9CAAB9] hover:text-gray-700 transition-colors duration-200 pt-1 rounded-lg"
+          >
             <span className="text-base">로그아웃</span>
             <LogOutIcon className="w-5 h-5" />
           </button>
@@ -188,14 +191,27 @@ const SettingMain = () => {
         onSave={handleProfileUpdate}
         userId={userProfile?.id || 0}
       />
-
+      {/* 프로필 이미지 수정 모달 */}
       <EditProfileImage
         isOpen={isImageModalOpen}
         onClose={() => setIsImageModalOpen(false)}
         onSave={handleImageUpdate}
+        onDelete={async () => {
+          // 프로필 정보를 다시 가져오기
+          try {
+            const data = await fetchUserProfile();
+            setUserProfile(data);
+          } catch (error) {
+            console.error(
+              "Failed to fetch user profile after deletion:",
+              error
+            );
+          }
+        }}
+        currentProfileImage={userProfile?.profileImage}
       />
       {isExitModalOpen && (
-      <ExitMember onClose={() => setIsExitModalOpen(false)} />
+        <ExitMember onClose={() => setIsExitModalOpen(false)} />
       )}
     </div>
   );
@@ -222,6 +238,6 @@ const MenuItem = (props: MenuItemProps) => {
       <span className="text-[#9CAAB9]">&gt;</span>
     </div>
   );
-}
+};
 
 export default SettingMain;
