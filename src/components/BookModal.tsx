@@ -45,10 +45,20 @@ const BookModal = ({ book, onClose, requireSubmit = false }: BookModalProps) => 
 
   // 줄거리 보기 버튼 클릭 핸들러
   const handleViewSummary = async () => {
+    console.log('📚 줄거리 보기 버튼 클릭', { bookId: book.id });
+    
     try {
+      console.log('📚 줄거리 데이터 요청 시작');
+      
       // 줄거리 데이터 불러오기
       const summaryData = await fetchBookSummary(book.id.toString());
       
+      console.log('📚 줄거리 데이터 수신 완료', { 
+        sceneCount: summaryData.length,
+        firstScene: summaryData[0]
+      });
+      
+      console.log('📚 Redux 스토어에 데이터 저장 시작');
       // 책 정보와 줄거리 데이터를 Redux 스토어에 저장
       dispatch(setCartoon({
         bookId: book.id,
@@ -61,7 +71,10 @@ const BookModal = ({ book, onClose, requireSubmit = false }: BookModalProps) => 
         likeCount: 0
       }));
       
+      console.log('📚 Redux 스토어 저장 완료, 페이지 이동 준비');
+      
       onClose(); // 모달 닫기
+      console.log(`📚 줄거리 페이지로 이동: /cartoon/${book.id}`);
       navigate(`/cartoon/${book.id}`); // 줄거리 화면으로 이동
     } catch (error) {
       console.error("줄거리를 불러오는 중 오류가 발생했습니다:", error);
