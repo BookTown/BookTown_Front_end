@@ -28,11 +28,17 @@ const LikedBooksMain = () => {
     refetch 
   } = useLikedBooks();
   
-  // 컴포넌트 마운트 또는 좋아요 목록 변경 시 데이터 새로고침
-  useEffect(() => {
-    console.log("LikedBooksMain: 좋아요 목록 조회 요청");
-    refetch();
-  }, [likedBookIds, refetch]);
+  // 컴포넌트 마운트될 때만 데이터 로드
+useEffect(() => {
+  console.log("LikedBooksMain: 초기 로드 시 좋아요 목록 조회");
+  refetch();
+}, [refetch]); // likedBookIds 의존성 제거
+
+// 좋아요 상태 변경 감지 및 디버깅 로그만 출력 (API 호출 없음)
+useEffect(() => {
+  console.log("좋아요 상태 변경 감지:", likedBookIds);
+  // refetch() 호출 제거
+}, [likedBookIds]);
   
   console.log("LikedBooksMain 렌더링 - 받은 책 목록:", books); 
   

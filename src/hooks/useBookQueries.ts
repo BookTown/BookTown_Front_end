@@ -100,10 +100,6 @@ export const useLikedBooks = () => {
     refetchOnWindowFocus: false, // 창 포커스 시 자동 새로고침 방지
     refetchOnMount: true,
   });
-  
-  // Redux 상태 변화 감지 제거
-  // useEffect 제거
-  
   return {
     ...result,
     // 필요할 때만 명시적으로 호출할 수 있는 리프레시 함수 제공
