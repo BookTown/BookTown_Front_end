@@ -28,4 +28,14 @@ export interface IBook {
 }
 
 export type IBookList = IBook[];
-  
+// 도서 검색 결과
+export interface IBookSearchResponse {
+  bookId: number;
+  title: string;
+  author: string;
+  summaryUrl: string;
+  thumbnailUrl: string;
+  likeCount: number;
+}
+
+export type IBookSearch = IBookSearchResponse[];
