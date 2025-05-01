@@ -5,6 +5,14 @@ interface CartoonState {
     cartoon: IBookDetail;
 }
 
+// 작가 정보 처리 함수
+const processAuthor = (book: IBookDetail): IBookDetail => {
+    if (book.author === null || book.author === undefined || book.author === '') {
+        return { ...book, author: '작자미상' };
+    }
+    return book;
+};
+
 const initialState: CartoonState = {
     cartoon: {
         id: 0,
@@ -23,7 +31,7 @@ const cartoonSlice = createSlice({
     initialState,
     reducers: {
         setCartoon: (state, action: PayloadAction<IBookDetail>) => {        
-            state.cartoon = action.payload;
+            state.cartoon = processAuthor(action.payload);
         }
     }
 })
