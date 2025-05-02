@@ -7,12 +7,14 @@ import { RootState } from "../../redux/store";
 import { fetchBookSummary } from "../../api/api"; 
 
 // 장면 프레임 컴포넌트
-const SceneFrame = ({ illustrationUrl, onPrev, onNext, isFirst, isLast }: {
+const SceneFrame = ({ illustrationUrl, onPrev, onNext, isFirst, isLast, currentPage, totalPages }: {
   illustrationUrl: string;
   onPrev: () => void;
   onNext: () => void;
   isFirst: boolean;
   isLast: boolean;
+  currentPage: number;
+  totalPages: number;
 }) => {
   const [touchStart, setTouchStart] = useState<number | null>(null);
   const [touchEnd, setTouchEnd] = useState<number | null>(null);
@@ -166,6 +168,13 @@ const SceneFrame = ({ illustrationUrl, onPrev, onNext, isFirst, isLast }: {
           )}
         </div>
         
+        {/* 페이지 인디케이터 - 중앙에 배치 */}
+        <div className="flex-1 text-center">
+          <span className="text-sm text-gray-600">
+            {currentPage + 1} / {totalPages}
+          </span>
+        </div>
+        
         <div>
           {!isLast && (
             <button 
@@ -249,17 +258,12 @@ const CartoonMain = () => {
           onNext={goToNextPage}
           isFirst={isFirstScene}
           isLast={isLastScene}
+          currentPage={currentPage}
+          totalPages={scenes.length}
         />
         
         {/* 텍스트 내용 */}
         <PromptFrame content={currentScene.content} />
-        
-        {/* 페이지 인디케이터 */}
-        <div className="my-2 text-center">
-          <span className="text-sm text-gray-600">
-            {currentPage + 1} / {scenes.length}
-          </span>
-        </div>
       </div>
     </div>
   );
