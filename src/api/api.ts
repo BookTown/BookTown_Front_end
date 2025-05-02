@@ -2,13 +2,37 @@ import axiosApi from "../axios";
 import { IBookList, IScene } from "../interfaces/bookInterface";
 import { IBookSearch } from "../interfaces/bookInterface";
 
+// 작가 정보 처리 함수 - API 응답에서 바로 처리
+const processAuthorField = (data: any) => {
+  if (!data) return data;
+  
+  // 배열인 경우 (책 목록)
+  if (Array.isArray(data)) {
+    return data.map(book => ({
+      ...book,
+      author: book.author || '작자미상'
+    }));
+  }
+  
+  // 단일 객체인 경우
+  if (typeof data === 'object' && data !== null) {
+    return {
+      ...data,
+      author: data.author || '작자미상'
+    };
+  }
+  
+  return data;
+};
+
 // 인기 도서 조회 (좋아요 수 기준)
 export const fetchPopularBooks = async (): Promise<IBookList> => {
   console.log('인기 도서 API 호출 시작');
   try {
     const response = await axiosApi.get<IBookList>('/book/popular');
     console.log('인기 도서 API 응답 성공:', response.data);
-    return response.data;
+    // 작가 정보 처리 후 반환
+    return processAuthorField(response.data);
   } catch (error) {
     console.error('인기 도서 API 오류:', error);
     throw error;
@@ -21,7 +45,8 @@ export const fetchRecentBooks = async (): Promise<IBookList> => {
   try {
     const response = await axiosApi.get<IBookList>('/book/recent');
     console.log('최신 도서 API 응답 성공:', response.data);
-    return response.data;
+    // 작가 정보 처리 후 반환
+    return processAuthorField(response.data);
   } catch (error) {
     console.error('최신 도서 API 오류:', error);
     throw error;
@@ -34,7 +59,8 @@ export const fetchBannerBook = async () => {
   try {
     const response = await axiosApi.get('/book/banner');
     console.log('배너 도서 API 응답 성공:', response.data);
-    return response.data;
+    // 작가 정보 처리 후 반환
+    return processAuthorField(response.data);
   } catch (error) {
     console.error('배너 도서 API 오류:', error);
     throw error;
@@ -45,7 +71,8 @@ export const fetchBannerBook = async () => {
 export const fetchAllPopularBooks = async (): Promise<IBookList> => {
   try {
     const response = await axiosApi.get<IBookList>('/book/popular/all');
-    return response.data;
+    // 작가 정보 처리 후 반환
+    return processAuthorField(response.data);
   } catch (error) {
     throw error;
   }
@@ -55,7 +82,8 @@ export const fetchAllPopularBooks = async (): Promise<IBookList> => {
 export const fetchAllRecentBooks = async (): Promise<IBookList> => {
   try {
     const response = await axiosApi.get<IBookList>('/book/recent/all');
-    return response.data;
+    // 작가 정보 처리 후 반환
+    return processAuthorField(response.data);
   } catch (error) {
     throw error;
   }
@@ -152,7 +180,8 @@ export const getLikedBooks = async () => {
     
     const response = await axiosApi.get("/book/like/view");
     console.log('서버에서 받은 좋아요 책 목록:', response.data);
-    return response.data; // data 속성만 반환하도록 수정
+    // 작가 정보 처리 후 반환
+    return processAuthorField(response.data);
   } catch (error) {
     console.error('좋아요 목록 요청 실패:', error);
     throw error;
@@ -172,7 +201,8 @@ export const searchBooks = async (query: string): Promise<IBookSearch> => {
     );
 
     console.log("검색 결과:", response.data);
-    return response.data;
+    // 작가 정보 처리 후 반환
+    return processAuthorField(response.data);
   } catch (error) {
     console.error("검색 API 오류:", error);
     return []; // 에러 시 빈 배열 반환해도 무방 (앱 크래시 방지)
