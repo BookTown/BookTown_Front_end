@@ -42,6 +42,12 @@ const bookSlice = createSlice({
     setRecentBooks: (state, action: PayloadAction<IBookList>) => {
       state.recent = processBookArray(action.payload);
     },
+    setPopularAllBooks: (state, action: PayloadAction<IBookList>) => {
+      state.popular = processBookArray(action.payload);
+    },
+    setRecentAllBooks: (state, action: PayloadAction<IBookList>) => {
+      state.recent = processBookArray(action.payload);
+    },
     addToFavorites: (state, action: PayloadAction<number>) => {
       if (!state.favorites.includes(action.payload)) {
         state.favorites.push(action.payload);
@@ -59,6 +65,8 @@ const bookSlice = createSlice({
 export const { 
   setPopularBooks, 
   setRecentBooks,
+  setPopularAllBooks,
+  setRecentAllBooks,
   addToFavorites,
   removeFromFavorites,
   setBannerBook

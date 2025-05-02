@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useEffect } from "react";
 import { fetchPopularBooks, fetchRecentBooks, fetchBannerBook, fetchAllPopularBooks, fetchAllRecentBooks, getLikedBooks } from "../api/api";
 import { useAppDispatch } from "../redux/hooks";
-import { setPopularBooks, setRecentBooks, setBannerBook } from "../redux/slices/bookSlice";
+import { setPopularBooks, setRecentBooks, setBannerBook, setPopularAllBooks, setRecentAllBooks } from "../redux/slices/bookSlice";
 import { useQueryClient } from "@tanstack/react-query";
 
 // 인기 도서 조회 
@@ -79,7 +79,7 @@ export const useAllPopularBooks = () => {
   useEffect(() => {
     if (result.data) {
       console.log('전체 인기 도서 데이터를 Redux에 저장:', result.data);
-      dispatch(setPopularBooks(result.data)); // Redux에 전체 데이터 저장
+      dispatch(setPopularAllBooks(result.data)); // Redux에 전체 인기 도서 데이터 저장
     }
   }, [result.data, dispatch]);
 
@@ -99,7 +99,7 @@ export const useAllRecentBooks = () => {
   useEffect(() => {
     if (result.data) {
       console.log('전체 최신 도서 데이터를 Redux에 저장:', result.data);
-      dispatch(setRecentBooks(result.data)); // Redux에 모든 데이터 저장
+      dispatch(setRecentAllBooks(result.data)); // Redux에 전체 최신 도서 데이터 저장
     }
   }, [result.data, dispatch]);
 
