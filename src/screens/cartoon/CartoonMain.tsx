@@ -289,11 +289,10 @@ const CartoonMain = () => {
               color="white"
               type="button"
               onClick={handleViewSummaryAgain}
+              className="flex items-center justify-center"
             >
-              <span className="flex items-center">
-                <RotateCw className="mr-1 fill-[#C75C5C]" size={16} />
-                다시 보기
-              </span>
+              <RotateCw className="mr-4 stroke-[#C75C5C]" size={16} strokeWidth={2} />
+              다시 보기
             </Button>
             
             <Button
@@ -301,11 +300,10 @@ const CartoonMain = () => {
               color="pink"
               type="button"
               onClick={handleSolveQuiz}
+              className="flex items-center justify-center"
             >
-              <span className="flex items-center">
-                <BookOpenCheck className="mr-1 fill-[#FFFFFF]" size={16} />
-                퀴즈 풀기
-              </span>
+              <BookOpenCheck className="mr-4 stroke-[#FFFFFF]" size={16} strokeWidth={2} />
+              퀴즈 풀기
             </Button>
           </div>
         )}
