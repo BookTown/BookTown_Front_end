@@ -1,10 +1,11 @@
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { useState, useEffect, useRef } from "react";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { IScene } from "../../interfaces/bookInterface";
 import { useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
 import { fetchBookSummary } from "../../api/api"; 
+import Button from "../../components/Button";
 
 // 장면 프레임 컴포넌트
 const SceneFrame = ({ illustrationUrl, onPrev, onNext, isFirst, isLast, currentPage, totalPages }: {
@@ -207,6 +208,7 @@ const PromptFrame = ({ content }: { content: string }) => {
 const CartoonMain = () => {
   const { bookId } = useParams();
   const [currentPage, setCurrentPage] = useState(0);
+  const navigate = useNavigate();
   
   // Redux 스토어에서 cartoon 데이터 가져오기
   const { cartoon } = useSelector((state: RootState) => state.cartoon);
@@ -243,6 +245,16 @@ const CartoonMain = () => {
     }
   };
   
+  // 다시 보기 핸들러 - 첫 페이지로 이동
+  const handleViewSummaryAgain = () => {
+    setCurrentPage(0);
+  };
+  
+  // 퀴즈 풀기 핸들러 - 퀴즈 페이지로 이동
+  const handleSolveQuiz = () => {
+    navigate('/quiz');
+  };
+  
   if (scenes.length === 0) {
     return <div className="pt-14 text-center">줄거리 정보를 불러올 수 없습니다.</div>;
   }
@@ -268,6 +280,29 @@ const CartoonMain = () => {
         
         {/* 텍스트 내용 */}
         <PromptFrame content={currentScene.content} />
+        
+        {/* 마지막 페이지일 때만 버튼 표시 */}
+        {isLastScene && (
+          <div className="mt-4 flex justify-center gap-3">
+            <Button
+              size="md"
+              color="white"
+              type="button"
+              onClick={handleViewSummaryAgain}
+            >
+              다시 보기
+            </Button>
+            
+            <Button
+              size="md"
+              color="pink"
+              type="button"
+              onClick={handleSolveQuiz}
+            >
+              퀴즈 풀기
+            </Button>
+          </div>
+        )}
       </div>
     </div>
   );
