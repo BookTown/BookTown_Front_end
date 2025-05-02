@@ -1,6 +1,6 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useState, useEffect, useRef } from "react";
-import { ArrowLeft, ArrowRight } from "lucide-react";
+import { ArrowLeft, ArrowRight, RotateCw, BookOpenCheck } from "lucide-react";
 import { IScene } from "../../interfaces/bookInterface";
 import { useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
@@ -283,14 +283,14 @@ const CartoonMain = () => {
         
         {/* 마지막 페이지일 때만 버튼 표시 */}
         {isLastScene && (
-          <div className="mt-4 w-full flex justify-between gap-8">
+          <div className="mt-4 flex justify-center gap-12">
             <Button
               size="md"
               color="white"
               type="button"
               onClick={handleViewSummaryAgain}
-              className="flex-1 max-w-[45%]" // 버튼 너비가 지나치게 넓어지는 것을 방지
             >
+              <RotateCw className="mr-1 fill-[#C75C5C] stroke-[#C75C5C]" size={16} />
               다시 보기
             </Button>
             
@@ -299,8 +299,8 @@ const CartoonMain = () => {
               color="pink"
               type="button"
               onClick={handleSolveQuiz}
-              className="flex-1 max-w-[45%]" // 버튼 너비가 지나치게 넓어지는 것을 방지
             >
+              <BookOpenCheck className="mr-1 fill-[#FFFFFF] stroke-[#FFFFFF]" size={16} />
               퀴즈 풀기
             </Button>
           </div>
