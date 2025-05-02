@@ -5,6 +5,26 @@ import { useAppDispatch } from "../redux/hooks";
 import { setPopularBooks, setRecentBooks, setBannerBook, setPopularAllBooks, setRecentAllBooks } from "../redux/slices/bookSlice";
 import { useQueryClient } from "@tanstack/react-query";
 
+// 작가 정보 처리 함수
+const processAuthorData = (data: any) => {
+  if (!data) return data;
+  
+  // 배열인 경우 (book 목록)
+  if (Array.isArray(data)) {
+    return data.map(book => ({
+      ...book,
+      author: book.author || '작자미상'
+    }));
+  }
+  
+  // 단일 객체인 경우 (배너 도서 등)
+  if (data.author === null || data.author === undefined || data.author === '') {
+    return { ...data, author: '작자미상' };
+  }
+  
+  return data;
+};
+
 // 인기 도서 조회 
 export const usePopularBooks = () => {
   const dispatch = useAppDispatch();
@@ -19,7 +39,9 @@ export const usePopularBooks = () => {
   useEffect(() => {
     if (result.data) {
       console.log('인기 도서 데이터를 Redux에 저장:', result.data);
-      dispatch(setPopularBooks(result.data));
+      // 작가 정보 처리 후 Redux에 저장
+      const processedData = processAuthorData(result.data);
+      dispatch(setPopularBooks(processedData));
     }
   }, [result.data, dispatch]);
 
@@ -39,7 +61,9 @@ export const useRecentBooks = () => {
   useEffect(() => {
     if (result.data) {
       console.log('최신 도서 데이터를 Redux에 저장:', result.data);
-      dispatch(setRecentBooks(result.data));
+      // 작가 정보 처리 후 Redux에 저장
+      const processedData = processAuthorData(result.data);
+      dispatch(setRecentBooks(processedData));
     }
   }, [result.data, dispatch]);
 
@@ -59,7 +83,9 @@ export const useBannerBook = () => {
   useEffect(() => {
     if (result.data) {
       console.log('배너 도서 데이터를 Redux에 저장:', result.data);
-      dispatch(setBannerBook(result.data));
+      // 작가 정보 처리 후 Redux에 저장
+      const processedData = processAuthorData(result.data);
+      dispatch(setBannerBook(processedData));
     }
   }, [result.data, dispatch]);
 
@@ -79,7 +105,9 @@ export const useAllPopularBooks = () => {
   useEffect(() => {
     if (result.data) {
       console.log('전체 인기 도서 데이터를 Redux에 저장:', result.data);
-      dispatch(setPopularAllBooks(result.data)); // Redux에 전체 인기 도서 데이터 저장
+      // 작가 정보 처리 후 Redux에 저장
+      const processedData = processAuthorData(result.data);
+      dispatch(setPopularAllBooks(processedData));
     }
   }, [result.data, dispatch]);
 
@@ -99,7 +127,9 @@ export const useAllRecentBooks = () => {
   useEffect(() => {
     if (result.data) {
       console.log('전체 최신 도서 데이터를 Redux에 저장:', result.data);
-      dispatch(setRecentAllBooks(result.data)); // Redux에 전체 최신 도서 데이터 저장
+      // 작가 정보 처리 후 Redux에 저장
+      const processedData = processAuthorData(result.data);
+      dispatch(setRecentAllBooks(processedData));
     }
   }, [result.data, dispatch]);
 
@@ -117,7 +147,9 @@ export const useLikedBooks = () => {
     staleTime: 5 * 60 * 1000, 
     refetchOnWindowFocus: false, 
     refetchOnMount: true,
+    select: (data) => processAuthorData(data), // 데이터 변환 함수 추가
   });
+  
   return {
     ...result,
     // 필요할 때만 명시적으로 호출할 수 있는 리프레시 함수 제공

@@ -9,33 +9,6 @@ interface BookState {
   banner: IBookDetail | null; // 배너용 도서 추가
 }
 
-// 작가 정보 처리 헬퍼 함수
-const processAuthor = <T extends { author?: string | null }>(data: T): T => {
-  if (data.author === null || data.author === undefined || data.author === '') {
-    return { ...data, author: '작자미상' };
-  }
-  return data;
-};
-
-// 책 배열에 대한 작가 정보 처리 함수
-const processBookArray = (books: IBookList | null): IBookList | null => {
-  if (!books || !Array.isArray(books)) return books;
-
-  // 새 배열 생성하여 확실히 불변성 유지
-  const processedBooks = books.map(book => {
-    // 직접 새 객체 생성하여 author 속성 변경
-    if (book.author === null || book.author === undefined || book.author === '') {
-      return { 
-        ...book, 
-        author: '작자미상' 
-      };
-    }
-    return { ...book };
-  });
-  
-  return processedBooks;
-};
-
 // 초기 상태 정의
 const initialState: BookState = {
   popular: null,
@@ -50,16 +23,16 @@ const bookSlice = createSlice({
   initialState,
   reducers: {
     setPopularBooks: (state, action: PayloadAction<IBookList>) => {
-      state.popular = processBookArray(action.payload);
+      state.popular = action.payload;
     },
     setRecentBooks: (state, action: PayloadAction<IBookList>) => {
-      state.recent = processBookArray(action.payload);
+      state.recent = action.payload;
     },
     setPopularAllBooks: (state, action: PayloadAction<IBookList>) => {
-      state.popular = processBookArray(action.payload);
+      state.popular = action.payload;
     },
     setRecentAllBooks: (state, action: PayloadAction<IBookList>) => {
-      state.recent = processBookArray(action.payload);
+      state.recent = action.payload;
     },
     addToFavorites: (state, action: PayloadAction<number>) => {
       if (!state.favorites.includes(action.payload)) {
@@ -70,13 +43,7 @@ const bookSlice = createSlice({
       state.favorites = state.favorites.filter(id => id !== action.payload);
     },
     setBannerBook: (state, action: PayloadAction<IBookDetail>) => {
-      console.log('setBannerBook 호출됨, 처리 전:', action.payload);
-      if (action.payload.author === null || action.payload.author === undefined || action.payload.author === '') {
-        state.banner = { ...action.payload, author: '작자미상' };
-      } else {
-        state.banner = action.payload;
-      }
-      console.log('처리 후 banner:', state.banner);
+      state.banner = action.payload;
     },
   },
 });
