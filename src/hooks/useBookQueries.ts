@@ -68,22 +68,40 @@ export const useBannerBook = () => {
 
 // 전체 인기 도서 조회
 export const useAllPopularBooks = () => {
+  const dispatch = useAppDispatch();
+  
   const result = useQuery({
     queryKey: ["allPopularBooks"],
     queryFn: fetchAllPopularBooks,
     staleTime: 5 * 60 * 1000, // 5분 동안 데이터 신선도 유지
   });
 
+  useEffect(() => {
+    if (result.data) {
+      console.log('전체 인기 도서 데이터를 Redux에 저장:', result.data);
+      dispatch(setPopularBooks(result.data)); // Redux에 전체 데이터 저장
+    }
+  }, [result.data, dispatch]);
+
   return result;
 };
 
 // 전체 최신 도서 조회
 export const useAllRecentBooks = () => {
+  const dispatch = useAppDispatch();
+  
   const result = useQuery({
     queryKey: ["allRecentBooks"],
     queryFn: fetchAllRecentBooks,
     staleTime: 5 * 60 * 1000, // 5분 동안 데이터 신선도 유지
   });
+
+  useEffect(() => {
+    if (result.data) {
+      console.log('전체 최신 도서 데이터를 Redux에 저장:', result.data);
+      dispatch(setRecentBooks(result.data)); // Redux에 모든 데이터 저장
+    }
+  }, [result.data, dispatch]);
 
   return result;
 };

@@ -21,7 +21,7 @@ const Main = () => {
   const [showModal, setShowModal] = useState(false);
   const [cardsPerSection, setCardsPerSection] = useState(2);
 
-  // React Query로 데이터 가져오기 (배너 도서 추가)
+  // React Query로 데이터 가져오기
   const { isLoading: isLoadingPopular, error: popularError } = usePopularBooks();
   const { isLoading: isLoadingRecent, error: recentError } = useRecentBooks();
   const { isLoading: isLoadingBanner, error: bannerError } = useBannerBook();
