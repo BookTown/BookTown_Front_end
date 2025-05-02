@@ -283,7 +283,7 @@ const CartoonMain = () => {
         
         {/* 마지막 페이지일 때만 버튼 표시 */}
         {isLastScene && (
-          <div className="mt-4 flex justify-center gap-20">
+          <div className="mt-4 flex justify-center gap-8 md:gap-12 lg:gap-20">
             <Button
               size="md"
               color="white"
@@ -291,7 +291,7 @@ const CartoonMain = () => {
               onClick={handleViewSummaryAgain}
               className="flex items-center justify-center"
             >
-              <RotateCw className="mr-4 stroke-[#C75C5C]" size={16} strokeWidth={2} />
+              <RotateCw className="mr-1.5 md:mr-2 lg:mr-4 stroke-[#C75C5C]" size={16} strokeWidth={2} />
               다시 보기
             </Button>
             
@@ -302,7 +302,7 @@ const CartoonMain = () => {
               onClick={handleSolveQuiz}
               className="flex items-center justify-center"
             >
-              <BookOpenCheck className="mr-4 stroke-[#FFFFFF]" size={16} strokeWidth={2} />
+              <BookOpenCheck className="mr-1.5 md:mr-2 lg:mr-4 stroke-[#FFFFFF]" size={16} strokeWidth={2} />
               퀴즈 풀기
             </Button>
           </div>
