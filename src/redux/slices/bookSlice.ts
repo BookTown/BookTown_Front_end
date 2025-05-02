@@ -20,7 +20,20 @@ const processAuthor = <T extends { author?: string | null }>(data: T): T => {
 // 책 배열에 대한 작가 정보 처리 함수
 const processBookArray = (books: IBookList | null): IBookList | null => {
   if (!books || !Array.isArray(books)) return books;
-  return books.map(book => processAuthor(book));
+
+  // 새 배열 생성하여 확실히 불변성 유지
+  const processedBooks = books.map(book => {
+    // 직접 새 객체 생성하여 author 속성 변경
+    if (book.author === null || book.author === undefined || book.author === '') {
+      return { 
+        ...book, 
+        author: '작자미상' 
+      };
+    }
+    return { ...book };
+  });
+  
+  return processedBooks;
 };
 
 // 초기 상태 정의
@@ -57,7 +70,13 @@ const bookSlice = createSlice({
       state.favorites = state.favorites.filter(id => id !== action.payload);
     },
     setBannerBook: (state, action: PayloadAction<IBookDetail>) => {
-      state.banner = processAuthor(action.payload);
+      console.log('setBannerBook 호출됨, 처리 전:', action.payload);
+      if (action.payload.author === null || action.payload.author === undefined || action.payload.author === '') {
+        state.banner = { ...action.payload, author: '작자미상' };
+      } else {
+        state.banner = action.payload;
+      }
+      console.log('처리 후 banner:', state.banner);
     },
   },
 });
