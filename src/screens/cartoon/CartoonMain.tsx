@@ -283,12 +283,13 @@ const CartoonMain = () => {
         
         {/* 마지막 페이지일 때만 버튼 표시 */}
         {isLastScene && (
-          <div className="mt-4 flex justify-center gap-3">
+          <div className="mt-4 w-full flex justify-between gap-8">
             <Button
               size="md"
               color="white"
               type="button"
               onClick={handleViewSummaryAgain}
+              className="flex-1 max-w-[45%]" // 버튼 너비가 지나치게 넓어지는 것을 방지
             >
               다시 보기
             </Button>
@@ -298,6 +299,7 @@ const CartoonMain = () => {
               color="pink"
               type="button"
               onClick={handleSolveQuiz}
+              className="flex-1 max-w-[45%]" // 버튼 너비가 지나치게 넓어지는 것을 방지
             >
               퀴즈 풀기
             </Button>
