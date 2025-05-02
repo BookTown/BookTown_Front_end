@@ -156,8 +156,8 @@ const SceneFrame = ({ illustrationUrl, onPrev, onNext, isFirst, isLast, currentP
       
       {/* 화살표 네비게이션 */}
       <div className="flex justify-between items-center mt-2 px-2">
-        <div>
-          {!isFirst && (
+        <div className="w-10 h-10 flex items-center justify-center">
+          {!isFirst ? (
             <button 
               onClick={onPrev} 
               className="p-2 rounded-full opacity-70 hover:opacity-100 transition"
@@ -165,6 +165,8 @@ const SceneFrame = ({ illustrationUrl, onPrev, onNext, isFirst, isLast, currentP
             >
               <ArrowLeft size={24} color="#333" />
             </button>
+          ) : (
+            <div></div> // 빈 공간 유지
           )}
         </div>
         
@@ -175,8 +177,8 @@ const SceneFrame = ({ illustrationUrl, onPrev, onNext, isFirst, isLast, currentP
           </span>
         </div>
         
-        <div>
-          {!isLast && (
+        <div className="w-10 h-10 flex items-center justify-center">
+          {!isLast ? (
             <button 
               onClick={onNext} 
               className="p-2 rounded-full opacity-70 hover:opacity-100 transition"
@@ -184,6 +186,8 @@ const SceneFrame = ({ illustrationUrl, onPrev, onNext, isFirst, isLast, currentP
             >
               <ArrowRight size={24} color="#333" />
             </button>
+          ) : (
+            <div></div> // 빈 공간 유지
           )}
         </div>
       </div>
