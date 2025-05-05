@@ -2,7 +2,7 @@ const Quiz = () => {
     return (
       <div>
         <h1>Quiz</h1>
-        <p>Quiz of your transactions will be displayed here.</p>
+        <p>TopTitle + 객체 맵핑으로 MultipleChoice or ShortAnswer or OxQuiz</p>
       </div>
     )
   }
