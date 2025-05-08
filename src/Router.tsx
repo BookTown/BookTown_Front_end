@@ -13,6 +13,7 @@ import History from "./screens/history/History";
 import Cartoon from "./screens/cartoon/Cartoon";
 import LikedBooks from "./screens/setting/LikedBooks";
 import Quiz from "./screens/quiz/Quiz";
+import QuizEntry from "./screens/quiz/QuizEntry";
 
 const router = createBrowserRouter([
     {
@@ -70,6 +71,10 @@ const router = createBrowserRouter([
             {
                 path: "/likedBooks",
                 element: <LikedBooks />,
+            },
+            {
+                path: "/quizStart",
+                element: <QuizEntry />,
             }
         ]
     },
