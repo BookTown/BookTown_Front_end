@@ -129,13 +129,13 @@ const Quiz = () => {
   return (
     <>
       <TopTitle />
-      <div className="pt-28 p-6 max-w-xl mx-auto">
+      <div className="pt-28 md:w-[600px] px-8 md:mx-auto">
         <h2 className="text-center text-xl font-bold mb-4">
           문제 {currentIndex + 1} / {quizList.length}
         </h2>
         <ProgressBar current={currentIndex + 1} total={quizList.length} />
         
-        <div className="mt-6 bg-white p-6 rounded-xl shadow-md min-h-[350px]">
+        <div className="mt-6 md:mt-10">
           {currentQuestion ? quizTypeMap[currentQuestion.questionType] : null}
         </div>
 

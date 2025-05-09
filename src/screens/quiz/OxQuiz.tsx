@@ -1,5 +1,6 @@
 import { TrueFalseQuestion } from "./quizTypes";
 import { useState } from "react";
+import Button from "../../components/Button";
 
 interface Props {
   questionData: TrueFalseQuestion;
@@ -21,19 +22,17 @@ const OxQuiz = ({ questionData, onAnswer, isLastQuestion = false }: Props) => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center p-4">
-      {/* 질문 */}
-      <div className="text-lg font-medium text-center px-4 mb-8">
-        {questionData.question}
-      </div>
+    <div className="">
+      {/* 문제 텍스트 */}
+      <p className="text-xl md:text-2xl pb-20">Q. {questionData.question}</p>
       
       {/* O/X 버튼 */}
-      <div className="flex justify-center gap-8 mb-8">
+      <div className="flex justify-center gap-10 mb-8">
         <button
           type="button"
-          className={`w-24 h-24 md:w-32 md:h-32 rounded-3xl flex items-center justify-center text-4xl md:text-5xl font-bold transition
+          className={`w-36 h-32 md:w-72 md:h-52 rounded-3xl flex items-center justify-center text-7xl md:text-8xl transition
             ${selected === "TRUE" 
-              ? "bg-[#C75C5C] text-white" 
+              ? "border-2 border-[#C75C5C] bg-[#FDECEC] text-[#C75C5C]" 
               : "bg-white border-2 border-gray-300 hover:border-[#C75C5C]"
             }`}
           onClick={() => handleSelect("TRUE")}
@@ -42,9 +41,9 @@ const OxQuiz = ({ questionData, onAnswer, isLastQuestion = false }: Props) => {
         </button>
         <button
           type="button"
-          className={`w-24 h-24 md:w-32 md:h-32 rounded-3xl flex items-center justify-center text-4xl md:text-5xl font-bold transition
+          className={`w-36 h-32 md:w-72 md:h-52 rounded-3xl flex items-center justify-center text-7xl md:text-8xl transition
             ${selected === "FALSE" 
-              ? "bg-[#C75C5C] text-white" 
+              ? "border-2 border-[#C75C5C] bg-[#FDECEC] text-[#C75C5C]" 
               : "bg-white border-2 border-gray-300 hover:border-[#C75C5C]"
             }`}
           onClick={() => handleSelect("FALSE")}
@@ -54,18 +53,15 @@ const OxQuiz = ({ questionData, onAnswer, isLastQuestion = false }: Props) => {
       </div>
       
       {/* 다음/제출 버튼 */}
-      <div className="w-full max-w-md">
-        <button 
+      <div className="pt-32 flex justify-center">
+        <Button
           onClick={handleSubmit}
           disabled={!selected}
-          className={`w-full h-12 rounded-lg text-white font-medium transition
-            ${selected 
-              ? "bg-[#C75C5C] hover:bg-[#b54d4d]" 
-              : "bg-gray-300 cursor-not-allowed"
-            }`}
+          size="lg"
+          color="pink"
         >
           {isLastQuestion ? "제출" : "다음"}
-        </button>
+        </Button>
       </div>
     </div>
   );

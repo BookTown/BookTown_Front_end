@@ -13,7 +13,7 @@ type ButtonProps = {
 const sizeClasses = {
   sm: "w-[90px] h-[32px] text-[12px] md:w-[100px] md:h-[36px] md:text-[14px] lg:w-[120px] lg:h-[40px]",
   md: "w-[120px] h-[36px] text-[14px] md:w-[160px] md:h-[40px] md:text-[16px] lg:w-[200px] lg:h-[44px]",
-  lg: "w-full max-w-[280px] h-[40px] text-[16px] md:h-[48px] md:text-[18px] lg:h-[52px] lg:text-[20px]",
+  lg: "w-full max-w-[340px] h-[40px] text-[24px] rounded-xl",
 };
 
 const colorClasses = {
@@ -39,7 +39,7 @@ const Button: React.FC<ButtonProps> = ({
       className={`
         ${sizeClasses[size]} 
         ${colorClasses[color]} 
-        rounded-full 
+        rounded-full
         font-medium
         shadow-sm
         transition-all duration-200 ease-in-out
