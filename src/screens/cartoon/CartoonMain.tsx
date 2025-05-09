@@ -252,7 +252,7 @@ const CartoonMain = () => {
   
   // 퀴즈 풀기 핸들러 - 퀴즈 페이지로 이동
   const handleSolveQuiz = () => {
-    navigate('/quiz');
+    navigate(`/quizStart/${bookId}`);
   };
   
   if (scenes.length === 0) {

@@ -73,7 +73,7 @@ const router = createBrowserRouter([
                 element: <LikedBooks />,
             },
             {
-                path: "/quizStart",
+                path: "/quizStart/:bookId",
                 element: <QuizEntry />,
             }
         ]

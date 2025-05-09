@@ -89,6 +89,12 @@ const BookModal = ({ book, onClose, requireSubmit = false }: BookModalProps) => 
     }
   };
 
+  // 퀴즈 풀기 버튼 클릭 핸들러
+  const handleStartQuiz = () => {
+    onClose(); // 모달 닫기
+    navigate(`/quizStart/${book.id}`); // 퀴즈 시작 화면으로 이동
+  };
+
   if (!book) return null;
 
   return (
@@ -114,7 +120,7 @@ const BookModal = ({ book, onClose, requireSubmit = false }: BookModalProps) => 
           <Button size="md" color="white" type="button" onClick={handleViewSummary}>
             줄거리 보기
           </Button>
-          <Button size="md" color="pink" type="button">
+          <Button size="md" color="pink" type="button" onClick={handleStartQuiz}>
             퀴즈 풀기
           </Button>
         </div>

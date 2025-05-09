@@ -1,9 +1,10 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import TopTitle from "../../components/TopTitle";
 
 const QuizEntry = () => {
   const navigate = useNavigate();
+  const { bookId } = useParams(); // URL에서 bookId 파라미터 가져오기
   const [step, setStep] = useState<"difficulty" | "type">("difficulty");
   const [difficulty, setDifficulty] = useState<"EASY" | "MEDIUM" | "HARD" | null>(null);
   const [type, setType] = useState<"MULTIPLE_CHOICE" | "SHORT_ANSWER" | "TRUE_FALSE" | null>(null);
@@ -24,7 +25,8 @@ const QuizEntry = () => {
         navigate("/quiz", {
           state: {
             difficulty,
-            type
+            type,
+            bookId: bookId ? parseInt(bookId) : undefined
           }
         });
       } catch (error) {
@@ -91,7 +93,7 @@ const QuizEntry = () => {
 
             {step === "type" && (
               <>
-                <h2 className="text-xl font-bold mb-6">난이도를 선택하세요 !!!</h2>
+                <h2 className="text-xl font-bold mb-6">문제 유형을 선택하세요 !!!</h2>
                 <div className="flex flex-col gap-4">
                   {[
                     { label: "객관식", value: "MULTIPLE_CHOICE" },
