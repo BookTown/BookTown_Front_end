@@ -37,14 +37,29 @@ const QuizEntry = () => {
   };
 
   return (
-    <>
+    <div className="min-h-screen bg-[#FFFAF0]">
       <TopTitle />
-      <div className="min-h-screen flex items-center justify-center px-4 pb-20">
-        <div className="w-[90%] max-w-[480px] md:max-w-[600px] lg:max-w-[720px] space-y-6 text-center">
-          <div className="bg-white rounded-xl shadow-md p-6 md:p-8">
+      
+      {/* 북타운 마스코트 배경 */}
+      <div className="fixed inset-0 flex flex-col items-center z-0">
+        <div className="w-64 h-64 md:w-80 md:h-80 mt-36">
+          <img 
+            src="/images/Loader.gif" 
+            alt="북타운 마스코트" 
+            className="w-full h-full"
+          />
+        </div>
+      </div>
+      
+      {/* 바텀시트 모달 */}
+      <div className="fixed inset-0 flex items-end md:items-end justify-center z-10 pointer-events-none">
+        <div className="pointer-events-auto bg-white w-full md:w-[480px] lg:w-[560px] max-h-[50vh] md:max-h-[60vh] 
+                      rounded-t-2xl md:rounded-xl shadow-xl md:mb-8 border border-black/20">
+          
+          <div className="pt-8 px-6 pb-6 md:p-8">
             {step === "difficulty" && (
               <>
-                <h2 className="text-xl font-bold mb-6">난이도를 선택하세요</h2>
+                <h2 className="text-xl font-bold mb-6">난이도를 선택하세요 !!!</h2>
                 <div className="flex flex-col gap-4">
                   {Object.entries(difficultyLabels).map(([value, label]) => (
                     <button
@@ -76,7 +91,7 @@ const QuizEntry = () => {
 
             {step === "type" && (
               <>
-                <h2 className="text-xl font-bold mb-6">문제 유형을 선택하세요</h2>
+                <h2 className="text-xl font-bold mb-6">난이도를 선택하세요 !!!</h2>
                 <div className="flex flex-col gap-4">
                   {[
                     { label: "객관식", value: "MULTIPLE_CHOICE" },
@@ -102,7 +117,7 @@ const QuizEntry = () => {
                       setStep("difficulty");
                       setType(null);
                     }}
-                    className="flex-1 py-3 rounded-lg border border-gray-300 hover:bg-gray-50 transition"
+                    className="flex-1 py-3 rounded-lg border border-gray-300 bg-[#F4F7F9] hover:bg-gray-100 transition"
                   >
                     이전
                   </button>
@@ -123,7 +138,7 @@ const QuizEntry = () => {
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 
