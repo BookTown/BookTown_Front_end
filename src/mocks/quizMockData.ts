@@ -33,7 +33,7 @@ const quizMockData: QuizQuestion[] = [
     difficulty: "EASY",
     question: "도로시는 겐자스의 농장에서 사이클론에 휘말렸다.",
     correctAnswer: "TRUE",
-    score: 5,
+    score: 10,
     options: null
   },
   {
@@ -68,7 +68,7 @@ const quizMockData: QuizQuestion[] = [
     difficulty: "EASY",
     question: "도로시는 겐자스의 농장에서 사이클론에 휘말렸다.",
     correctAnswer: "TRUE",
-    score: 5,
+    score: 10,
     options: null
   },
   {
@@ -103,7 +103,7 @@ const quizMockData: QuizQuestion[] = [
     difficulty: "EASY",
     question: "도로시는 겐자스의 농장에서 사이클론에 휘말렸다.",
     correctAnswer: "TRUE",
-    score: 5,
+    score: 10,
     options: null
   },
   {
