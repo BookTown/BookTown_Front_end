@@ -8,7 +8,6 @@ import OxQuiz from "./OxQuiz";
 import ScoreModal from "./ScoreModal";
 import ProgressBar from "../../components/ProgressBar";
 import quizMockData from "../../mocks/quizMockData";
-import { Loader2 } from "lucide-react";
 
 const Quiz = () => {
   const navigate = useNavigate();
@@ -75,10 +74,15 @@ const Quiz = () => {
   if (isLoading) {
     return (
       <>
-        <TopTitle />
-        <div className="pt-28 flex flex-col items-center justify-center">
-          <Loader2 className="w-12 h-12 animate-spin text-[#C75C5C]" />
-          <p className="mt-4 text-lg text-center">퀴즈를 준비하는 중입니다...</p>
+        <div className="flex flex-col items-center justify-center my-auto">
+          <div className="w-64 h-64 md:w-96 md:h-96">
+            <img 
+              src="/images/Loader.gif" 
+              alt="북타운 마스코트" 
+              className="w-full h-full"
+            />
+          </div>
+          <p className="mt-4 text-2xl md:text-5xl text-center">고을이가 문제 생성중...</p>
         </div>
       </>
     );
