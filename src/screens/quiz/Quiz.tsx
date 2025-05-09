@@ -111,7 +111,8 @@ const Quiz = () => {
       <MultipleChoice 
         questionData={currentQuestion as any} 
         onAnswer={handleAnswer} 
-        isLastQuestion={isLastQuestion} 
+        isLastQuestion={isLastQuestion}
+        current={currentIndex + 1}
       />
     ),
     SHORT_ANSWER: (
@@ -119,6 +120,7 @@ const Quiz = () => {
         questionData={currentQuestion as any} 
         onAnswer={handleAnswer} 
         isLastQuestion={isLastQuestion}
+        current={currentIndex + 1}
       />
     ),
     TRUE_FALSE: (
@@ -126,6 +128,7 @@ const Quiz = () => {
         questionData={currentQuestion as any} 
         onAnswer={handleAnswer} 
         isLastQuestion={isLastQuestion}
+        current={currentIndex + 1}
       />
     )
   };

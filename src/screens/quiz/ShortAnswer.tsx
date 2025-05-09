@@ -6,10 +6,12 @@ interface Props {
   questionData: ShortAnswerQuestion;
   onAnswer: (answer: string) => void;
   isLastQuestion?: boolean;
+  current: number;
 }
 
-const ShortAnswer = ({ questionData, onAnswer, isLastQuestion = false }: Props) => {
+const ShortAnswer = ({ questionData, onAnswer, isLastQuestion = false, current }: Props) => {
   const [input, setInput] = useState("");
+  const currentNumber = current;
 
   const handleSubmit = () => {
     if (input.trim()) {
@@ -39,7 +41,7 @@ const ShortAnswer = ({ questionData, onAnswer, isLastQuestion = false }: Props) 
   return (
     <div className="">
       {/* 문제 텍스트 */}
-      <p className="text-xl md:text-2xl pb-28 md:pb-32">Q. {questionData.question}</p>
+      <p className="text-xl md:text-2xl pb-28 md:pb-32">Quiz {currentNumber}. {questionData.question}</p>
       
       <div className="flex justify-center">
         <input

@@ -6,10 +6,12 @@ interface Props {
   questionData: TrueFalseQuestion;
   onAnswer: (answer: string) => void;
   isLastQuestion?: boolean;
+  current: number;
 }
 
-const OxQuiz = ({ questionData, onAnswer, isLastQuestion = false }: Props) => {
+const OxQuiz = ({ questionData, onAnswer, isLastQuestion = false, current }: Props) => {
   const [selected, setSelected] = useState<"TRUE" | "FALSE" | null>(null);
+  const currentNumber = current;
 
   const handleSelect = (value: "TRUE" | "FALSE") => {
     setSelected(value);
@@ -24,13 +26,13 @@ const OxQuiz = ({ questionData, onAnswer, isLastQuestion = false }: Props) => {
   return (
     <div className="">
       {/* 문제 텍스트 */}
-      <p className="text-xl md:text-2xl pb-20">Q. {questionData.question}</p>
+      <p className="text-xl md:text-2xl pb-20">Quiz {currentNumber}. {questionData.question}</p>
       
       {/* O/X 버튼 */}
       <div className="flex justify-center gap-10 mb-8">
         <button
           type="button"
-          className={`w-36 h-32 md:w-72 md:h-52 rounded-3xl flex items-center justify-center text-7xl md:text-8xl transition
+          className={`w-36 h-32 md:w-72 md:h-56 rounded-3xl flex items-center justify-center text-7xl md:text-8xl transition shadow-lg
             ${selected === "TRUE" 
               ? "border-2 border-[#C75C5C] bg-[#FDECEC] text-[#C75C5C]" 
               : "bg-white border-2 border-gray-300 hover:border-[#C75C5C]"
@@ -41,7 +43,7 @@ const OxQuiz = ({ questionData, onAnswer, isLastQuestion = false }: Props) => {
         </button>
         <button
           type="button"
-          className={`w-36 h-32 md:w-72 md:h-52 rounded-3xl flex items-center justify-center text-7xl md:text-8xl transition
+          className={`w-36 h-32 md:w-72 md:h-56 rounded-3xl flex items-center justify-center text-7xl md:text-8xl transition shadow-lg
             ${selected === "FALSE" 
               ? "border-2 border-[#C75C5C] bg-[#FDECEC] text-[#C75C5C]" 
               : "bg-white border-2 border-gray-300 hover:border-[#C75C5C]"
@@ -53,7 +55,7 @@ const OxQuiz = ({ questionData, onAnswer, isLastQuestion = false }: Props) => {
       </div>
       
       {/* 다음/제출 버튼 */}
-      <div className="pt-32 flex justify-center">
+      <div className="pt-28 md:pt-36 flex justify-center">
         <Button
           onClick={handleSubmit}
           disabled={!selected}

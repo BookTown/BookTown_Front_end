@@ -6,10 +6,12 @@ interface Props {
   questionData: MultipleChoiceQuestion;
   onAnswer: (answer: string) => void;
   isLastQuestion?: boolean;
+  current: number;
 }
 
-const MultipleChoice = ({ questionData, onAnswer, isLastQuestion = false }: Props) => {
+const MultipleChoice = ({ questionData, onAnswer, isLastQuestion = false, current }: Props) => {
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
+  const currentNumber = current;
 
   const handleOptionSelect = (optText: string) => {
     setSelectedOption(optText);
@@ -29,7 +31,7 @@ const MultipleChoice = ({ questionData, onAnswer, isLastQuestion = false }: Prop
   return (
     <div className="">
       {/* 문제 텍스트 */}
-      <p className="text-xl md:text-2xl pb-6">Q. {questionData.question}</p>
+      <p className="text-xl md:text-2xl pb-6">Quiz {currentNumber}. {questionData.question}</p>
       
       {/* 선택지 목록 */}
       <div className="space-y-4 ml-4">
