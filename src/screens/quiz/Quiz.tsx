@@ -96,7 +96,7 @@ const Quiz = () => {
     if (answer.trim().toUpperCase() === currentQuestion.correctAnswer.trim().toUpperCase()) {
       setScore(prev => prev + currentQuestion.score);
     }
-
+  
     // 마지막 문제인 경우 결과 표시
     if (isLastQuestion) {
       try {
@@ -112,16 +112,25 @@ const Quiz = () => {
         
         const result = await submitQuizAnswers(submissionData);
         
-        setQuizResult(result);
-        // 서버 점수 있으면 사용, 없으면 클라이언트 점수 유지
-        if (result?.score !== undefined) {
-          setScore(result.score);
-        }
+        // 서버 응답에 correctAnswers 배열 포함 (true/false 배열)
+        const quizResultData = {
+          score: result?.score || score,
+          totalScore: quizList.reduce((sum, q) => sum + q.score, 0),
+          correctCount: result?.correctAnswers?.filter(Boolean).length || 
+          allAnswers.filter(a => {
+            const question = quizList.find(q => q.id === a.quizId);
+            return question?.correctAnswer.trim().toUpperCase() === a.userAnswer.trim().toUpperCase();
+          }).length,
+          totalQuestions: quizList.length,
+          correctAnswers: result?.correctAnswers || [], // 서버에서 받은 정답 여부 배열
+          userSubmissions: allAnswers // 사용자가 제출한 답변
+        };
         
+        setQuizResult(quizResultData);      
         setShowResult(true);
       } catch (error) {
         console.error("퀴즈 제출 중 오류 발생:", error);
-        setShowResult(true); // 오류 발생해도 결과는 보여줌
+        setShowResult(true); 
       } finally {
         setIsSubmitting(false);
       }
