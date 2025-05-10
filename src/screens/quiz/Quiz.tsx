@@ -184,7 +184,7 @@ const Quiz = () => {
         <div className="pt-28 text-center">
           <p className="text-lg">이용 가능한 퀴즈가 없습니다.</p>
           <button 
-            onClick={() => navigate("/")}
+            onClick={() => navigate("/home")}
             className="mt-4 px-4 py-2 bg-[#C75C5C] text-white rounded-lg"
           >
             홈으로 돌아가기
