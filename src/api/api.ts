@@ -238,7 +238,7 @@ export const submitQuizAnswers = async (answers: {
 }[]) => {
   console.log('퀴즈 답변 제출 API 호출 시작:', answers);
   try {
-    const response = await axiosApi.post('/quiz/submit/batch', { answers });
+    const response = await axiosApi.post('/quiz/submit/batch', answers);
     console.log('퀴즈 채점 결과:', response.data);
     return response.data;
   } catch (error) {

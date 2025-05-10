@@ -105,11 +105,13 @@ const Quiz = () => {
         // 모든 답변을 서버에 제출
         const allAnswers = [...userAnswers, newAnswer];
         
+        // 수정된 부분: API 요청 형식을 배열로 바꿈
         const submissionData = allAnswers.map(item => ({
           quizId: item.quizId,
           answer: item.userAnswer
         }));
         
+        // 배열 자체를 전달 (객체에 감싸지 않음)
         const result = await submitQuizAnswers(submissionData);
         
         // 서버 응답에 correctAnswers 배열 포함 (true/false 배열)
