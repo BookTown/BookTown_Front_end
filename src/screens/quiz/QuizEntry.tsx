@@ -16,25 +16,23 @@ const QuizEntry = () => {
     "HARD": "어려움"
   };
 
-  const handleSubmit = async () => {
+  // 퀴즈 시작 함수
+  const handleSubmit = () => {
     if (difficulty && type) {
       setIsLoading(true);
       
-      try {
-        // 퀴즈 화면으로 이동
-        navigate("/quiz", {
-          state: {
-            difficulty,
+      const numericBookId = bookId ? parseInt(bookId) : undefined;
+      
+      // 퀴즈 화면으로 바로 이동 (API는 Quiz.tsx에서 호출)
+      navigate("/quiz", {
+        state: {
+          quizParams: {
+            bookId: numericBookId,
             type,
-            bookId: bookId ? parseInt(bookId) : undefined
+            difficulty
           }
-        });
-      } catch (error) {
-        console.error("퀴즈 생성 중 오류 발생:", error);
-        alert("퀴즈를 생성하는 중 오류가 발생했습니다. 다시 시도해주세요.");
-      } finally {
-        setIsLoading(false);
-      }
+        }
+      });
     }
   };
 
@@ -132,7 +130,7 @@ const QuizEntry = () => {
                         : "bg-gray-300 text-gray-500 cursor-not-allowed"
                     }`}
                   >
-                    {isLoading ? "퀴즈 생성 중..." : "퀴즈 시작"}
+                    퀴즈 시작
                   </button>
                 </div>
               </>

@@ -7,17 +7,27 @@ import ShortAnswer from "./ShortAnswer";
 import OxQuiz from "./OxQuiz";
 import ScoreModal from "./ScoreModal";
 import ProgressBar from "../../components/ProgressBar";
-import { submitQuizAnswers } from "../../api/api";
+import { generateQuiz, submitQuizAnswers } from "../../api/api";
 
 interface UserAnswer {
   quizId: number;
   userAnswer: string;
 }
 
+interface QuizParams {
+  bookId?: number;
+  type: "MULTIPLE_CHOICE" | "SHORT_ANSWER" | "TRUE_FALSE";
+  difficulty: "EASY" | "MEDIUM" | "HARD";
+}
+
 const Quiz = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { quizData } = location.state || {};
+  
+  const { quizData, quizParams } = location.state || {} as { 
+    quizData?: QuizQuestion[], 
+    quizParams?: QuizParams 
+  };
 
   const [quizList, setQuizList] = useState<QuizQuestion[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -26,23 +36,50 @@ const Quiz = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [userAnswers, setUserAnswers] = useState<UserAnswer[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [quizResult, setQuizResult] = useState<any>(null); // quizResult 상태 추가
+  const [quizResult, setQuizResult] = useState<any>(null);
+  const [apiError, setApiError] = useState<string | null>(null);
 
   const currentQuestion = quizList[currentIndex];
   const isLastQuestion = currentIndex === quizList.length - 1;
 
   // 퀴즈 데이터 로드
   useEffect(() => {
-    if (quizData) {
-      console.log('퀴즈 데이터 로드 완료:', quizData);
-      setQuizList(quizData);
-      setIsLoading(false);
-    } else {
-      console.error('퀴즈 데이터가 없습니다');
-      alert('퀴즈 데이터를 불러오는데 실패했습니다.');
-      navigate('/home');
-    }
-  }, [quizData, navigate]);
+    const fetchQuizData = async () => {
+      // 이미 퀴즈 데이터가 있는 경우
+      if (quizData) {
+        console.log('이미 생성된 퀴즈 데이터 사용:', quizData);
+        setQuizList(quizData);
+        setIsLoading(false);
+        return;
+      }
+      
+      // 퀴즈 파라미터가 없으면 에러
+      if (!quizParams) {
+        console.error('퀴즈 파라미터가 없습니다');
+        setApiError('퀴즈 생성에 필요한 정보가 없습니다');
+        setIsLoading(false);
+        return;
+      }
+
+      try {
+        console.log('퀴즈 생성 API 호출 시작:', quizParams);
+        const { bookId, type, difficulty } = quizParams;
+        
+        // API 호출
+        const result = await generateQuiz(bookId, type, difficulty);
+        
+        console.log('퀴즈 생성 완료:', result);
+        setQuizList(result);
+      } catch (error) {
+        console.error('퀴즈 생성 중 오류 발생:', error);
+        setApiError('퀴즈 생성 중 오류가 발생했습니다. 다시 시도해주세요.');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchQuizData();
+  }, [quizData, quizParams, navigate]);
 
   const handleAnswer = async (answer: string) => {
     if (!currentQuestion) return;
@@ -89,7 +126,6 @@ const Quiz = () => {
         setIsSubmitting(false);
       }
     } else {
-      // 다음 문제로 이동
       setCurrentIndex(prev => prev + 1);
     }
   };
@@ -115,6 +151,26 @@ const Quiz = () => {
           <p className="mt-4 text-2xl md:text-5xl text-center">
             {isSubmitting ? "퀴즈 채점중..." : "고을이가 문제 생성중..."}
           </p>
+        </div>
+      </>
+    );
+  }
+
+  // API 에러 발생 시
+  if (apiError) {
+    return (
+      <>
+        <TopTitle />
+        <div className="flex flex-col items-center justify-center h-[80vh]">
+          <div className="text-center">
+            <p className="text-xl text-red-500 mb-4">{apiError}</p>
+            <button 
+              onClick={() => navigate(-1)}
+              className="px-4 py-2 bg-[#C75C5C] text-white rounded-lg"
+            >
+              돌아가기
+            </button>
+          </div>
         </div>
       </>
     );
@@ -180,7 +236,7 @@ const Quiz = () => {
             score={score}
             total={quizList.reduce((sum, q) => sum + q.score, 0)}
             onClose={handleResultClose}
-            quizResult={quizResult} // 이제 정의된 상태 전달
+            quizResult={quizResult}
           />
         )}
       </div>
