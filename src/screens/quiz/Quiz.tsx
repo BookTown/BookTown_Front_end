@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import TopTitle from "../../components/TopTitle";
 import { QuizQuestion } from "./quizTypes";
 import MultipleChoice from "./MultipleChoice";
 import ShortAnswer from "./ShortAnswer";
@@ -139,7 +138,6 @@ const Quiz = () => {
   if (isLoading || isSubmitting) {
     return (
       <>
-        <TopTitle />
         <div className="flex flex-col items-center justify-center h-[80vh]">
           <div className="w-64 h-64 md:w-96 md:h-96">
             <img 
@@ -160,7 +158,6 @@ const Quiz = () => {
   if (apiError) {
     return (
       <>
-        <TopTitle />
         <div className="flex flex-col items-center justify-center h-[80vh]">
           <div className="text-center">
             <p className="text-xl text-red-500 mb-4">{apiError}</p>
@@ -180,7 +177,6 @@ const Quiz = () => {
   if (!quizList.length) {
     return (
       <>
-        <TopTitle />
         <div className="pt-28 text-center">
           <p className="text-lg">이용 가능한 퀴즈가 없습니다.</p>
           <button 
@@ -223,7 +219,6 @@ const Quiz = () => {
 
   return (
     <>
-      <TopTitle />
       <div className="pt-24 md:w-[650px] px-6 md:mx-auto">
         <ProgressBar current={currentIndex + 1} total={quizList.length} />
         
