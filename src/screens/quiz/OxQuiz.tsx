@@ -45,7 +45,7 @@ const OxQuiz = ({ questionData, onAnswer, isLastQuestion = false, current, score
         </button>
         <button
           type="button"
-          className={`w-36 h-32 md:w-72 md:h-56 rounded-3xl flex items-center justify-center text-7xl md:text-8xl transition shadow-lg
+          className={`w-36 h-32 md:w-64 md:h-48 rounded-3xl flex items-center justify-center text-7xl md:text-8xl transition shadow-lg
             ${selected === "FALSE" 
               ? "border-2 border-[#C75C5C] bg-[#FDECEC] text-[#C75C5C]" 
               : "bg-white border-2 border-gray-300 hover:border-[#C75C5C] hover:text-[#C75C5C]"
