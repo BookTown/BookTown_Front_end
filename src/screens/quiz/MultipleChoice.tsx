@@ -34,13 +34,13 @@ const MultipleChoice = ({ questionData, onAnswer, isLastQuestion = false, curren
       {/* 문제 텍스트 */}
       <p className="text-xl md:text-2xl pb-3">Quiz {currentNumber}. {questionData.question}</p>
       {/* 배점 표시 */}
-      <p className="text-lg md:text-xl text-[#9CAAB9] pb-6">배점: {questionData.score}점</p>
+      <p className="text-lg md:text-xl text-[#9CAAB9] pb-4">배점: {questionData.score}점</p>
       {/* 선택지 목록 */}
       <div className="space-y-4 ml-4">
         {questionData.options.map((opt, index) => (
           <label 
             key={opt.id}
-            className="flex items-center cursor-pointer pt-6"
+            className="flex items-center cursor-pointer pt-3 md:pt-6"
           >
             <div className="relative pr-2">
               <input
@@ -71,7 +71,7 @@ const MultipleChoice = ({ questionData, onAnswer, isLastQuestion = false, curren
       </div>
       
       {/* 다음/제출 버튼 */}
-      <div className="pt-12 md:pt-28 flex justify-center">
+      <div className="pt-8 md:pt-28 flex justify-center">
         <Button
           onClick={handleSubmit}
           disabled={!selectedOption}

@@ -29,9 +29,9 @@ const OxQuiz = ({ questionData, onAnswer, isLastQuestion = false, current, score
       {/* 문제 텍스트 */}
       <p className="text-xl md:text-2xl pb-3">Quiz {currentNumber}. {questionData.question}</p>
       {/* 배점 표시 */}
-      <p className="text-lg md:text-xl text-[#9CAAB9] pb-20">배점: {score}점</p>
+      <p className="text-lg md:text-xl text-[#9CAAB9] pb-4 md:pb-20">배점: {score}점</p>
       {/* O/X 버튼 */}
-      <div className="flex justify-center gap-10 mb-8">
+      <div className="flex justify-center gap-10 mb-2 md:mb-8">
         <button
           type="button"
           className={`w-36 h-32 md:w-72 md:h-56 rounded-3xl flex items-center justify-center text-7xl md:text-8xl transition shadow-lg
@@ -57,7 +57,7 @@ const OxQuiz = ({ questionData, onAnswer, isLastQuestion = false, current, score
       </div>
       
       {/* 다음/제출 버튼 */}
-      <div className="pt-28 md:pt-36 flex justify-center">
+      <div className="pt-20 md:pt-36 flex justify-center">
         <Button
           onClick={handleSubmit}
           disabled={!selected}

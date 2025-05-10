@@ -44,8 +44,8 @@ const ShortAnswer = ({ questionData, onAnswer, isLastQuestion = false, current, 
       {/* 문제 텍스트 */}
       <p className="text-xl md:text-2xl pb-3">Quiz {currentNumber}. {questionData.question}</p>
       {/* 배점 표시 */}
-      <p className="text-lg md:text-xl text-[#9CAAB9] pb-28 md:pb-32">배점: {score}점</p>
-      <div className="flex justify-center">
+      <p className="text-lg md:text-xl text-[#9CAAB9] pb-4 md:pb-20">배점: {score}점</p>
+      <div className="flex justify-center pt-24">
         <input
           type="text"
           value={input}
@@ -56,7 +56,7 @@ const ShortAnswer = ({ questionData, onAnswer, isLastQuestion = false, current, 
       </div>
       
       {/* 다음/제출 버튼 */}
-      <div className="pt-36 md:pt-44 flex justify-center">
+      <div className="pt-24 md:pt-44 flex justify-center">
         <Button
           onClick={handleSubmit}
           disabled={!input.trim()}
