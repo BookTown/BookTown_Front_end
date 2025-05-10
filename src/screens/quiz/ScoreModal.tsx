@@ -1,13 +1,27 @@
 import { useEffect } from "react";
 
+// quizResult 타입 추가
+interface QuizResult {
+  score?: number;
+  totalScore?: number;
+  correctCount?: number;
+  totalQuestions?: number;
+  [key: string]: any; // 서버에서 오는 추가 필드를 위한 인덱스 시그니처
+}
+
 interface ScoreModalProps {
   score: number;
   total: number;
   onClose: () => void;
+  quizResult?: QuizResult; 
 }
 
-const ScoreModal = ({ score, total, onClose }: ScoreModalProps) => {
-  const percentage = (score / total) * 100;
+const ScoreModal = ({ score, total, onClose, quizResult }: ScoreModalProps) => {
+  // 서버에서 받은 점수가 있으면 사용, 없으면 클라이언트 계산 점수 사용
+  const finalScore = quizResult?.score !== undefined ? quizResult.score : score;
+  const finalTotal = quizResult?.totalScore !== undefined ? quizResult.totalScore : total;
+  
+  const percentage = (finalScore / finalTotal) * 100;
   
   // 점수별 피드백 메시지와 이모티콘
   let feedback;
@@ -49,11 +63,18 @@ const ScoreModal = ({ score, total, onClose }: ScoreModalProps) => {
         <div className="bg-gray-50 p-5 rounded-lg mb-8">
           <p className="text-lg mb-1">당신의 점수</p>
           <p className="text-4xl font-bold text-[#C75C5C] mb-1">
-            {score}점 / {total}점
+            {finalScore}점 / {finalTotal}점
           </p>
           <p className="text-sm text-gray-500">
             정답률: {percentage.toFixed(0)}%
           </p>
+          
+          {/* 서버 결과에 정답 개수가 있는 경우 추가 정보 표시 */}
+          {quizResult?.correctCount !== undefined && (
+            <p className="mt-2 text-sm text-gray-600">
+              {quizResult.correctCount}문제 정답 / {quizResult.totalQuestions || total/10}문제 중
+            </p>
+          )}
         </div>
         
         <button

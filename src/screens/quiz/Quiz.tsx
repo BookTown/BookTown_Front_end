@@ -7,61 +7,90 @@ import ShortAnswer from "./ShortAnswer";
 import OxQuiz from "./OxQuiz";
 import ScoreModal from "./ScoreModal";
 import ProgressBar from "../../components/ProgressBar";
-import quizMockData from "../../mocks/quizMockData";
+import { submitQuizAnswers } from "../../api/api";
+
+interface UserAnswer {
+  quizId: number;
+  userAnswer: string;
+}
 
 const Quiz = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { type, difficulty } = location.state || {};
+  const { quizData } = location.state || {};
 
   const [quizList, setQuizList] = useState<QuizQuestion[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [score, setScore] = useState(0);
   const [showResult, setShowResult] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [userAnswers, setUserAnswers] = useState<UserAnswer[]>([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [quizResult, setQuizResult] = useState<any>(null); // quizResult 상태 추가
 
   const currentQuestion = quizList[currentIndex];
   const isLastQuestion = currentIndex === quizList.length - 1;
 
-  // 퀴즈 데이터 불러오기
+  // 퀴즈 데이터 로드
   useEffect(() => {
-    const fetchQuizData = async () => {
-      setIsLoading(true);
-      try {
-        // 실제 API 호출이라면 이런 형태
-        // const data = await fetchQuizQuestions(difficulty, type);
-        // setQuizList(data);
+    if (quizData) {
+      console.log('퀴즈 데이터 로드 완료:', quizData);
+      setQuizList(quizData);
+      setIsLoading(false);
+    } else {
+      console.error('퀴즈 데이터가 없습니다');
+      alert('퀴즈 데이터를 불러오는데 실패했습니다.');
+      navigate('/home');
+    }
+  }, [quizData, navigate]);
 
-        // 모의 데이터로 지연 시간 시뮬레이션
-        setTimeout(() => {
-          const filteredQuizzes = type 
-            ? quizMockData.filter(q => q.questionType === type && q.difficulty === difficulty)
-            : quizMockData;
-            
-          setQuizList(filteredQuizzes.slice(0, 10)); // 최대 10문제만
-          setIsLoading(false);
-        }, 2000);
-      } catch (error) {
-        console.error("퀴즈 데이터 로딩 실패:", error);
-        alert("퀴즈 데이터를 불러오는데 실패했습니다.");
-        navigate("/");
-      }
+  const handleAnswer = async (answer: string) => {
+    if (!currentQuestion) return;
+    
+    // 사용자 답변 저장
+    const newAnswer: UserAnswer = {
+      quizId: currentQuestion.id,
+      userAnswer: answer
     };
-
-    fetchQuizData();
-  }, [type, difficulty, navigate]);
-
-  const handleAnswer = (answer: string) => {
-    // 정답 확인
-    if (currentQuestion && answer.trim().toUpperCase() === currentQuestion.correctAnswer.trim().toUpperCase()) {
-      setScore((prev) => prev + currentQuestion.score);
+    
+    setUserAnswers(prev => [...prev, newAnswer]);
+    
+    // 클라이언트 측에서 점수 계산
+    if (answer.trim().toUpperCase() === currentQuestion.correctAnswer.trim().toUpperCase()) {
+      setScore(prev => prev + currentQuestion.score);
     }
 
-    // 마지막 문제인지 확인
+    // 마지막 문제인 경우 결과 표시
     if (isLastQuestion) {
-      setShowResult(true);
+      try {
+        setIsSubmitting(true);
+        
+        // 모든 답변을 서버에 제출
+        const allAnswers = [...userAnswers, newAnswer];
+        
+        const submissionData = allAnswers.map(item => ({
+          quizId: item.quizId,
+          answer: item.userAnswer
+        }));
+        
+        const result = await submitQuizAnswers(submissionData);
+        
+        setQuizResult(result);
+        // 서버 점수 있으면 사용, 없으면 클라이언트 점수 유지
+        if (result?.score !== undefined) {
+          setScore(result.score);
+        }
+        
+        setShowResult(true);
+      } catch (error) {
+        console.error("퀴즈 제출 중 오류 발생:", error);
+        setShowResult(true); // 오류 발생해도 결과는 보여줌
+      } finally {
+        setIsSubmitting(false);
+      }
     } else {
-      setCurrentIndex((prev) => prev + 1);
+      // 다음 문제로 이동
+      setCurrentIndex(prev => prev + 1);
     }
   };
 
@@ -71,10 +100,11 @@ const Quiz = () => {
   };
 
   // 로딩 중 상태 표시
-  if (isLoading) {
+  if (isLoading || isSubmitting) {
     return (
       <>
-        <div className="flex flex-col items-center justify-center my-auto">
+        <TopTitle />
+        <div className="flex flex-col items-center justify-center h-[80vh]">
           <div className="w-64 h-64 md:w-96 md:h-96">
             <img 
               src="/images/Loader.gif" 
@@ -82,7 +112,9 @@ const Quiz = () => {
               className="w-full h-full"
             />
           </div>
-          <p className="mt-4 text-2xl md:text-5xl text-center">고을이가 문제 생성중...</p>
+          <p className="mt-4 text-2xl md:text-5xl text-center">
+            {isSubmitting ? "퀴즈 채점중..." : "고을이가 문제 생성중..."}
+          </p>
         </div>
       </>
     );
@@ -148,6 +180,7 @@ const Quiz = () => {
             score={score}
             total={quizList.reduce((sum, q) => sum + q.score, 0)}
             onClose={handleResultClose}
+            quizResult={quizResult} // 이제 정의된 상태 전달
           />
         )}
       </div>

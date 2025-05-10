@@ -208,3 +208,41 @@ export const searchBooks = async (query: string): Promise<IBookSearch> => {
     return []; // 에러 시 빈 배열 반환해도 무방 (앱 크래시 방지)
   }
 };
+
+// 퀴즈 생성 API
+export const generateQuiz = async (
+  bookId: number | undefined, 
+  type: "MULTIPLE_CHOICE" | "SHORT_ANSWER" | "TRUE_FALSE", 
+  difficulty: "EASY" | "MEDIUM" | "HARD"
+) => {
+  console.log('퀴즈 생성 API 호출 시작:', { bookId, type, difficulty });
+  try {
+    const response = await axiosApi.post('/quiz/generate', {
+      bookId,
+      type,
+      difficulty
+    });
+    
+    console.log('퀴즈 생성 API 응답 성공:', response.data);
+    return response.data;
+  } catch (error) {
+    console.error('퀴즈 생성 API 오류:', error);
+    throw error;
+  }
+};
+
+// 퀴즈 답변 제출 및 채점 API
+export const submitQuizAnswers = async (answers: {
+  quizId: number;
+  answer: string;
+}[]) => {
+  console.log('퀴즈 답변 제출 API 호출 시작:', answers);
+  try {
+    const response = await axiosApi.post('/quiz/submit/batch', { answers });
+    console.log('퀴즈 채점 결과:', response.data);
+    return response.data;
+  } catch (error) {
+    console.error('퀴즈 제출 API 오류:', error);
+    throw error;
+  }
+};
