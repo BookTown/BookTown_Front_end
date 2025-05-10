@@ -37,7 +37,7 @@ const QuizEntry = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#FFFAF0] pt-8 px-6">
+    <div className="min-h-screen bg-[#FFFAF0] pt-4 px-4 md:px-2 md:pt-10">
       {/* 뒤로 가기 버튼 */}
       <div className="">
         <button
@@ -48,7 +48,7 @@ const QuizEntry = () => {
           <ArrowLeft size={32} />
         </button>
         {/* 북타운 마스코트 */}
-        <div className="flex flex-col items-center justify-center mt-6 mb-8">
+        <div className="flex flex-col items-center justify-center mt-6 md:mt-10 mb-8">
           <div className="w-64 h-64 md:w-80 md:h-80">
             <img 
               src="/images/Loader.gif" 
@@ -57,12 +57,16 @@ const QuizEntry = () => {
             />
           </div>
           
-          {/* 안내 텍스트 추가 (스크린샷처럼) */}
-          <p className="text-4xl md:text-5xl mt-10 mb-4 text-center">
+          {/* 안내 텍스트 */}
+          <p className="text-4xl md:text-5xl mt-5 md:mt-10 text-center">
             {step === "difficulty" 
               ? "난이도를 골라주세요 !!"
               : "퀴즈 유형을 골라주세요 !!"
             }
+          </p>
+          <p className="text-lg md:text-xl text-center text-[#9CAAB9]">
+            퀴즈 난이도와 유형에 따라 점수가 조금씩 달라요!<br />
+            어려운 문제일수록 점수가 더 높아요 🧠✨
           </p>
         </div>
         
