@@ -74,3 +74,29 @@ export const deleteProfileImage = async () => {
     throw error;
   }
 };
+
+// 사용자 퀴즈 히스토리 조회
+export const fetchUserQuizHistory = async (userId: number) => {
+  console.log('사용자 퀴즈 히스토리 조회 API 호출 시작');
+  try {
+    const res = await axiosApi.get(`/history/${userId}`);
+    console.log("✅ 퀴즈 히스토리 조회 완료:", res.data);
+    return res.data;
+  } catch (error: any) {
+    console.error("❌ 퀴즈 히스토리 조회 실패:", error.response || error.message);
+    throw error;
+  }
+};
+
+// 특정 책에 대한 퀴즈 히스토리 상세 조회
+export const fetchBookQuizHistoryDetail = async (userId: number, bookId: number) => {
+  console.log(`책 퀴즈 상세 히스토리 조회 API 호출 시작 (userId: ${userId}, bookId: ${bookId})`);
+  try {
+    const res = await axiosApi.get(`/history/${userId}/book/${bookId}`);
+    console.log("✅ 책 퀴즈 상세 히스토리 조회 완료:", res.data);
+    return res.data;
+  } catch (error: any) {
+    console.error("❌ 책 퀴즈 상세 히스토리 조회 실패:", error.response || error.message);
+    throw error;
+  }
+};

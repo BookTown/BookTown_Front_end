@@ -1,82 +1,145 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useEffect } from "react";
 import ListFrame from "../../components/ListFrame";
 import QuizCard from "../../components/QuizCard";
 import QuizModal from "../../components/QuizModal";
-import { mockQuizHistory } from "../../mocks/mockQuiz";
+import { fetchUserQuizHistory, fetchUserProfile } from "../../api/user";
+import { fetchBookDetailById } from "../../api/api"; // 단일 책 정보 API import
+import { sampleQuizData } from "../../mocks/mockQuiz"; // 퀴즈 데이터는 여전히 사용
 
-// 샘플 퀴즈 데이터
-const sampleQuizData = {
-  question: "돈키호테가 처음으로 만난 사람은 누구인가?",
-  options: [
-    { id: 1, text: "산초 판자", index: 0 },
-    { id: 2, text: "로시난테", index: 1 },
-    { id: 3, text: "귀족", index: 2 },
-    { id: 4, text: "사냥꾼", index: 3 }
-  ],
-  correctAnswerIndex: 2,
-  explanation: "돈키호테는 모험을 시작한 후 처음으로 귀족을 만나게 됩니다."
-};
+// 퀴즈 히스토리 인터페이스 정의
+interface QuizHistoryItem {
+  id: number; // 퀴즈 기록 자체의 ID (API 응답에 null일 수 있으므로 주의)
+  bookId: number;
+  bookTitle: string;
+  score: number;
+  submittedAt: string;
+  author?: string; 
+  imageUrl?: string; 
+  // QuizCard에 필요한 추가 필드
+  correctCount?: number;
+  totalCount?: number;
+}
 
 const HistoryMain = () => {
+  const [quizHistoryList, setQuizHistoryList] = useState<QuizHistoryItem[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  
   const [selectedBook, setSelectedBook] = useState<{
     id: number;
     title: string;
-    author: string;
-    imageUrl: string;
+    author?: string;
+    imageUrl?: string;
   } | null>(null);
   
   // 모달 상태 관리
   const [showQuizModal, setShowQuizModal] = useState(false);
   
-  // 퀴즈 상태 관리 (실제로는 API 호출로 가져올 데이터)
+  // 퀴즈 상태 관리
   const [currentQuizIndex, setCurrentQuizIndex] = useState(0);
   const [selectedAnswerIndex, setSelectedAnswerIndex] = useState<number | undefined>(undefined);
 
-  // mockQuiz에서 데이터 가져오기 (고정된 점수 사용)
-  const quizHistoryList = useMemo(() => {
-    return mockQuizHistory.slice(0, 10).map((quiz, index) => ({
-      id: index + 1,
-      bookId: quiz.id,
-      title: quiz.title,
-      author: quiz.author,
-      imageUrl: quiz.imageUrl,
-      correctCount: quiz.correctCount,
-      totalCount: 10,
-      solvedAt: new Date(Date.now() - index * 86400000).toISOString(),
-    }));
+  useEffect(() => {
+    const loadQuizHistory = async () => {
+      try {
+        setIsLoading(true);
+        
+        const userProfile = await fetchUserProfile();
+        const userId = userProfile.id;
+        
+        const historyData = await fetchUserQuizHistory(userId);
+        
+        // 각 히스토리 항목에 대해 책 상세 정보 조회
+        const formattedDataPromises = historyData.map(async (item: any) => {
+          let author = '작자미상';
+          let imageUrl = '/images/default-book.png';
+
+          try {
+            const bookDetail = await fetchBookDetailById(item.bookId);
+            if (bookDetail) {
+              author = bookDetail.author || author;
+              imageUrl = bookDetail.thumbnailUrl || imageUrl;
+            }
+          } catch (bookDetailError) {
+            console.error(`Book ID ${item.bookId} 상세 정보 조회 실패:`, bookDetailError);
+            // 책 정보 조회 실패 시 기본값 사용
+          }
+          
+          return {
+            id: item.id, // API 응답에 따라 null일 수 있음
+            bookId: item.bookId,
+            bookTitle: item.bookTitle,
+            score: item.score,
+            submittedAt: item.submittedAt,
+            author,
+            imageUrl,
+            correctCount: Math.floor(item.score / 10), // 예시 점수 계산
+            totalCount: 10, // 예시 전체 문제 수
+          };
+        });
+
+        const formattedData = await Promise.all(formattedDataPromises);
+        
+        setQuizHistoryList(formattedData);
+      } catch (err) {
+        console.error('퀴즈 히스토리 로딩 오류:', err);
+        setError('퀴즈 히스토리를 불러오는 중 오류가 발생했습니다.');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadQuizHistory();
   }, []);
 
   // 퀴즈 카드 클릭 핸들러
-  const handleQuizCardSelect = (book: { id: number; title: string; author: string; imageUrl: string }) => {
+  const handleQuizCardSelect = (book: { id: number; title: string; author?: string; imageUrl?: string }) => {
     setSelectedBook(book);
-    setShowQuizModal(true); // QuizModal 표시
-    
-    // 실제 구현에서는 여기서 해당 책의 퀴즈 데이터를 불러올 수 있음
+    setShowQuizModal(true);
     setCurrentQuizIndex(0);
-    setSelectedAnswerIndex(1); // 예시로 특정 답변 선택 상태로 설정
+    setSelectedAnswerIndex(undefined); // 초기에는 선택된 답변 없음
   };
   
-
-  // 퀴즈 모달 핸들러
+  // 퀴즈 모달 핸들러들
   const handleQuizClose = () => {
     setShowQuizModal(false);
   };
   
   const handleNextQuiz = () => {
-    // 다음 퀴즈로 이동하는 로직 (실제로는 여러 퀴즈 데이터가 있을 경우)
-    if (currentQuizIndex < 2) { // 예시로 최대 3개 퀴즈로 제한
+    // sampleQuizData.options.length를 기반으로 하거나, 실제 퀴즈 데이터 길이를 사용해야 합니다.
+    // 현재는 예시로 3개의 퀴즈가 있다고 가정 (인덱스 0, 1, 2)
+    if (currentQuizIndex < 2) { 
       setCurrentQuizIndex(prev => prev + 1);
-      setSelectedAnswerIndex(undefined); // 새 퀴즈에서는 선택 초기화
+      setSelectedAnswerIndex(undefined);
     } else {
-      setShowQuizModal(false); // 마지막 퀴즈면 모달 닫기
+      setShowQuizModal(false); // 마지막 퀴즈 후 모달 닫기
     }
   };
   
   const handlePrevQuiz = () => {
     if (currentQuizIndex > 0) {
       setCurrentQuizIndex(prev => prev - 1);
+      setSelectedAnswerIndex(undefined); // 이전 문제로 가면 선택 초기화
     }
   };
+
+  // 로딩 중 표시
+  if (isLoading) {
+    return (
+      <div className="pt-14 md:pt-12 flex justify-center items-center h-[50vh]">
+        <p className="text-xl">로딩 중...</p>
+      </div>
+    );
+  }
+
+  // 에러 표시
+  if (error) {
+    return (
+      <div className="pt-14 md:pt-12 flex justify-center items-center h-[50vh]">
+        <p className="text-xl text-red-500">{error}</p>
+      </div>
+    );
+  }
 
   return (
     <div className="pt-14 md:pt-12">
@@ -89,14 +152,19 @@ const HistoryMain = () => {
         {quizHistoryList.length > 0 
           ? quizHistoryList.map((quiz) => (
               <QuizCard
-                key={quiz.id}
+                key={quiz.id || quiz.bookId} // quiz.id가 null일 수 있으므로 bookId를 fallback으로 사용
                 id={quiz.bookId}
-                title={quiz.title}
-                author={quiz.author}
-                thumbnailUrl={quiz.imageUrl}
-                correctCount={quiz.correctCount}
-                totalCount={quiz.totalCount}
-                onQuizSelect={handleQuizCardSelect} // 수정된 핸들러 사용
+                title={quiz.bookTitle}
+                author={quiz.author || '작자미상'}
+                thumbnailUrl={quiz.imageUrl || '/images/default-book.png'}
+                correctCount={quiz.correctCount || 0}
+                totalCount={quiz.totalCount || 10}
+                onQuizSelect={() => handleQuizCardSelect({
+                  id: quiz.bookId,
+                  title: quiz.bookTitle,
+                  author: quiz.author,
+                  imageUrl: quiz.imageUrl
+                })}
                 size="lg"
               />
             ))
@@ -112,17 +180,18 @@ const HistoryMain = () => {
       {showQuizModal && selectedBook && (
         <QuizModal
           bookTitle={selectedBook.title}
-          score={Math.floor(Math.random() * 50) + 50} // 예시 점수
+          score={quizHistoryList.find(q => q.bookId === selectedBook.id)?.score || 0} // 선택된 책의 점수 찾기
           quizNumber={currentQuizIndex + 1}
-          question={sampleQuizData.question}
-          options={sampleQuizData.options}
-          correctAnswerIndex={sampleQuizData.correctAnswerIndex}
+          question={sampleQuizData.question} // 실제 퀴즈 데이터로 교체 필요
+          options={sampleQuizData.options} // 실제 퀴즈 데이터로 교체 필요
+          correctAnswerIndex={sampleQuizData.correctAnswerIndex} // 실제 퀴즈 데이터로 교체 필요
           selectedAnswerIndex={selectedAnswerIndex}
-          explanation={sampleQuizData.explanation}
+          explanation={sampleQuizData.explanation} // 실제 퀴즈 데이터로 교체 필요
           onClose={handleQuizClose}
           onNext={handleNextQuiz}
           onPrev={handlePrevQuiz}
-          isLastQuestion={currentQuizIndex === 2} // 예시로 3번째가 마지막
+          isLastQuestion={currentQuizIndex === 2} // 실제 퀴즈 개수에 따라 동적으로 변경 필요
+          isFirstQuestion={currentQuizIndex === 0}
         />
       )}
     </div>

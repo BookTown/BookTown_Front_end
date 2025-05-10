@@ -16,6 +16,19 @@ const getRandomDifficulty = (): Difficulty => {
   return difficulties[Math.floor(Math.random() * difficulties.length)];
 };
 
+// 샘플 퀴즈 데이터 (QuizModal에 필요한 형식)
+export const sampleQuizData = {
+  question: "로빈슨 크루소는 무인도에서 몇 년간 생활했나요?",
+  options: [
+    { id: 1, text: "20년", index: 0 },
+    { id: 2, text: "28년", index: 1 },
+    { id: 3, text: "15년", index: 2 },
+    { id: 4, text: "10년", index: 3 }
+  ],
+  correctAnswerIndex: 1, // 두 번째 옵션(28년)이 정답
+  explanation: "로빈슨 크루소는 무인도에서 총 28년간 생활했습니다."
+};
+
 // 퀴즈 히스토리 데이터 생성
 export const mockQuizHistory = mockBooks.map(book => ({
   id: book.id,
