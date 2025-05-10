@@ -29,12 +29,12 @@ const OxQuiz = ({ questionData, onAnswer, isLastQuestion = false, current, score
       {/* 문제 텍스트 */}
       <p className="text-xl md:text-2xl pb-3">Quiz {currentNumber}. {questionData.question}</p>
       {/* 배점 표시 */}
-      <p className="text-lg md:text-xl text-[#9CAAB9] pb-4 md:pb-20">배점: {score}점</p>
+      <p className="text-lg md:text-xl text-[#9CAAB9] pb-4 md:pb-12">배점: {score}점</p>
       {/* O/X 버튼 */}
-      <div className="flex justify-center gap-10 mb-2 md:mb-8">
+      <div className="flex justify-center gap-10 md:gap-16 mb-2 md:mb-8">
         <button
           type="button"
-          className={`w-36 h-32 md:w-72 md:h-56 rounded-3xl flex items-center justify-center text-7xl md:text-8xl transition shadow-lg
+          className={`w-36 h-32 md:w-64 md:h-48 rounded-3xl flex items-center justify-center text-7xl md:text-8xl transition shadow-lg
             ${selected === "TRUE" 
               ? "border-2 border-[#C75C5C] bg-[#FDECEC] text-[#C75C5C]" 
               : "bg-white border-2 border-gray-300 hover:border-[#C75C5C] hover:text-[#C75C5C]"

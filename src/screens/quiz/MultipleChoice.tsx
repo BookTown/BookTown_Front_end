@@ -34,7 +34,7 @@ const MultipleChoice = ({ questionData, onAnswer, isLastQuestion = false, curren
       {/* 문제 텍스트 */}
       <p className="text-xl md:text-2xl pb-3">Quiz {currentNumber}. {questionData.question}</p>
       {/* 배점 표시 */}
-      <p className="text-lg md:text-xl text-[#9CAAB9] pb-4">배점: {questionData.score}점</p>
+      <p className="text-lg md:text-xl text-[#9CAAB9] pb-4 md:pb-8">배점: {questionData.score}점</p>
       {/* 선택지 목록 */}
       <div className="space-y-4 ml-4">
         {questionData.options.map((opt, index) => (
