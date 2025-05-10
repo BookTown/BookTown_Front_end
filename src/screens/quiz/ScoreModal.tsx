@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-
+import Button from "../../components/Button";
 
 interface QuizResult {
   score?: number;
@@ -28,19 +28,18 @@ const ScoreModal = ({ score, total, onClose, quizResult }: ScoreModalProps) => {
   const finalScore = quizResult?.score !== undefined ? quizResult.score : score;
   const finalTotal = quizResult?.totalScore !== undefined ? quizResult.totalScore : total;
   
-  const percentage = (finalScore / finalTotal) * 100;
-  
-  // 점수별 피드백 메시지와 이모티콘
   let feedback;
   let emoji;
   
-  if (percentage === 100) {
+  const scoreRatio = finalScore / finalTotal;
+  
+  if (scoreRatio === 1) {
     feedback = "완벽해요! 모든 문제를 맞히셨습니다!";
     emoji = "🏆";
-  } else if (percentage >= 70) {
+  } else if (scoreRatio >= 0.7) {
     feedback = "훌륭해요! 대부분의 문제를 맞히셨습니다!";
     emoji = "🎉";
-  } else if (percentage >= 40) {
+  } else if (scoreRatio >= 0.4) {
     feedback = "좋아요! 다음에는 더 잘할 수 있을 거예요.";
     emoji = "👍";
   } else {
@@ -75,19 +74,14 @@ const ScoreModal = ({ score, total, onClose, quizResult }: ScoreModalProps) => {
           <p className="text-4xl font-bold text-[#C75C5C] mb-1">
             {finalScore}점 / {finalTotal}점
           </p>
-          <p className="text-sm text-gray-500">
-            정답률: {percentage.toFixed(0)}%
-          </p>
           
-          {/* 서버 결과에 정답 개수가 있는 경우 추가 정보 표시 */}
           {quizResult?.correctCount !== undefined && (
             <p className="mt-2 text-sm text-gray-600">
-              {quizResult.correctCount}문제 정답 / {quizResult.totalQuestions || total/10}문제 중
+              {quizResult.correctCount}문제 맞음 / {quizResult.totalQuestions || total/10}문제 중
             </p>
           )}
         </div>
         
-        {/* 상세 결과 토글 버튼 (API 응답으로 정답 여부 배열이 있는 경우만) */}
         {hasDetailedResults && (
           <div className="mb-6">
             <button 
@@ -120,12 +114,13 @@ const ScoreModal = ({ score, total, onClose, quizResult }: ScoreModalProps) => {
           </div>
         )}
         
-        <button
-          className="w-full bg-[#C75C5C] hover:bg-[#b54d4d] text-white py-3 rounded-lg text-lg font-medium transition"
+        <Button
           onClick={onClose}
+          size="lg"
+          color="pink"
         >
           확인
-        </button>
+        </Button>
       </div>
     </div>
   );

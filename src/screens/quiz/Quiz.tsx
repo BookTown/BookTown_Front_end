@@ -210,6 +210,7 @@ const Quiz = () => {
         onAnswer={handleAnswer} 
         isLastQuestion={isLastQuestion}
         current={currentIndex + 1}
+        score={currentQuestion.score} // 배점 정보 전달
       />
     ),
     SHORT_ANSWER: (
@@ -219,6 +220,7 @@ const Quiz = () => {
         onAnswer={handleAnswer} 
         isLastQuestion={isLastQuestion}
         current={currentIndex + 1}
+        score={currentQuestion.score} // 배점 정보 전달
       />
     ),
     TRUE_FALSE: (
@@ -228,6 +230,7 @@ const Quiz = () => {
         onAnswer={handleAnswer} 
         isLastQuestion={isLastQuestion}
         current={currentIndex + 1}
+        score={currentQuestion.score} // 배점 정보 전달
       />
     )
   };

@@ -7,9 +7,10 @@ interface Props {
   onAnswer: (answer: string) => void;
   isLastQuestion?: boolean;
   current: number;
+  score: number;
 }
 
-const OxQuiz = ({ questionData, onAnswer, isLastQuestion = false, current }: Props) => {
+const OxQuiz = ({ questionData, onAnswer, isLastQuestion = false, current, score }: Props) => {
   const [selected, setSelected] = useState<"TRUE" | "FALSE" | null>(null);
   const currentNumber = current;
 
@@ -27,7 +28,8 @@ const OxQuiz = ({ questionData, onAnswer, isLastQuestion = false, current }: Pro
     <div className="">
       {/* 문제 텍스트 */}
       <p className="text-xl md:text-2xl pb-20">Quiz {currentNumber}. {questionData.question}</p>
-      
+      {/* 배점 표시 */}
+      <p className="text-sm text-[#9CAAB9] mb-4">배점: {score}점</p>
       {/* O/X 버튼 */}
       <div className="flex justify-center gap-10 mb-8">
         <button

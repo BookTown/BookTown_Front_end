@@ -7,9 +7,10 @@ interface Props {
   onAnswer: (answer: string) => void;
   isLastQuestion?: boolean;
   current: number;
+  score: number;
 }
 
-const ShortAnswer = ({ questionData, onAnswer, isLastQuestion = false, current }: Props) => {
+const ShortAnswer = ({ questionData, onAnswer, isLastQuestion = false, current, score }: Props) => {
   const [input, setInput] = useState("");
   const currentNumber = current;
 
@@ -42,7 +43,8 @@ const ShortAnswer = ({ questionData, onAnswer, isLastQuestion = false, current }
     <div className="">
       {/* 문제 텍스트 */}
       <p className="text-xl md:text-2xl pb-28 md:pb-32">Quiz {currentNumber}. {questionData.question}</p>
-      
+      {/* 배점 표시 */}
+      <p className="text-sm text-[#9CAAB9] mb-4">배점: {score}점</p>
       <div className="flex justify-center">
         <input
           type="text"
