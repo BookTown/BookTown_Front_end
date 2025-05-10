@@ -42,9 +42,9 @@ const ShortAnswer = ({ questionData, onAnswer, isLastQuestion = false, current, 
   return (
     <div className="">
       {/* 문제 텍스트 */}
-      <p className="text-xl md:text-2xl pb-28 md:pb-32">Quiz {currentNumber}. {questionData.question}</p>
+      <p className="text-xl md:text-2xl pb-3">Quiz {currentNumber}. {questionData.question}</p>
       {/* 배점 표시 */}
-      <p className="text-sm text-[#9CAAB9] mb-4">배점: {score}점</p>
+      <p className="text-lg md:text-xl text-[#9CAAB9] pb-28 md:pb-32">배점: {score}점</p>
       <div className="flex justify-center">
         <input
           type="text"

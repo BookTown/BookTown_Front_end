@@ -77,7 +77,7 @@ const ScoreModal = ({ score, total, onClose, quizResult }: ScoreModalProps) => {
           
           {quizResult?.correctCount !== undefined && (
             <p className="mt-2 text-sm text-gray-600">
-              {quizResult.correctCount}문제 맞음 / {quizResult.totalQuestions || total/10}문제 중
+              {quizResult.totalQuestions || total/10}문제 중 {quizResult.correctCount}문제 맞음 
             </p>
           )}
         </div>
