@@ -7,6 +7,7 @@ import OxQuiz from "./OxQuiz";
 import ScoreModal from "./ScoreModal";
 import ProgressBar from "../../components/ProgressBar";
 import { generateQuiz, submitQuizAnswers } from "../../api/api";
+import TopTitle from "../../components/TopTitle";
 
 interface UserAnswer {
   quizId: number;
@@ -193,6 +194,7 @@ const Quiz = () => {
   const quizTypeMap: Record<string, React.ReactElement> = {
     MULTIPLE_CHOICE: (
       <MultipleChoice 
+        key={`question-${currentQuestion.id}-${currentIndex}`}
         questionData={currentQuestion as any} 
         onAnswer={handleAnswer} 
         isLastQuestion={isLastQuestion}
@@ -201,6 +203,7 @@ const Quiz = () => {
     ),
     SHORT_ANSWER: (
       <ShortAnswer 
+        key={`question-${currentQuestion.id}-${currentIndex}`}
         questionData={currentQuestion as any} 
         onAnswer={handleAnswer} 
         isLastQuestion={isLastQuestion}
@@ -209,6 +212,7 @@ const Quiz = () => {
     ),
     TRUE_FALSE: (
       <OxQuiz 
+        key={`question-${currentQuestion.id}-${currentIndex}`}
         questionData={currentQuestion as any} 
         onAnswer={handleAnswer} 
         isLastQuestion={isLastQuestion}
@@ -219,6 +223,7 @@ const Quiz = () => {
 
   return (
     <>
+      <TopTitle />
       <div className="pt-24 md:w-[650px] px-6 md:mx-auto">
         <ProgressBar current={currentIndex + 1} total={quizList.length} />
         
