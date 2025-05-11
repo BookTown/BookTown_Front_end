@@ -15,9 +15,7 @@ interface QuizHistoryItem {
   submittedAt: string;
   author?: string; 
   imageUrl?: string; 
-  // QuizCard에 필요한 추가 필드
-  correctCount?: number;
-  totalCount?: number;
+  // correctCount와 totalCount 필드 제거
 }
 
 const HistoryMain = () => {
@@ -73,8 +71,7 @@ const HistoryMain = () => {
             submittedAt: item.submittedAt,
             author,
             imageUrl,
-            correctCount: Math.floor(item.score / 10), // 예시 점수 계산
-            totalCount: 10, // 예시 전체 문제 수
+            // correctCount와 totalCount 계산 제거
           };
         });
 
@@ -157,8 +154,7 @@ const HistoryMain = () => {
                 title={quiz.bookTitle}
                 author={quiz.author || '작자미상'}
                 thumbnailUrl={quiz.imageUrl || '/images/default-book.png'}
-                correctCount={quiz.correctCount || 0}
-                totalCount={quiz.totalCount || 10}
+                score={quiz.score} // correctCount, totalCount 대신 score로 변경
                 onQuizSelect={() => handleQuizCardSelect({
                   id: quiz.bookId,
                   title: quiz.bookTitle,

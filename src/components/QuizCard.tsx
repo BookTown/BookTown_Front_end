@@ -5,10 +5,9 @@ interface QuizCardProps {
   title: string;
   author: string;
   thumbnailUrl: string;
+  score: number;
   onQuizSelect?: (quiz: { id: number; title: string; author: string; imageUrl: string }) => void;
   size?: "sm" | "lg";
-  correctCount: number;
-  totalCount: number;
 }
 
 const QuizCard: React.FC<QuizCardProps> = ({
@@ -16,10 +15,9 @@ const QuizCard: React.FC<QuizCardProps> = ({
   title,
   author,
   thumbnailUrl,
+  score,
   onQuizSelect,
-  size = "sm",
-  correctCount,
-  totalCount
+  size = "sm"
 }) => {
   // 크기별 스타일 설정
   const cardStyles = {
@@ -53,14 +51,6 @@ const QuizCard: React.FC<QuizCardProps> = ({
     }
   }, [id, title, author, thumbnailUrl, onQuizSelect]);
 
-  // 점수에 따른 색상 결정
-  const getScoreColor = () => {
-    const percentage = (correctCount / totalCount) * 100;
-    if (percentage >= 80) return "text-[#4CAF50]"; // 80% 이상 초록색
-    if (percentage >= 50) return "text-[#FFC107]"; // 50% 이상 노란색
-    return "text-[#F44336]"; // 50% 미만 빨간색
-  };
-
   return (
     <div
       className={`${styles.container} cursor-pointer transition-transform duration-200 hover:scale-105`}
@@ -79,8 +69,8 @@ const QuizCard: React.FC<QuizCardProps> = ({
           <h3 className={`${styles.title} font-medium truncate`}>{title}</h3>
           <p className={`${styles.author} text-[#9CAAB9] truncate`}>{author}</p>
         </div>
-        <span className={`${styles.score} ml-4 ${getScoreColor()} whitespace-nowrap`}>
-          {correctCount}/{totalCount}
+        <span className={`${styles.score} ml-4 text-[#4B8E96] whitespace-nowrap`}>
+          {score}점
         </span>
       </div>
     </div>
