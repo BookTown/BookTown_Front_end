@@ -30,10 +30,10 @@ const OxQuiz: React.FC<QuestionComponentProps> = ({
       onSubmit={handleSubmit}
       isDisabled={!selected}
     >
-      <div className="flex justify-center gap-10 md:gap-16 mb-2 md:mb-8">
+      <div className="flex justify-center gap-10 md:gap-16 mb-2 md:mb-0">
         <button
           type="button"
-          className={`w-36 h-32 md:w-64 md:h-48 rounded-3xl flex items-center justify-center text-7xl md:text-8xl transition shadow-lg
+          className={`w-36 h-32 md:w-64 md:h-56 rounded-3xl flex items-center justify-center text-7xl md:text-8xl transition shadow-lg
             ${
               selected === "TRUE"
                 ? "border-2 border-[#C75C5C] bg-[#FDECEC] text-[#C75C5C]"
@@ -45,7 +45,7 @@ const OxQuiz: React.FC<QuestionComponentProps> = ({
         </button>
         <button
           type="button"
-          className={`w-36 h-32 md:w-64 md:h-48 rounded-3xl flex items-center justify-center text-7xl md:text-8xl transition shadow-lg
+          className={`w-36 h-32 md:w-64 md:h-56 rounded-3xl flex items-center justify-center text-7xl md:text-8xl transition shadow-lg
             ${
               selected === "FALSE"
                 ? "border-2 border-[#C75C5C] bg-[#FDECEC] text-[#C75C5C]"
