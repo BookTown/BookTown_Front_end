@@ -145,9 +145,9 @@ const QuizModal: React.FC<QuizModalProps> = ({
             
             {/* 일반 텍스트 답변인 경우 */}
             {!isOxQuiz(currentSubmission.correctAnswer) && (
-              <div className="space-y-3 mb-4">
+              <div className="space-y-3 mb-4">    
                 {/* 객관식인 경우 (options가 있는 경우) */}
-                {currentSubmission.options ? (
+                {Array.isArray(currentSubmission.options) && currentSubmission.options.length > 0 ? (
                   <MultipleChoiceOptions currentSubmission={currentSubmission} />
                 ) : (
                   /* 주관식인 경우 */
