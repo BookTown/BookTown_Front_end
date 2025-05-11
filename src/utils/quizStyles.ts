@@ -9,7 +9,11 @@ export const getOptionStyle = (status: 'correct' | 'wrong' | 'default'): string 
   }
 };
 
-export const getStatusBadge = (status: 'correct' | 'wrong') => {
+export const getStatusBadge = (status: 'correct' | 'wrong' | 'default') => {
+  if (status === 'default') {
+    return { className: '', text: '' };
+  }
+  
   return {
     className: status === 'correct' 
       ? 'bg-[#4B8E96] text-white' 

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { QuizSubmission } from '../interfaces/quizInterface';
 import { getOptionStyle } from '../utils/quizStyles';
 
@@ -7,6 +7,15 @@ interface OxQuizOptionsProps {
 }
 
 const OxQuizOptions: React.FC<OxQuizOptionsProps> = ({ currentSubmission }) => {
+  // 컴포넌트 마운트 시 로그 출력
+  useEffect(() => {
+    console.log("OxQuizOptions 렌더링:", { 
+      currentSubmission,
+      correctAnswer: currentSubmission.correctAnswer,
+      userAnswer: currentSubmission.userAnswer
+    });
+  }, [currentSubmission]);
+
   const { correct, correctAnswer, userAnswer } = currentSubmission;
 
   // OX 옵션 렌더링 함수
