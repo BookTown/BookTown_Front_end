@@ -65,7 +65,7 @@ const QuizModal: React.FC<QuizModalProps> = ({
   );
 
   // 퀴즈 렌더링
-  const renderQuiz = (submission: QuizSubmission & { explanation?: string }) => {
+  const renderQuiz = (submission: QuizSubmission) => {
     const quizType = determineQuizType(submission);
     
     return (
@@ -86,7 +86,7 @@ const QuizModal: React.FC<QuizModalProps> = ({
         <p className="mb-5 text-sm">{submission.question}</p>
         
         {/* 퀴즈 유형에 따른 컴포넌트 렌더링 */}
-        {quizType === QuizType.OX_QUIZ && (
+        {quizType === QuizType.TRUE_FALSE && (
           <OxQuizOptions currentSubmission={submission} />
         )}
         

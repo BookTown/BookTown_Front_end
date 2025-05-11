@@ -6,7 +6,6 @@ interface MultipleChoiceOptionsProps {
   currentSubmission: QuizSubmission;
 }
 
-
 const MultipleChoiceOptions: React.FC<MultipleChoiceOptionsProps> = ({ currentSubmission }) => {
   // 옵션 레이블 생성 함수
   const getOptionLabel = (index: number): string => {
@@ -19,21 +18,19 @@ const MultipleChoiceOptions: React.FC<MultipleChoiceOptionsProps> = ({ currentSu
     const isCorrectAnswer = option === currentSubmission.correctAnswer;
     
     if (isCorrectAnswer) return 'correct';
-    if (isUserAnswer && !currentSubmission.correct) return 'wrong';
+    if (isUserAnswer && !isCorrectAnswer) return 'wrong';
     return 'default';
   };
   
   // options가 없거나 빈 배열인 경우 확인
   if (!currentSubmission.options || currentSubmission.options.length === 0) {
-    console.error('No options found for multiple choice question', currentSubmission);
     return <div>선택지 정보를 불러올 수 없습니다.</div>;
   }
   
   return (
     <div className="space-y-3 mb-4">
       {currentSubmission.options.map((option, index) => {
-        // 타입 안전하게 처리
-        const optionText = typeof option === 'string' ? option : (option as any).text || String(option);
+        const optionText = option; // 이미 string 형태로 제공됨
         const status = getOptionStatus(optionText);
         const showBadge = status !== 'default';
         
@@ -47,7 +44,7 @@ const MultipleChoiceOptions: React.FC<MultipleChoiceOptionsProps> = ({ currentSu
               <div className="flex-1">{optionText}</div>
               
               {showBadge && (
-                <span className={`absolute right-2 top-1/2 -translate-y-1/2 ${getStatusBadge(status).className} text-xs px-2 py-0.5 rounded-md`}>
+                <span className={`ml-2 px-2 py-0.5 text-xs rounded-full ${getStatusBadge(status).className}`}>
                   {getStatusBadge(status).text}
                 </span>
               )}

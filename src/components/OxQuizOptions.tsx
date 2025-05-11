@@ -15,16 +15,16 @@ const OxQuizOptions: React.FC<OxQuizOptionsProps> = ({ currentSubmission }) => {
     const isUserAnswer = userAnswer === value;
     
     // 상태에 따른 스타일 결정
-    let status = 'default';
+    let status: 'correct' | 'wrong' | 'default' = 'default';
     if (isCorrectAnswer) status = 'correct';
     else if (isUserAnswer && !correct) status = 'wrong';
     
     return (
-      <div className={`relative p-12 rounded-lg flex items-center justify-center ${getOptionStyle(status as any)}`}>
+      <div className={`relative p-12 rounded-lg flex items-center justify-center ${getOptionStyle(status)}`}>
         {isCorrectAnswer && (
           <span className="absolute top-2 left-2 text-xs text-gray-500">정답:</span>
         )}
-        {isUserAnswer && (
+        {isUserAnswer && !isCorrectAnswer && (
           <span className="absolute top-2 left-2 text-xs text-gray-500">사용자 답변:</span>
         )}
         <span className="text-6xl font-bold">{symbol}</span>
