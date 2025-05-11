@@ -5,7 +5,7 @@ export interface QuizSubmission {
   correctAnswer: string;
   score: number;
   correct: boolean;
-  options: string[];
+  options: string[] | null;
 }
 
 export interface QuizHistoryDetail {

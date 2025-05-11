@@ -199,8 +199,11 @@ const QuizModal: React.FC<QuizModalProps> = ({
             {!isOxQuiz(currentSubmission.correctAnswer) && (
               <div className="space-y-3 mb-4">
                 {/* 객관식인 경우 (options가 있는 경우) */}
-                {currentSubmission.options && (
+                {currentSubmission.options && Array.isArray(currentSubmission.options) && currentSubmission.options.length > 0 ? (
                   <>
+                    {/* 디버깅용 로그 */}
+                    <div className="text-xs text-gray-400 mb-2">옵션 개수: {currentSubmission.options.length}</div>
+                    
                     {/* 모든 선택지 표시 */}
                     {currentSubmission.options.map((option, index) => {
                       const isUserAnswer = option === currentSubmission.userAnswer;
@@ -239,6 +242,11 @@ const QuizModal: React.FC<QuizModalProps> = ({
                       );
                     })}
                   </>
+                ) : (
+                  // options가 null이거나 빈 배열인 경우
+                  <div className="text-xs text-gray-400 mb-2">
+                    객관식 옵션이 없습니다: {JSON.stringify(currentSubmission.options)}
+                  </div>
                 )}
                 
                 {/* 객관식이 아닌 경우 (주관식) */}
