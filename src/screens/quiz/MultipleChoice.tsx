@@ -1,18 +1,16 @@
-import { MultipleChoiceQuestion } from "./quizTypes";
-import { useState } from "react";
-import Button from "../../components/Button";
+import React, { useState } from "react";
+import { MultipleChoiceQuestion, QuestionComponentProps } from "./quizTypes";
+import QuestionContainer from "./QuestionContainer";
 
-interface Props {
-  questionData: MultipleChoiceQuestion;
-  onAnswer: (answer: string) => void;
-  isLastQuestion?: boolean;
-  current: number;
-  score: number;
-}
-
-const MultipleChoice = ({ questionData, onAnswer, isLastQuestion = false, current, score }: Props) => {
+const MultipleChoice: React.FC<QuestionComponentProps> = ({
+  questionData,
+  onAnswer,
+  isLastQuestion = false,
+  current,
+  score,
+}) => {
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
-  const currentNumber = current;
+  const typedQuestionData = questionData as MultipleChoiceQuestion;
 
   const handleOptionSelect = (optText: string) => {
     setSelectedOption(optText);
@@ -30,14 +28,17 @@ const MultipleChoice = ({ questionData, onAnswer, isLastQuestion = false, curren
   };
 
   return (
-    <div className="">
-      {/* 문제 텍스트 */}
-      <p className="text-xl md:text-2xl pb-3">Quiz {currentNumber}. {questionData.question}</p>
-      {/* 배점 표시 */}
-      <p className="text-lg md:text-xl text-[#9CAAB9] pb-4 md:pb-8">배점: {questionData.score}점</p>
+    <QuestionContainer
+      questionData={questionData}
+      current={current}
+      score={score}
+      isLastQuestion={isLastQuestion}
+      onSubmit={handleSubmit}
+      isDisabled={!selectedOption}
+    >
       {/* 선택지 목록 */}
       <div className="space-y-4 ml-4">
-        {questionData.options.map((opt, index) => (
+        {typedQuestionData.options.map((opt, index) => (
           <label 
             key={opt.id}
             className="flex items-center cursor-pointer pt-3 md:pt-6"
@@ -69,19 +70,7 @@ const MultipleChoice = ({ questionData, onAnswer, isLastQuestion = false, curren
           </label>
         ))}
       </div>
-      
-      {/* 다음/제출 버튼 */}
-      <div className="pt-8 md:pt-28 flex justify-center">
-        <Button
-          onClick={handleSubmit}
-          disabled={!selectedOption}
-          size="lg"
-          color="pink"
-        >
-          {isLastQuestion ? "제출" : "다음"}
-        </Button>
-      </div>
-    </div>
+    </QuestionContainer>
   );
 };
 

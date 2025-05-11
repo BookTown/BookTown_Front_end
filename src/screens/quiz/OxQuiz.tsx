@@ -1,18 +1,15 @@
-import { TrueFalseQuestion } from "./quizTypes";
-import { useState } from "react";
-import Button from "../../components/Button";
+import React, { useState } from "react";
+import {  QuestionComponentProps } from "./quizTypes";
+import QuestionContainer from "./QuestionContainer";
 
-interface Props {
-  questionData: TrueFalseQuestion;
-  onAnswer: (answer: string) => void;
-  isLastQuestion?: boolean;
-  current: number;
-  score: number;
-}
-
-const OxQuiz = ({ questionData, onAnswer, isLastQuestion = false, current, score }: Props) => {
+const OxQuiz: React.FC<QuestionComponentProps> = ({
+  questionData,
+  onAnswer,
+  isLastQuestion = false,
+  current,
+  score,
+}) => {
   const [selected, setSelected] = useState<"TRUE" | "FALSE" | null>(null);
-  const currentNumber = current;
 
   const handleSelect = (value: "TRUE" | "FALSE") => {
     setSelected(value);
@@ -25,12 +22,14 @@ const OxQuiz = ({ questionData, onAnswer, isLastQuestion = false, current, score
   };
 
   return (
-    <div className="">
-      {/* 문제 텍스트 */}
-      <p className="text-xl md:text-2xl pb-3">Quiz {currentNumber}. {questionData.question}</p>
-      {/* 배점 표시 */}
-      <p className="text-lg md:text-xl text-[#9CAAB9] pb-4 md:pb-20">배점: {score}점</p>
-      {/* O/X 버튼 */}
+    <QuestionContainer
+      questionData={questionData}
+      current={current}
+      score={score}
+      isLastQuestion={isLastQuestion}
+      onSubmit={handleSubmit}
+      isDisabled={!selected}
+    >
       <div className="flex justify-center gap-10 md:gap-16 mb-2 md:mb-8">
         <button
           type="button"
@@ -55,19 +54,7 @@ const OxQuiz = ({ questionData, onAnswer, isLastQuestion = false, current, score
           X
         </button>
       </div>
-      
-      {/* 다음/제출 버튼 */}
-      <div className="pt-20 md:pt-24 flex justify-center">
-        <Button
-          onClick={handleSubmit}
-          disabled={!selected}
-          size="lg"
-          color="pink"
-        >
-          {isLastQuestion ? "제출" : "다음"}
-        </Button>
-      </div>
-    </div>
+    </QuestionContainer>
   );
 };
 

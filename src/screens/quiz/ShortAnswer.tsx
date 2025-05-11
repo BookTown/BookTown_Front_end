@@ -1,18 +1,16 @@
-import { ShortAnswerQuestion } from "./quizTypes";
-import { useState } from "react";
-import Button from "../../components/Button";
+import React, { useState } from "react";
+import { ShortAnswerQuestion, QuestionComponentProps } from "./quizTypes";
+import QuestionContainer from "./QuestionContainer";
 
-interface Props {
-  questionData: ShortAnswerQuestion;
-  onAnswer: (answer: string) => void;
-  isLastQuestion?: boolean;
-  current: number;
-  score: number;
-}
-
-const ShortAnswer = ({ questionData, onAnswer, isLastQuestion = false, current, score }: Props) => {
+const ShortAnswer: React.FC<QuestionComponentProps> = ({
+  questionData,
+  onAnswer,
+  isLastQuestion = false,
+  current,
+  score,
+}) => {
   const [input, setInput] = useState("");
-  const currentNumber = current;
+  const typedQuestionData = questionData as ShortAnswerQuestion;
 
   const handleSubmit = () => {
     if (input.trim()) {
@@ -22,9 +20,9 @@ const ShortAnswer = ({ questionData, onAnswer, isLastQuestion = false, current, 
 
   // 정답 글자 수에 따른 힌트 생성 함수
   const getHintText = () => {
-    if (!questionData.correctAnswer) return "정답을 입력하세요";
+    if (!typedQuestionData.correctAnswer) return "정답을 입력하세요";
     
-    const answerLength = questionData.correctAnswer.trim().length;
+    const answerLength = typedQuestionData.correctAnswer.trim().length;
     
     // 한글로 글자 수 표현
     const numberToKorean: Record<number, string> = {
@@ -40,11 +38,14 @@ const ShortAnswer = ({ questionData, onAnswer, isLastQuestion = false, current, 
   };
 
   return (
-    <div className="">
-      {/* 문제 텍스트 */}
-      <p className="text-xl md:text-2xl pb-3">Quiz {currentNumber}. {questionData.question}</p>
-      {/* 배점 표시 */}
-      <p className="text-lg md:text-xl text-[#9CAAB9] pb-4 md:pb-20">배점: {score}점</p>
+    <QuestionContainer
+      questionData={questionData}
+      current={current}
+      score={score}
+      isLastQuestion={isLastQuestion}
+      onSubmit={handleSubmit}
+      isDisabled={!input.trim()}
+    >
       <div className="flex justify-center pt-24">
         <input
           type="text"
@@ -54,19 +55,7 @@ const ShortAnswer = ({ questionData, onAnswer, isLastQuestion = false, current, 
           placeholder={getHintText()}
         />
       </div>
-      
-      {/* 다음/제출 버튼 */}
-      <div className="pt-24 md:pt-44 flex justify-center">
-        <Button
-          onClick={handleSubmit}
-          disabled={!input.trim()}
-          size="lg"
-          color="pink"
-        >
-          {isLastQuestion ? "제출" : "다음"}
-        </Button>
-      </div>
-    </div>
+    </QuestionContainer>
   );
 };
 
