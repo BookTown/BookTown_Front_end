@@ -145,8 +145,8 @@ const QuizModal: React.FC<QuizModalProps> = ({
                       currentSubmission.correctAnswer === "TRUE" 
                         ? 'bg-[#B2EBF2] border-[1.5px] border-[#4B8E96]' 
                         : 'bg-[#FFEBEE] border-[1.5px] border-[#C75C5C]'
-                    }`}>
-                      <div className="text-xs text-gray-500 mb-1">사용자 답변:</div>
+                    }`} style={{ width: '48%' }}>
+                      <span className="absolute top-2 left-2 text-xs text-gray-500">사용자 답변:</span>
                       <span className="text-6xl font-bold">
                         {currentSubmission.correctAnswer === "TRUE" ? "O" : "X"}
                       </span>
@@ -164,13 +164,13 @@ const QuizModal: React.FC<QuizModalProps> = ({
                             ? 'bg-[#FFEBEE] border-[1.5px] border-[#C75C5C]' 
                             : 'bg-white border border-black/20')
                       }`}>
-                        <span className="text-6xl font-bold">O</span>
                         {currentSubmission.correctAnswer === "TRUE" && (
-                          <div className="text-xs text-gray-500 mb-1">정답:</div>
+                          <span className="absolute top-2 left-2 text-xs text-gray-500">정답:</span>
                         )}
                         {currentSubmission.userAnswer === "TRUE" && (
-                          <div className="text-xs text-gray-500 mb-1">사용자 답변:</div>
+                          <span className="absolute top-2 left-2 text-xs text-gray-500">사용자 답변:</span>
                         )}
+                        <span className="text-6xl font-bold">O</span>
                       </div>
                       
                       {/* X 선택지 */}
@@ -181,13 +181,13 @@ const QuizModal: React.FC<QuizModalProps> = ({
                             ? 'bg-[#FFEBEE] border-[1.5px] border-[#C75C5C]' 
                             : 'bg-white border border-black/20')
                       }`}>
-                        <span className="text-6xl font-bold">X</span>
                         {currentSubmission.correctAnswer === "FALSE" && (
-                          <div className="text-xs text-gray-500 mb-1">정답:</div>
+                          <span className="absolute top-2 left-2 text-xs text-gray-500">정답:</span>
                         )}
                         {currentSubmission.userAnswer === "FALSE" && (
-                          <div className="text-xs text-gray-500 mb-1">사용자 답변:</div>
+                          <span className="absolute top-2 left-2 text-xs text-gray-500">사용자 답변:</span>
                         )}
+                        <span className="text-6xl font-bold">X</span>
                       </div>
                     </div>
                   </div>
