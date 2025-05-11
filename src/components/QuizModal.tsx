@@ -139,26 +139,22 @@ const QuizModal: React.FC<QuizModalProps> = ({
             {isOxQuiz(currentSubmission.correctAnswer) && (
               <div className="mb-4">
                 {currentSubmission.correct ? (
-                  // 정답인 경우: 정답만 표시
-                  <div className="flex flex-col justify-center">
-                    <div className="text-xs text-gray-500 mb-1 text-center">사용자 답변:</div>
-                    <div className={`relative p-12 rounded-lg flex items-center justify-center w-full ${
+                  // 정답인 경우: 정답만 표시 (너비 조정 및 중앙 정렬)
+                  <div className="flex justify-center">
+                    <div className={`relative p-12 rounded-lg flex items-center justify-center ${
                       currentSubmission.correctAnswer === "TRUE" 
                         ? 'bg-[#B2EBF2] border-[1.5px] border-[#4B8E96]' 
                         : 'bg-[#FFEBEE] border-[1.5px] border-[#C75C5C]'
                     }`}>
+                      <div className="text-xs text-gray-500 mb-1">사용자 답변:</div>
                       <span className="text-6xl font-bold">
                         {currentSubmission.correctAnswer === "TRUE" ? "O" : "X"}
-                      </span>
-                      <span className="absolute right-2 top-2 bg-[#4B8E96] text-white text-xs px-2 py-0.5 rounded-md">
-                        정답
                       </span>
                     </div>
                   </div>
                 ) : (
                   // 오답인 경우: OX 두 개 표시
                   <div>
-                    <div className="text-xs text-gray-500 mb-1">선택지:</div>
                     <div className="grid grid-cols-2 gap-3">
                       {/* O 선택지 */}
                       <div className={`relative p-12 rounded-lg flex items-center justify-center ${
@@ -170,14 +166,10 @@ const QuizModal: React.FC<QuizModalProps> = ({
                       }`}>
                         <span className="text-6xl font-bold">O</span>
                         {currentSubmission.correctAnswer === "TRUE" && (
-                          <span className="absolute right-2 top-2 bg-[#4B8E96] text-white text-xs px-2 py-0.5 rounded-md">
-                            정답
-                          </span>
+                          <div className="text-xs text-gray-500 mb-1">정답:</div>
                         )}
                         {currentSubmission.userAnswer === "TRUE" && (
-                          <span className="absolute left-2 top-2 text-xs px-2 py-0.5 rounded-md">
-                            사용자 답변
-                          </span>
+                          <div className="text-xs text-gray-500 mb-1">사용자 답변:</div>
                         )}
                       </div>
                       
@@ -191,14 +183,10 @@ const QuizModal: React.FC<QuizModalProps> = ({
                       }`}>
                         <span className="text-6xl font-bold">X</span>
                         {currentSubmission.correctAnswer === "FALSE" && (
-                          <span className="absolute right-2 top-2 bg-[#4B8E96] text-white text-xs px-2 py-0.5 rounded-md">
-                            정답
-                          </span>
+                          <div className="text-xs text-gray-500 mb-1">정답:</div>
                         )}
                         {currentSubmission.userAnswer === "FALSE" && (
-                          <span className="absolute left-2 top-2 text-xs px-2 py-0.5 rounded-md">
-                            사용자 답변
-                          </span>
+                          <div className="text-xs text-gray-500 mb-1">사용자 답변:</div>
                         )}
                       </div>
                     </div>
