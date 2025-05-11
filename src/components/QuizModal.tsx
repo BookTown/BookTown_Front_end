@@ -91,8 +91,8 @@ const QuizModal: React.FC<QuizModalProps> = ({
   };
 
   // OX 퀴즈인지 확인 (TRUE/FALSE 형태)
-  const isOxQuiz = (answer: string) => {
-    return answer === "TRUE" || answer === "FALSE";
+  const isOxQuiz = (answer: string, options: string[] | null): boolean => {
+    return (answer === "TRUE" || answer === "FALSE") && (!options || options.length === 0);
   };
 
   return (
@@ -136,7 +136,7 @@ const QuizModal: React.FC<QuizModalProps> = ({
             <p className="mb-5 text-sm">{currentSubmission.question}</p>
             
             {/* OX 퀴즈인 경우 */}
-            {isOxQuiz(currentSubmission.correctAnswer) && (
+            {isOxQuiz(currentSubmission.correctAnswer, currentSubmission.options) ? (
               <div className="mb-4">
                 {currentSubmission.correct ? (
                   // 정답인 경우: 정답만 표시 (너비 조정 및 중앙 정렬)
@@ -193,69 +193,54 @@ const QuizModal: React.FC<QuizModalProps> = ({
                   </div>
                 )}
               </div>
-            )}
-            
-            {/* 일반 텍스트 답변인 경우 */}
-            {!isOxQuiz(currentSubmission.correctAnswer) && (
+            ) : (
               <div className="space-y-3 mb-4">
                 {/* 객관식인 경우 (options가 있는 경우) */}
-                {currentSubmission.options && Array.isArray(currentSubmission.options) && currentSubmission.options.length > 0 ? (
+                {currentSubmission.options && currentSubmission.options.length > 0 ? (
                   <>
                     {/* 디버깅용 로그 */}
-                    <div className="text-xs text-gray-400 mb-2">옵션 개수: {currentSubmission.options.length}</div>
+                    <div className="text-xs text-gray-400 mb-2">객관식 선택지 ({currentSubmission.options.length}개)</div>
                     
                     {/* 모든 선택지 표시 */}
                     {currentSubmission.options.map((option, index) => {
                       const isUserAnswer = option === currentSubmission.userAnswer;
                       const isCorrectAnswer = option === currentSubmission.correctAnswer;
                       
-                      // 스타일 결정
-                      let optionClass = "bg-white border border-black/20";
-                      let badgeComponent = null;
-                      
-                      if (isCorrectAnswer) {
-                        optionClass = "bg-[#B2EBF2] border-[1.5px] border-[#4B8E96]";
-                        if (!currentSubmission.correct || isUserAnswer) {
-                          badgeComponent = (
-                            <span className="absolute right-2 top-1/2 -translate-y-1/2 bg-[#4B8E96] text-white text-xs px-2 py-0.5 rounded-md">
-                              정답
-                            </span>
-                          );
-                        }
-                      } else if (isUserAnswer && !currentSubmission.correct) {
-                        optionClass = "bg-[#FFEBEE] border-[1.5px] border-[#C75C5C]";
-                        badgeComponent = (
-                          <span className="absolute right-2 top-1/2 -translate-y-1/2 bg-[#C75C5C] text-white text-xs px-2 py-0.5 rounded-md">
-                            오답
-                          </span>
-                        );
-                      }
-                      
                       return (
                         <div 
                           key={index}
-                          className={`relative p-3 rounded-lg ${optionClass}`}
+                          className={`relative p-3 rounded-lg ${
+                            isCorrectAnswer 
+                              ? 'bg-[#B2EBF2] border-[1.5px] border-[#4B8E96]' 
+                              : (isUserAnswer && !currentSubmission.correct
+                                ? 'bg-[#FFEBEE] border-[1.5px] border-[#C75C5C]'
+                                : 'bg-white border border-black/20')
+                          }`}
                         >
-                          <div className="flex items-center">
-                            <span className="font-medium mr-2">
+                          <div className="flex items-start">
+                            <span className="mr-2 font-medium">
                               {index === 0 ? 'A. ' : index === 1 ? 'B. ' : index === 2 ? 'C. ' : 'D. '}
                             </span>
                             <div className="flex-1">{option}</div>
-                            {badgeComponent}
                           </div>
+                          
+                          {isUserAnswer && (
+                            <span className="absolute top-2 left-2 text-xs text-gray-500">
+                              사용자 답변:
+                            </span>
+                          )}
+                          
+                          {isCorrectAnswer && !currentSubmission.correct && (
+                            <span className="absolute top-2 right-2 text-xs text-gray-500">
+                              정답:
+                            </span>
+                          )}
                         </div>
                       );
                     })}
                   </>
                 ) : (
-                  // options가 null이거나 빈 배열인 경우
-                  <div className="text-xs text-gray-400 mb-2">
-                    객관식 옵션이 없습니다: {JSON.stringify(currentSubmission.options)}
-                  </div>
-                )}
-                
-                {/* 객관식이 아닌 경우 (주관식) */}
-                {!currentSubmission.options && (
+                  // 주관식 (options가 null이거나 빈 배열인 경우)
                   <>
                     {/* 사용자 답변 */}
                     <div className={`relative p-3 rounded-lg ${
