@@ -24,7 +24,7 @@ const MultipleChoice: React.FC<QuestionComponentProps> = ({
 
   // 선택지 레이블 생성 함수
   const getOptionLabel = (index: number): string => {
-    return String.fromCharCode(65 + index) + '.';
+    return String.fromCharCode(65 + index) + ".";
   };
 
   return (
@@ -39,7 +39,7 @@ const MultipleChoice: React.FC<QuestionComponentProps> = ({
       {/* 선택지 목록 */}
       <div className="space-y-4 ml-4">
         {typedQuestionData.options.map((opt, index) => (
-          <label 
+          <label
             key={opt.id}
             className="flex items-center cursor-pointer pt-3 md:pt-6"
           >
@@ -51,19 +51,23 @@ const MultipleChoice: React.FC<QuestionComponentProps> = ({
                 checked={selectedOption === opt.text}
                 onChange={() => handleOptionSelect(opt.text)}
               />
-              <div className={`w-6 h-6 rounded-full border ${
-                selectedOption === opt.text 
-                  ? 'border-2 border-[#C75C5C]' 
-                  : 'border-black'
-              } flex items-center justify-center mr-3`}>
+              <div
+                className={`w-6 h-6 rounded-full border ${
+                  selectedOption === opt.text
+                    ? "border-2 border-[#C75C5C]"
+                    : "border-black"
+                } flex items-center justify-center mr-3`}
+              >
                 {selectedOption === opt.text && (
                   <div className="w-3.5 h-3.5 rounded-full bg-[#C75C5C]"></div>
                 )}
               </div>
             </div>
-            <span className={`text-xl md:text-2lg ${
-              selectedOption === opt.text ? 'text-[#C75C5C]' : ''
-            }`}>
+            <span
+              className={`text-xl md:text-2lg ${
+                selectedOption === opt.text ? "text-[#C75C5C]" : ""
+              }`}
+            >
               <span className="font-bold mr-2">{getOptionLabel(index)}</span>
               {opt.text}
             </span>

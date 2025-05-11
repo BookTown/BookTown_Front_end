@@ -27,23 +27,18 @@ const QuestionContainer: React.FC<QuestionContainerProps> = ({
       <p className="text-xl md:text-2xl pb-3">
         Quiz {current}. {questionData.question}
       </p>
-      
+
       {/* 배점 표시 */}
       <p className="text-lg md:text-xl text-[#9CAAB9] pb-4 md:pb-8">
         배점: {score}점
       </p>
-      
+
       {/* 문제 내용 - children으로 전달됨 */}
       {children}
-      
+
       {/* 다음/제출 버튼 */}
       <div className="pt-8 md:pt-28 flex justify-center">
-        <Button
-          onClick={onSubmit}
-          disabled={isDisabled}
-          size="lg"
-          color="pink"
-        >
+        <Button onClick={onSubmit} disabled={isDisabled} size="lg" color="pink">
           {isLastQuestion ? "제출" : "다음"}
         </Button>
       </div>

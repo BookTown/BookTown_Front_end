@@ -12,11 +12,13 @@ import ScoreModal from "./ScoreModal";
 const Quiz: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  
-  const { quizData, quizParams } = location.state || {} as { 
-    quizData?: QuizQuestion[], 
-    quizParams?: QuizParams 
-  };
+
+  const { quizData, quizParams } =
+    location.state ||
+    ({} as {
+      quizData?: QuizQuestion[];
+      quizParams?: QuizParams;
+    });
 
   const [quizList, setQuizList] = useState<QuizQuestion[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -39,9 +41,9 @@ const Quiz: React.FC = () => {
         setIsLoading(false);
         return;
       }
-      
+
       if (!quizParams) {
-        setApiError('퀴즈 생성에 필요한 정보가 없습니다');
+        setApiError("퀴즈 생성에 필요한 정보가 없습니다");
         setIsLoading(false);
         return;
       }
@@ -51,7 +53,7 @@ const Quiz: React.FC = () => {
         const result = await generateQuiz(bookId, type, difficulty);
         setQuizList(result);
       } catch (error) {
-        setApiError('퀴즈 생성 중 오류가 발생했습니다. 다시 시도해주세요.');
+        setApiError("퀴즈 생성 중 오류가 발생했습니다. 다시 시도해주세요.");
       } finally {
         setIsLoading(false);
       }
@@ -62,56 +64,64 @@ const Quiz: React.FC = () => {
 
   const handleAnswer = async (answer: string) => {
     if (!currentQuestion) return;
-    
+
     const newAnswer: UserAnswer = {
       quizId: currentQuestion.id,
-      userAnswer: answer
+      userAnswer: answer,
     };
-    
-    setUserAnswers(prev => [...prev, newAnswer]);
-    
+
+    setUserAnswers((prev) => [...prev, newAnswer]);
+
     // 클라이언트 측에서 점수 계산
-    if (answer.trim().toUpperCase() === currentQuestion.correctAnswer.trim().toUpperCase()) {
-      setScore(prev => prev + currentQuestion.score);
-    }
-  
+    const isCorrect =
+      answer.trim().toUpperCase() ===
+      currentQuestion.correctAnswer.trim().toUpperCase();
+    const updatedScore = isCorrect ? score + currentQuestion.score : score;
+
+    setScore(updatedScore);
+
     // 마지막 문제인 경우 결과 표시
     if (isLastQuestion) {
-      await handleQuizSubmission(newAnswer);
+      // 마지막 점수가 즉시 반영되도록 업데이트된 점수 사용
+      await handleQuizSubmission(newAnswer, updatedScore);
     } else {
-      setCurrentIndex(prev => prev + 1);
+      setCurrentIndex((prev) => prev + 1);
     }
   };
 
   // 퀴즈 제출 및 채점 처리
-  const handleQuizSubmission = async (newAnswer: UserAnswer) => {
+  const handleQuizSubmission = async (
+    newAnswer: UserAnswer,
+    finalScore: number
+  ) => {
     try {
       setIsSubmitting(true);
-      
+
       // 모든 답변을 서버에 제출
       const allAnswers = [...userAnswers, newAnswer];
-      
+
       // API 요청 형식을 배열로 변환
-      const submissionData = allAnswers.map(item => ({
+      const submissionData = allAnswers.map((item) => ({
         quizId: item.quizId,
-        answer: item.userAnswer
+        answer: item.userAnswer,
       }));
-      
+
       const result = await submitQuizAnswers(submissionData);
-      
+
       // 결과 데이터 구성
       const totalScore = quizList.reduce((sum, q) => sum + q.score, 0);
-      
+
       const quizResultData: QuizResult = {
-        score: result?.score || score,
+        score: result?.score || finalScore, // 업데이트된 점수 사용
         totalScore: totalScore,
-        correctCount: result?.correctAnswers?.filter(Boolean).length || 
+        correctCount:
+          result?.correctAnswers?.filter(Boolean).length ||
           calculateCorrectAnswersCount(allAnswers),
         totalQuestions: quizList.length,
         correctAnswers: result?.correctAnswers || [],
-        userSubmissions: allAnswers
+        userSubmissions: allAnswers,
       };
-      
+
       setQuizResult(quizResultData);
     } catch (error) {
       console.error("퀴즈 제출 중 오류 발생:", error);
@@ -120,12 +130,15 @@ const Quiz: React.FC = () => {
       setShowResult(true);
     }
   };
-  
+
   // 클라이언트 측에서 정답 개수 계산
   const calculateCorrectAnswersCount = (answers: UserAnswer[]): number => {
-    return answers.filter(a => {
-      const question = quizList.find(q => q.id === a.quizId);
-      return question?.correctAnswer.trim().toUpperCase() === a.userAnswer.trim().toUpperCase();
+    return answers.filter((a) => {
+      const question = quizList.find((q) => q.id === a.quizId);
+      return (
+        question?.correctAnswer.trim().toUpperCase() ===
+        a.userAnswer.trim().toUpperCase()
+      );
     }).length;
   };
 
@@ -148,35 +161,35 @@ const Quiz: React.FC = () => {
 
   const quizTypeMap: Record<string, React.ReactElement> = {
     MULTIPLE_CHOICE: (
-      <MultipleChoice 
+      <MultipleChoice
         key={`question-${currentQuestion.id}-${currentIndex}`}
-        questionData={currentQuestion} 
-        onAnswer={handleAnswer} 
+        questionData={currentQuestion}
+        onAnswer={handleAnswer}
         isLastQuestion={isLastQuestion}
         current={currentIndex + 1}
         score={currentQuestion.score}
       />
     ),
     SHORT_ANSWER: (
-      <ShortAnswer 
+      <ShortAnswer
         key={`question-${currentQuestion.id}-${currentIndex}`}
-        questionData={currentQuestion} 
-        onAnswer={handleAnswer} 
+        questionData={currentQuestion}
+        onAnswer={handleAnswer}
         isLastQuestion={isLastQuestion}
         current={currentIndex + 1}
         score={currentQuestion.score}
       />
     ),
     TRUE_FALSE: (
-      <OxQuiz 
+      <OxQuiz
         key={`question-${currentQuestion.id}-${currentIndex}`}
-        questionData={currentQuestion} 
-        onAnswer={handleAnswer} 
+        questionData={currentQuestion}
+        onAnswer={handleAnswer}
         isLastQuestion={isLastQuestion}
         current={currentIndex + 1}
         score={currentQuestion.score}
       />
-    )
+    ),
   };
 
   return (
@@ -184,7 +197,7 @@ const Quiz: React.FC = () => {
       <TopTitle />
       <div className="pt-16 md:pt-24 md:w-[650px] px-6 md:mx-auto">
         <ProgressBar current={currentIndex + 1} total={quizList.length} />
-        
+
         <div className="mt-8 md:mt-10">
           {currentQuestion ? quizTypeMap[currentQuestion.questionType] : null}
         </div>
@@ -207,9 +220,9 @@ function renderLoadingState(isSubmitting: boolean) {
   return (
     <div className="flex flex-col items-center justify-center h-[80vh]">
       <div className="w-64 h-64 md:w-96 md:h-96">
-        <img 
-          src="/images/Loader.gif" 
-          alt="북타운 마스코트" 
+        <img
+          src="/images/Loader.gif"
+          alt="북타운 마스코트"
           className="w-full h-full"
         />
       </div>
@@ -226,7 +239,7 @@ function renderErrorState(errorMessage: string, onBackClick: () => void) {
     <div className="flex flex-col items-center justify-center h-[80vh]">
       <div className="text-center">
         <p className="text-xl text-red-500 mb-4">{errorMessage}</p>
-        <button 
+        <button
           onClick={onBackClick}
           className="px-4 py-2 bg-[#C75C5C] text-white rounded-lg"
         >
@@ -242,7 +255,7 @@ function renderEmptyState(onHomeClick: () => void) {
   return (
     <div className="pt-28 text-center">
       <p className="text-lg">이용 가능한 퀴즈가 없습니다.</p>
-      <button 
+      <button
         onClick={onHomeClick}
         className="mt-4 px-4 py-2 bg-[#C75C5C] text-white rounded-lg"
       >
