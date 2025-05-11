@@ -1,50 +1,47 @@
 import React from 'react';
 import { QuizSubmission } from '../interfaces/quizInterface';
+import { getOptionStyle, getStatusBadge } from '../utils/quizStyles';
 
 interface MultipleChoiceOptionsProps {
   currentSubmission: QuizSubmission;
 }
 
 const MultipleChoiceOptions: React.FC<MultipleChoiceOptionsProps> = ({ currentSubmission }) => {
-  // 4지선다형 퀴즈 렌더링
+  // 옵션 레이블 생성 함수
+  const getOptionLabel = (index: number): string => {
+    return String.fromCharCode(65 + index) + '. '; // A, B, C, D 생성
+  };
+  
+  // 옵션 상태 결정 함수
+  const getOptionStatus = (option: string): 'correct' | 'wrong' | 'default' => {
+    const isUserAnswer = option === currentSubmission.userAnswer;
+    const isCorrectAnswer = option === currentSubmission.correctAnswer;
+    
+    if (isCorrectAnswer) return 'correct';
+    if (isUserAnswer && !currentSubmission.correct) return 'wrong';
+    return 'default';
+  };
+  
   return (
     <div className="space-y-3 mb-4">
-      {/* 모든 선택지 표시 */}
       {currentSubmission.options?.map((option, index) => {
-        const isUserAnswer = option === currentSubmission.userAnswer;
-        const isCorrectAnswer = option === currentSubmission.correctAnswer;
-        
-        // 스타일 결정
-        let optionClass = "bg-white border border-black/20";
-        let badgeComponent = null;
-        
-        if (isCorrectAnswer) {
-          optionClass = "bg-[#B2EBF2] border-[1.5px] border-[#4B8E96]";
-          badgeComponent = (
-            <span className="absolute right-2 top-1/2 -translate-y-1/2 bg-[#4B8E96] text-white text-xs px-2 py-0.5 rounded-md">
-              정답
-            </span>
-          );
-        } else if (isUserAnswer && !currentSubmission.correct) {
-          optionClass = "bg-[#FFEBEE] border-[1.5px] border-[#C75C5C]";
-          badgeComponent = (
-            <span className="absolute right-2 top-1/2 -translate-y-1/2 bg-[#C75C5C] text-white text-xs px-2 py-0.5 rounded-md">
-              오답
-            </span>
-          );
-        }
+        const status = getOptionStatus(option);
+        const showBadge = status !== 'default';
         
         return (
           <div 
             key={index}
-            className={`relative p-3 rounded-lg ${optionClass}`}
+            className={`relative p-3 rounded-lg ${getOptionStyle(status)}`}
           >
             <div className="flex items-center">
-              <span className="font-medium mr-2">
-                {index === 0 ? 'A. ' : index === 1 ? 'B. ' : index === 2 ? 'C. ' : 'D. '}
-              </span>
+              <span className="font-medium mr-2">{getOptionLabel(index)}</span>
               <div className="flex-1">{option}</div>
-              {badgeComponent}
+              
+              {showBadge && (
+                <span className={`absolute right-2 top-1/2 -translate-y-1/2 ${getStatusBadge(status).className} text-xs px-2 py-0.5 rounded-md`}>
+                  {getStatusBadge(status).text}
+                </span>
+              )}
             </div>
           </div>
         );

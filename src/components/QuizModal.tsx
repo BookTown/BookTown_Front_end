@@ -6,49 +6,30 @@ import OxQuizOptions from "./OxQuizOptions";
 import MultipleChoiceOptions from "./MultipleChoiceOptions";
 import ShortAnswerOptions from "./ShortAnswerOptions";
 
-
-interface QuizOption {
-  id: number;
-  text: string;
-  index: number;
-}
 interface QuizModalProps {
+  onClose: () => void;
+  historyData?: QuizHistoryDetail;
+  // 이전 호환성을 위한 props 추가
   bookTitle?: string;
   score?: number;
   quizNumber?: number;
   question?: string;
-  options?: QuizOption[];
+  options?: any[];
   correctAnswerIndex?: number;
-  selectedAnswerIndex?: number;
-  explanation?: string;
-  onClose: () => void;
   onNext?: () => void;
   onPrev?: () => void;
-  isLastQuestion?: boolean;
-  isFirstQuestion?: boolean;
-  historyData?: QuizHistoryDetail;
 }
 
 const QuizModal: React.FC<QuizModalProps> = ({
-  bookTitle = "",
-  score = 0,
-  quizNumber = 0,
-  question = "",
-  options = [],
-  correctAnswerIndex = -1,
-  selectedAnswerIndex,
-  explanation = "이 문제에 대한 해설이 제공되지 않았습니다.",
   onClose,
-  onNext = () => {},
-  onPrev = () => {},
-  isLastQuestion = false,
-  isFirstQuestion = false,
-  historyData
+  historyData,
+  bookTitle, // 추가
+  // 다른 props는 사용하지 않음
 }) => {
   const [showExplanation, setShowExplanation] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
-
-  // API 데이터 사용 여부 확인
+  
+  // API 데이터 존재 여부 확인
   const hasApiData = !!historyData && historyData.submissions.length > 0;
   
   // 현재 문제 데이터
@@ -59,46 +40,32 @@ const QuizModal: React.FC<QuizModalProps> = ({
 
   // 다음 문제로 이동
   const handleNext = () => {
-    if (hasApiData && currentIndex < totalQuestions - 1) {
+    if (currentIndex < totalQuestions - 1) {
       setCurrentIndex(currentIndex + 1);
       setShowExplanation(false);
-    } else if (onNext) {
-      onNext();
     }
   };
 
   // 이전 문제로 이동
   const handlePrev = () => {
-    if (hasApiData && currentIndex > 0) {
+    if (currentIndex > 0) {
       setCurrentIndex(currentIndex - 1);
       setShowExplanation(false);
-    } else if (onPrev) {
-      onPrev();
     }
   };
 
-  // 선택지 옵션의 상태 결정 함수 (기존 데이터용)
-  const getOptionStatus = (index: number) => {
-    if (selectedAnswerIndex === undefined) return "default";
-    if (index === correctAnswerIndex) return "correct";
-    if (index === selectedAnswerIndex && index !== correctAnswerIndex) return "wrong";
-    return "default";
-  };
+  // 에러 상태 렌더링 (API 데이터 없을 때)
+  const renderErrorState = () => (
+    <div className="bg-gray-50 rounded-lg p-6 mb-5 border border-black/20 text-center">
+      <p className="text-sm mb-3">데이터를 불러올 수 없습니다.</p>
+      <Button size="md" color="pink" onClick={onClose} className="w-full">
+        닫기
+      </Button>
+    </div>
+  );
 
-  // 스타일 선택 함수
-  const getOptionStyle = (status: string) => {
-    switch (status) {
-      case "correct":
-        return "bg-[#B2EBF2] border-[1.5px] border-[#4B8E96] text-black";
-      case "wrong":
-        return "bg-[#FFEBEE] border-[1.5px] border-[#C75C5C] text-black";
-      default:
-        return "bg-white border border-black/20 text-black";
-    }
-  };
-
-  // API 데이터 렌더링
-  const renderApiQuiz = (submission: QuizSubmission) => {
+  // 퀴즈 렌더링
+  const renderQuiz = (submission: QuizSubmission & { explanation?: string }) => {
     const quizType = determineQuizType(submission);
     
     return (
@@ -130,110 +97,53 @@ const QuizModal: React.FC<QuizModalProps> = ({
         {quizType === QuizType.SHORT_ANSWER && (
           <ShortAnswerOptions currentSubmission={submission} />
         )}
-      </div>
-    );
-  };
 
-  // 기존 데이터 렌더링
-  const renderLegacyQuiz = () => {
-    return (
-      <div className="bg-gray-50 rounded-lg p-4 mb-5 border border-black/20">
-        <h3 className="font-medium mb-3">Quiz {quizNumber}</h3>
-        <p className="mb-5 text-sm">{question}</p>
-
-        {/* 선택지 옵션 */}
-        <div className="space-y-3 mb-4">
-          {options.map((option) => {
-            const status = getOptionStatus(option.index);
-            return (
-              <div
-                key={option.id}
-                className={`relative p-3 rounded-lg ${getOptionStyle(status)}`}
-              >
-                <div className="flex items-center">
-                  <span className="font-medium mr-2">
-                    {option.index === 0 ? 'A. ' : option.index === 1 ? 'B. ' : option.index === 2 ? 'C. ' : 'D. '}
-                  </span>
-                  <div className="flex-1">{option.text}</div>
-                  {status === "correct" && (
-                    <span className="bg-[#4B8E96] text-white text-xs px-2 py-0.5 rounded-md">
-                      정답
-                    </span>
-                  )}
-                  {status === "wrong" && (
-                    <span className="bg-[#C75C5C] text-white text-xs px-2 py-0.5 rounded-md">
-                      오답
-                    </span>
-                  )}
-                </div>
+        {/* 해설 섹션 */}
+        {submission.explanation && (
+          <div className="border-[1.5px] border-black rounded-lg overflow-hidden">
+            <button
+              className="w-full p-3 flex items-center justify-center relative bg-white"
+              onClick={() => setShowExplanation(!showExplanation)}
+            >
+              <span className="text-center">해설보기</span>
+              <span className="absolute right-4">
+                {showExplanation ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
+              </span>
+            </button>
+            {showExplanation && (
+              <div className="p-6 border-t border-black/20 bg-gray-50 text-center">
+                <p className="text-sm">{submission.explanation}</p>
               </div>
-            );
-          })}
-        </div>
-
-        {/* 해설보기 아코디언 */}
-        <div className="border-[1.5px] border-black rounded-lg overflow-hidden">
-          <button
-            className="w-full p-3 flex items-center justify-center relative bg-white"
-            onClick={() => setShowExplanation(!showExplanation)}
-          >
-            <span className="text-center">해설보기</span>
-            <span className="absolute right-4">
-              {showExplanation ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
-            </span>
-          </button>
-          {showExplanation && (
-            <div className="p-6 border-t border-black/20 bg-gray-50 text-center">
-              <p className="text-sm">{explanation}</p>
-            </div>
-          )}
-        </div>
+            )}
+          </div>
+        )}
       </div>
     );
   };
 
   // 네비게이션 버튼 렌더링
   const renderNavigationButtons = () => {
-    // API 데이터를 사용하는 경우
-    if (hasApiData) {
-      return (
-        <>
-          <Button 
-            size="md" 
-            color="white" 
-            onClick={handlePrev} 
-            disabled={currentIndex === 0}
-            className={`w-[48%] ${currentIndex === 0 ? 'opacity-50 cursor-not-allowed' : ''}`}
-          >
-            이전
-          </Button>
-          <Button 
-            size="md" 
-            color="pink" 
-            onClick={currentIndex === totalQuestions - 1 ? onClose : handleNext} 
-            className="w-[48%]"
-          >
-            {currentIndex === totalQuestions - 1 ? "완료" : "다음"}
-          </Button>
-        </>
-      );
-    }
+    const isFirst = currentIndex === 0;
+    const isLast = currentIndex === totalQuestions - 1;
     
-    // 기존 데이터를 사용하는 경우
     return (
       <>
-        {!isFirstQuestion && (
-          <Button size="md" color="white" onClick={onPrev} className="w-[48%]">
-            이전
-          </Button>
-        )}
+        <Button 
+          size="md" 
+          color="white" 
+          onClick={handlePrev} 
+          disabled={isFirst}
+          className={`w-[48%] ${isFirst ? 'opacity-50 cursor-not-allowed' : ''}`}
+        >
+          이전
+        </Button>
         <Button 
           size="md" 
           color="pink" 
-          onClick={isLastQuestion ? onClose : onNext} 
-          className={!isFirstQuestion ? "w-[48%]" : "w-full"}
+          onClick={isLast ? onClose : handleNext} 
+          className="w-[48%]"
         >
-          {isLastQuestion ? "완료" : "다음"}
+          {isLast ? "완료" : "다음"}
         </Button>
       </>
     );
@@ -241,7 +151,7 @@ const QuizModal: React.FC<QuizModalProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-      {/* dim 배경 바깥 클릭 */}
+      {/* 배경 딤처리 - 클릭 시 모달 닫기 */}
       <div className="absolute inset-0" onClick={onClose} />
 
       {/* 모달 본문 */}
@@ -249,25 +159,25 @@ const QuizModal: React.FC<QuizModalProps> = ({
         {/* 헤더: 책 제목 및 닫기 버튼 */}
         <div className="flex justify-between items-center mb-4">
           <div>
-            <h2 className="text-base font-medium">{historyData?.bookTitle || bookTitle}</h2>
-            {hasApiData ? (
+            <h2 className="text-base font-medium">{historyData?.bookTitle || bookTitle || "퀴즈 결과"}</h2>
+            {hasApiData && (
               <p className="text-sm text-gray-500">총점: {historyData!.totalScore}점</p>
-            ) : (
-              <p className="text-sm text-gray-500">점수: {score}점</p>
             )}
           </div>
-          <button onClick={onClose} className="p-1 rounded-full hover:bg-gray-100">
+          <button onClick={onClose} className="p-1 rounded-full hover:bg-gray-100" aria-label="닫기">
             <X size={20} />
           </button>
         </div>
 
-        {/* 퀴즈 컨텐츠 렌더링 */}
-        {hasApiData && currentSubmission ? renderApiQuiz(currentSubmission) : renderLegacyQuiz()}
+        {/* 퀴즈 컨텐츠 또는 에러 상태 */}
+        {currentSubmission ? renderQuiz(currentSubmission) : renderErrorState()}
 
-        {/* 이전/다음 버튼 */}
-        <div className="flex justify-center gap-2">
-          {renderNavigationButtons()}
-        </div>
+        {/* 이전/다음 버튼 (데이터가 있는 경우에만) */}
+        {currentSubmission && (
+          <div className="flex justify-center gap-2">
+            {renderNavigationButtons()}
+          </div>
+        )}
 
         {/* 퀴즈 진행 상황 표시 */}
         {hasApiData && (
