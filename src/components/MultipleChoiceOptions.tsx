@@ -6,15 +6,11 @@ interface MultipleChoiceOptionsProps {
 }
 
 const MultipleChoiceOptions: React.FC<MultipleChoiceOptionsProps> = ({ currentSubmission }) => {
-  // options가 null이 아닌지 확인
-  if (!currentSubmission.options) {
-    return <div>선택지가 없습니다.</div>;
-  }
-  
+  // 4지선다형 퀴즈 렌더링
   return (
-    <>
+    <div className="space-y-3 mb-4">
       {/* 모든 선택지 표시 */}
-      {currentSubmission.options.map((option, index) => {
+      {currentSubmission.options?.map((option, index) => {
         const isUserAnswer = option === currentSubmission.userAnswer;
         const isCorrectAnswer = option === currentSubmission.correctAnswer;
         
@@ -24,13 +20,11 @@ const MultipleChoiceOptions: React.FC<MultipleChoiceOptionsProps> = ({ currentSu
         
         if (isCorrectAnswer) {
           optionClass = "bg-[#B2EBF2] border-[1.5px] border-[#4B8E96]";
-          if (!currentSubmission.correct || isUserAnswer) {
-            badgeComponent = (
-              <span className="absolute right-2 top-1/2 -translate-y-1/2 bg-[#4B8E96] text-white text-xs px-2 py-0.5 rounded-md">
-                정답
-              </span>
-            );
-          }
+          badgeComponent = (
+            <span className="absolute right-2 top-1/2 -translate-y-1/2 bg-[#4B8E96] text-white text-xs px-2 py-0.5 rounded-md">
+              정답
+            </span>
+          );
         } else if (isUserAnswer && !currentSubmission.correct) {
           optionClass = "bg-[#FFEBEE] border-[1.5px] border-[#C75C5C]";
           badgeComponent = (
@@ -55,7 +49,7 @@ const MultipleChoiceOptions: React.FC<MultipleChoiceOptionsProps> = ({ currentSu
           </div>
         );
       })}
-    </>
+    </div>
   );
 };
 
