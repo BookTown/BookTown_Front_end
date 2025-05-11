@@ -14,7 +14,7 @@ interface QuizModalProps {
   score?: number;
   quizNumber?: number;
   question?: string;
-  options?: any[];
+  options?: string[];
   correctAnswerIndex?: number;
   onNext?: () => void;
   onPrev?: () => void;
