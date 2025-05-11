@@ -206,35 +206,40 @@ const QuizModal: React.FC<QuizModalProps> = ({
                       const isUserAnswer = option === currentSubmission.userAnswer;
                       const isCorrectAnswer = option === currentSubmission.correctAnswer;
                       
+                      // 스타일 결정
+                      let optionClass = "bg-white border border-black/20";
+                      let badgeComponent = null;
+                      
+                      if (isCorrectAnswer) {
+                        optionClass = "bg-[#B2EBF2] border-[1.5px] border-[#4B8E96]";
+                        if (!currentSubmission.correct || isUserAnswer) {
+                          badgeComponent = (
+                            <span className="absolute right-2 top-1/2 -translate-y-1/2 bg-[#4B8E96] text-white text-xs px-2 py-0.5 rounded-md">
+                              정답
+                            </span>
+                          );
+                        }
+                      } else if (isUserAnswer && !currentSubmission.correct) {
+                        optionClass = "bg-[#FFEBEE] border-[1.5px] border-[#C75C5C]";
+                        badgeComponent = (
+                          <span className="absolute right-2 top-1/2 -translate-y-1/2 bg-[#C75C5C] text-white text-xs px-2 py-0.5 rounded-md">
+                            오답
+                          </span>
+                        );
+                      }
+                      
                       return (
                         <div 
                           key={index}
-                          className={`relative p-3 rounded-lg ${
-                            isCorrectAnswer 
-                              ? 'bg-[#B2EBF2] border-[1.5px] border-[#4B8E96]' 
-                              : (isUserAnswer && !currentSubmission.correct
-                                ? 'bg-[#FFEBEE] border-[1.5px] border-[#C75C5C]'
-                                : 'bg-white border border-black/20')
-                          }`}
+                          className={`relative p-3 rounded-lg ${optionClass}`}
                         >
-                          <div className="flex items-start">
-                            <span className="mr-2 font-medium">
+                          <div className="flex items-center">
+                            <span className="font-medium mr-2">
                               {index === 0 ? 'A. ' : index === 1 ? 'B. ' : index === 2 ? 'C. ' : 'D. '}
                             </span>
                             <div className="flex-1">{option}</div>
+                            {badgeComponent}
                           </div>
-                          
-                          {isUserAnswer && (
-                            <span className="absolute top-2 left-2 text-xs text-gray-500">
-                              사용자 답변
-                            </span>
-                          )}
-                          
-                          {isCorrectAnswer && !currentSubmission.correct && (
-                            <span className="absolute top-2 right-2 text-xs text-gray-500">
-                              정답
-                            </span>
-                          )}
                         </div>
                       );
                     })}
@@ -283,21 +288,22 @@ const QuizModal: React.FC<QuizModalProps> = ({
                     key={option.id}
                     className={`relative p-3 rounded-lg ${getOptionStyle(status)}`}
                   >
-                    {option.index === 0 && 'A. '}
-                    {option.index === 1 && 'B. '}
-                    {option.index === 2 && 'C. '}
-                    {option.index === 3 && 'D. '}
-                    {option.text}
-                    {status === "correct" && (
-                      <span className="absolute right-2 top-0 -translate-y-1/2 bg-[#4B8E96] text-white text-xs px-2 py-0.5 rounded-md z-10">
-                        정답
+                    <div className="flex items-center">
+                      <span className="font-medium mr-2">
+                        {option.index === 0 ? 'A. ' : option.index === 1 ? 'B. ' : option.index === 2 ? 'C. ' : 'D. '}
                       </span>
-                    )}
-                    {status === "wrong" && (
-                      <span className="absolute right-2 top-0 -translate-y-1/2 bg-[#C75C5C] text-white text-xs px-2 py-0.5 rounded-md z-10">
-                        오답
-                      </span>
-                    )}
+                      <div className="flex-1">{option.text}</div>
+                      {status === "correct" && (
+                        <span className="bg-[#4B8E96] text-white text-xs px-2 py-0.5 rounded-md">
+                          정답
+                        </span>
+                      )}
+                      {status === "wrong" && (
+                        <span className="bg-[#C75C5C] text-white text-xs px-2 py-0.5 rounded-md">
+                          오답
+                        </span>
+                      )}
+                    </div>
                   </div>
                 );
               })}
