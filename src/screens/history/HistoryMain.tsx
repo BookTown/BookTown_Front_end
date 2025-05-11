@@ -1,142 +1,148 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useMemo } from "react";
 import ListFrame from "../../components/ListFrame";
 import QuizCard from "../../components/QuizCard";
 import QuizModal from "../../components/QuizModal";
-import { fetchUserQuizHistory, fetchUserProfile } from "../../api/user";
-import { fetchBookDetailById } from "../../api/api"; // 단일 책 정보 API import
-import { sampleQuizData } from "../../mocks/mockQuiz"; // 퀴즈 데이터는 여전히 사용
+import { mockQuizHistory } from "../../mocks/mockQuiz";
 
-// 퀴즈 히스토리 인터페이스 정의
-interface QuizHistoryItem {
-  id: number; // 퀴즈 기록 자체의 ID (API 응답에 null일 수 있으므로 주의)
-  bookId: number;
-  bookTitle: string;
-  score: number;
-  submittedAt: string;
-  author?: string; 
-  imageUrl?: string; 
-  // correctCount와 totalCount 필드 제거
-}
+// 목업 퀴즈 히스토리 응답 형식 - API와 동일한 형식
+const sampleQuizDetail = {
+  historyId: null,
+  bookTitle: "모비 딕",
+  totalScore: 50,
+  submittedAt: "2025-05-11T04:22:02.619718",
+  submissions: [
+    {
+      question: "고래는 인류의 탐험과 문화를 상징하는 존재로 자리 잡고 있다.",
+      userAnswer: "FALSE",
+      correctAnswer: "TRUE",
+      score: 0,
+      correct: false
+    },
+    {
+      question: "이스마엘은 바다의 매력을 이야기하며 물과의 연결이 인간에게 주는 심리적 안정과 회복의 중요성을 강조한다.",
+      userAnswer: "TRUE",
+      correctAnswer: "TRUE",
+      score: 0,
+      correct: true
+    },
+    {
+      question: "이스마엘은 물이 인간의 사색과 깊은 연관이 있다고 주장한다.",
+      userAnswer: "FALSE",
+      correctAnswer: "TRUE",
+      score: 0,
+      correct: false
+    },
+    {
+      question: "이스마엘은 승객으로서의 삶을 선택했다.",
+      userAnswer: "승객",
+      correctAnswer: "탑승객",
+      score: 0,
+      correct: false
+    },
+    {
+      question: "이스마엘은 여관에 도착해 고급스러운 숙소를 찾았다.",
+      userAnswer: "이스마엘 숙소",
+      correctAnswer: "이스마엘 숙소",
+      score: 0,
+      correct: true
+    },
+    {
+      question: "이스마엘은 하포니어와 같은 방을 쓰는 것에 대해 불안해하고 있다.",
+      userAnswer: "FALSE",
+      correctAnswer: "TRUE",
+      score: 0,
+      correct: false
+    },
+    {
+      question: "이스마엘은 처음에 퀴퀘그의 외모에 두려움을 느꼈다.",
+      userAnswer: "TRUE",
+      correctAnswer: "TRUE",
+      score: 0,
+      correct: true
+    },
+    {
+      question: "이스마엘과 퀴퀘그는 같은 배에 타고 조업을 시작한다.",
+      userAnswer: "FALSE",
+      correctAnswer: "TRUE",
+      score: 0,
+      correct: false
+    },
+    {
+      question: "두 사람은 고래잡이의 위험과 두려움을 경험하며 서로의 존재가 큰 힘이 됨을 느꼈다.",
+      userAnswer: "TRUE",
+      correctAnswer: "TRUE",
+      score: 0,
+      correct: true
+    },
+    {
+      question: "이스마엘과 퀴퀘그는 피쿼드 호에 승선하게 된다.",
+      userAnswer: "FALSE",
+      correctAnswer: "TRUE",
+      score: 0,
+      correct: false
+    }
+  ]
+};
 
 const HistoryMain = () => {
-  const [quizHistoryList, setQuizHistoryList] = useState<QuizHistoryItem[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  
   const [selectedBook, setSelectedBook] = useState<{
     id: number;
     title: string;
-    author?: string;
-    imageUrl?: string;
+    author: string;
+    imageUrl: string;
   } | null>(null);
   
   // 모달 상태 관리
   const [showQuizModal, setShowQuizModal] = useState(false);
   
-  // 퀴즈 상태 관리
+  // 퀴즈 상태 관리 (실제로는 API 호출로 가져올 데이터)
   const [currentQuizIndex, setCurrentQuizIndex] = useState(0);
   const [selectedAnswerIndex, setSelectedAnswerIndex] = useState<number | undefined>(undefined);
 
-  useEffect(() => {
-    const loadQuizHistory = async () => {
-      try {
-        setIsLoading(true);
-        
-        const userProfile = await fetchUserProfile();
-        const userId = userProfile.id;
-        
-        const historyData = await fetchUserQuizHistory(userId);
-        
-        // 각 히스토리 항목에 대해 책 상세 정보 조회
-        const formattedDataPromises = historyData.map(async (item: any) => {
-          let author = '작자미상';
-          let imageUrl = '/images/default-book.png';
-
-          try {
-            const bookDetail = await fetchBookDetailById(item.bookId);
-            if (bookDetail) {
-              author = bookDetail.author || author;
-              imageUrl = bookDetail.thumbnailUrl || imageUrl;
-            }
-          } catch (bookDetailError) {
-            console.error(`Book ID ${item.bookId} 상세 정보 조회 실패:`, bookDetailError);
-            // 책 정보 조회 실패 시 기본값 사용
-          }
-          
-          return {
-            id: item.id, // API 응답에 따라 null일 수 있음
-            bookId: item.bookId,
-            bookTitle: item.bookTitle,
-            score: item.score,
-            submittedAt: item.submittedAt,
-            author,
-            imageUrl,
-            // correctCount와 totalCount 계산 제거
-          };
-        });
-
-        const formattedData = await Promise.all(formattedDataPromises);
-        
-        setQuizHistoryList(formattedData);
-      } catch (err) {
-        console.error('퀴즈 히스토리 로딩 오류:', err);
-        setError('퀴즈 히스토리를 불러오는 중 오류가 발생했습니다.');
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    loadQuizHistory();
+  // mockQuiz에서 데이터 가져오기 (고정된 점수 사용)
+  const quizHistoryList = useMemo(() => {
+    return mockQuizHistory.slice(0, 10).map((quiz, index) => ({
+      id: index + 1,
+      bookId: quiz.id,
+      title: quiz.title,
+      author: quiz.author,
+      imageUrl: quiz.imageUrl,
+      score: quiz.score,
+      solvedAt: new Date(Date.now() - index * 86400000).toISOString(),
+    }));
   }, []);
 
   // 퀴즈 카드 클릭 핸들러
-  const handleQuizCardSelect = (book: { id: number; title: string; author?: string; imageUrl?: string }) => {
+  const handleQuizCardSelect = (book: { id: number; title: string; author: string; imageUrl: string }) => {
     setSelectedBook(book);
-    setShowQuizModal(true);
+    setShowQuizModal(true); // QuizModal 표시
+    
+    // 실제 구현에서는 여기서 해당 책의 퀴즈 데이터를 불러올 수 있음
     setCurrentQuizIndex(0);
-    setSelectedAnswerIndex(undefined); // 초기에는 선택된 답변 없음
+    setSelectedAnswerIndex(1); // 예시로 특정 답변 선택 상태로 설정
   };
   
-  // 퀴즈 모달 핸들러들
+
+  // 퀴즈 모달 핸들러
   const handleQuizClose = () => {
     setShowQuizModal(false);
   };
   
   const handleNextQuiz = () => {
-    // sampleQuizData.options.length를 기반으로 하거나, 실제 퀴즈 데이터 길이를 사용해야 합니다.
-    // 현재는 예시로 3개의 퀴즈가 있다고 가정 (인덱스 0, 1, 2)
-    if (currentQuizIndex < 2) { 
+    // 다음 퀴즈로 이동하는 로직
+    if (currentQuizIndex < sampleQuizDetail.submissions.length - 1) { 
       setCurrentQuizIndex(prev => prev + 1);
-      setSelectedAnswerIndex(undefined);
+      setSelectedAnswerIndex(undefined); // 새 퀴즈에서는 선택 초기화
     } else {
-      setShowQuizModal(false); // 마지막 퀴즈 후 모달 닫기
+      setShowQuizModal(false); // 마지막 퀴즈면 모달 닫기
     }
   };
   
   const handlePrevQuiz = () => {
     if (currentQuizIndex > 0) {
       setCurrentQuizIndex(prev => prev - 1);
-      setSelectedAnswerIndex(undefined); // 이전 문제로 가면 선택 초기화
     }
   };
-
-  // 로딩 중 표시
-  if (isLoading) {
-    return (
-      <div className="pt-14 md:pt-12 flex justify-center items-center h-[50vh]">
-        <p className="text-xl">로딩 중...</p>
-      </div>
-    );
-  }
-
-  // 에러 표시
-  if (error) {
-    return (
-      <div className="pt-14 md:pt-12 flex justify-center items-center h-[50vh]">
-        <p className="text-xl text-red-500">{error}</p>
-      </div>
-    );
-  }
 
   return (
     <div className="pt-14 md:pt-12">
@@ -149,18 +155,13 @@ const HistoryMain = () => {
         {quizHistoryList.length > 0 
           ? quizHistoryList.map((quiz) => (
               <QuizCard
-                key={quiz.id || quiz.bookId} // quiz.id가 null일 수 있으므로 bookId를 fallback으로 사용
+                key={quiz.id}
                 id={quiz.bookId}
-                title={quiz.bookTitle}
-                author={quiz.author || '작자미상'}
-                thumbnailUrl={quiz.imageUrl || '/images/default-book.png'}
-                score={quiz.score} // correctCount, totalCount 대신 score로 변경
-                onQuizSelect={() => handleQuizCardSelect({
-                  id: quiz.bookId,
-                  title: quiz.bookTitle,
-                  author: quiz.author,
-                  imageUrl: quiz.imageUrl
-                })}
+                title={quiz.title}
+                author={quiz.author}
+                thumbnailUrl={quiz.imageUrl}
+                score={quiz.score}
+                onQuizSelect={handleQuizCardSelect} // 수정된 핸들러 사용
                 size="lg"
               />
             ))
@@ -176,17 +177,13 @@ const HistoryMain = () => {
       {showQuizModal && selectedBook && (
         <QuizModal
           bookTitle={selectedBook.title}
-          score={quizHistoryList.find(q => q.bookId === selectedBook.id)?.score || 0} // 선택된 책의 점수 찾기
+          score={Math.floor(Math.random() * 50) + 50} // 예시 점수
           quizNumber={currentQuizIndex + 1}
-          question={sampleQuizData.question} // 실제 퀴즈 데이터로 교체 필요
-          options={sampleQuizData.options} // 실제 퀴즈 데이터로 교체 필요
-          correctAnswerIndex={sampleQuizData.correctAnswerIndex} // 실제 퀴즈 데이터로 교체 필요
-          selectedAnswerIndex={selectedAnswerIndex}
-          explanation={sampleQuizData.explanation} // 실제 퀴즈 데이터로 교체 필요
+          submission={sampleQuizDetail.submissions[currentQuizIndex]}
           onClose={handleQuizClose}
           onNext={handleNextQuiz}
           onPrev={handlePrevQuiz}
-          isLastQuestion={currentQuizIndex === 2} // 실제 퀴즈 개수에 따라 동적으로 변경 필요
+          isLastQuestion={currentQuizIndex === sampleQuizDetail.submissions.length - 1}
           isFirstQuestion={currentQuizIndex === 0}
         />
       )}

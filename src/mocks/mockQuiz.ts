@@ -35,7 +35,7 @@ export const mockQuizHistory = mockBooks.map(book => ({
   title: book.title,
   author: book.author,
   imageUrl: book.imageUrl,
-  correctCount: Math.floor(Math.random() * 10) + 1, // 1~10 사이 랜덤 점수
+  score: Math.floor(Math.random() * 10) + 1, // 1~10 사이 랜덤 점수
   quizDate: new Date(Date.now() - book.id * 86400000).toISOString(),
   questionType: getRandomQuestionType(), // 문제 유형 추가
   difficulty: getRandomDifficulty() // 난이도 추가
