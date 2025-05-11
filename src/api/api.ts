@@ -1,5 +1,5 @@
 import axiosApi from "../axios";
-import { IBookList, IScene } from "../interfaces/bookInterface";
+import { IBookList, IScene, IBookDetail } from "../interfaces/bookInterface";
 import { IBookSearch } from "../interfaces/bookInterface";
 
 // 작가 정보 처리 함수 - API 응답에서 바로 처리
@@ -23,6 +23,20 @@ const processAuthorField = (data: any) => {
   }
   
   return data;
+};
+
+// 단일 책 정보 조회
+export const fetchBookDetailById = async (bookId: number): Promise<IBookDetail | null> => {
+  console.log(`단일 책 정보 조회 API 호출 시작 (bookId: ${bookId})`);
+  try {
+    const response = await axiosApi.get(`/book/info?bookId=${bookId}`);
+    console.log('단일 책 정보 조회 API 응답 성공:', response.data);
+    // API 응답이 배열 형태이므로, 첫 번째 요소를 반환하거나 없을 경우 null 반환
+    return response.data && response.data.length > 0 ? response.data[0] : null;
+  } catch (error) {
+    console.error('단일 책 정보 조회 API 오류:', error);
+    throw error;
+  }
 };
 
 // 인기 도서 조회 (좋아요 수 기준)

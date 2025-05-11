@@ -209,38 +209,6 @@ const Main = () => {
         </div>
       </div>
 
-      {/* 히스토리 섹션 */}
-      <div className="mb-8">
-        <div className="px-4 flex items-center justify-between mb-4">
-          <h3 className="text-2xl">히스토리</h3>
-          <Link
-            to="/search"
-            className="text-[#4B8E96] hover:underline hover:opacity-80 transition"
-          >
-            모두 보기
-          </Link>
-        </div>
-        <div className="px-4 grid grid-cols-2 md:grid-cols-4 gap-4 place-items-center">
-          {isRecentBooksArray && recentBooks.length > 0 ? 
-            recentBooks.slice(0, cardsPerSection).map((book: IBook) => (
-              <BookCard
-                key={book.id}
-                id={book.id}
-                thumbnailUrl={book.thumbnailUrl}
-                title={book.title}
-                author={book.author}
-                onBookSelect={handleBookSelect}
-                size="sm"
-              />
-            )) : (
-              <div className="col-span-2 md:col-span-4 text-center text-gray-500">
-                최신 등록된 도서가 없습니다
-              </div>
-            )
-          }
-        </div>
-      </div>
-
       {showModal && selectedBook && (
         <BookModal book={selectedBook} onClose={handleCloseModal} />
       )}
