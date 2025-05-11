@@ -198,22 +198,70 @@ const QuizModal: React.FC<QuizModalProps> = ({
             {/* 일반 텍스트 답변인 경우 */}
             {!isOxQuiz(currentSubmission.correctAnswer) && (
               <div className="space-y-3 mb-4">
-                {/* 사용자 답변 */}
-                <div className={`relative p-3 rounded-lg ${
-                  currentSubmission.correct 
-                    ? getOptionStyle("correct") 
-                    : getOptionStyle("wrong")
-                }`}>
-                  <div className="text-xs text-gray-500 mb-1">사용자 답변:</div>
-                  <div>{currentSubmission.userAnswer}</div>
-                </div>
-                  
-                {/* 오답인 경우에만 정답 표시 */}
-                {!currentSubmission.correct && (
-                  <div className={`relative p-3 rounded-lg ${getOptionStyle("correct")}`}>
-                    <div className="text-xs text-gray-500 mb-1">정답:</div>
-                    <div>{currentSubmission.correctAnswer}</div>
-                  </div>
+                {/* 객관식인 경우 (options가 있는 경우) */}
+                {currentSubmission.options && (
+                  <>
+                    {/* 모든 선택지 표시 */}
+                    {currentSubmission.options.map((option, index) => {
+                      const isUserAnswer = option === currentSubmission.userAnswer;
+                      const isCorrectAnswer = option === currentSubmission.correctAnswer;
+                      
+                      return (
+                        <div 
+                          key={index}
+                          className={`relative p-3 rounded-lg ${
+                            isCorrectAnswer 
+                              ? 'bg-[#B2EBF2] border-[1.5px] border-[#4B8E96]' 
+                              : (isUserAnswer && !currentSubmission.correct
+                                ? 'bg-[#FFEBEE] border-[1.5px] border-[#C75C5C]'
+                                : 'bg-white border border-black/20')
+                          }`}
+                        >
+                          <div className="flex items-start">
+                            <span className="mr-2 font-medium">
+                              {index === 0 ? 'A. ' : index === 1 ? 'B. ' : index === 2 ? 'C. ' : 'D. '}
+                            </span>
+                            <div className="flex-1">{option}</div>
+                          </div>
+                          
+                          {isUserAnswer && (
+                            <span className="absolute top-2 left-2 text-xs text-gray-500">
+                              사용자 답변
+                            </span>
+                          )}
+                          
+                          {isCorrectAnswer && !currentSubmission.correct && (
+                            <span className="absolute top-2 right-2 text-xs text-gray-500">
+                              정답
+                            </span>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </>
+                )}
+                
+                {/* 객관식이 아닌 경우 (주관식) */}
+                {!currentSubmission.options && (
+                  <>
+                    {/* 사용자 답변 */}
+                    <div className={`relative p-3 rounded-lg ${
+                      currentSubmission.correct 
+                        ? getOptionStyle("correct") 
+                        : getOptionStyle("wrong")
+                    }`}>
+                      <div className="text-xs text-gray-500 mb-1">사용자 답변:</div>
+                      <div>{currentSubmission.userAnswer}</div>
+                    </div>
+                      
+                    {/* 오답인 경우에만 정답 표시 */}
+                    {!currentSubmission.correct && (
+                      <div className={`relative p-3 rounded-lg ${getOptionStyle("correct")}`}>
+                        <div className="text-xs text-gray-500 mb-1">정답:</div>
+                        <div>{currentSubmission.correctAnswer}</div>
+                      </div>
+                    )}
+                  </>
                 )}
               </div>
             )}
