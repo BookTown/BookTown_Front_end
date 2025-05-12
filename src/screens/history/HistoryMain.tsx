@@ -2,9 +2,9 @@ import React, { useState, useEffect } from "react";
 import ListFrame from "../../components/ListFrame";
 import QuizCard from "../../components/QuizCard";
 import QuizModal from "../../components/QuizModal";
-import { fetchUserQuizHistory, fetchUserProfile } from "../../api/user";
-import { fetchBookDetailById } from "../../api/api"; // 단일 책 정보 API import
-import { sampleQuizData } from "../../mocks/mockQuiz"; // 퀴즈 데이터는 여전히 사용
+import { fetchUserQuizHistory, fetchUserProfile, fetchBookQuizHistoryDetail } from "../../api/user";
+import { fetchBookDetailById } from "../../api/api";
+import { QuizHistoryDetail } from "../../interfaces/quizInterface";
 
 // 퀴즈 히스토리 인터페이스 정의
 interface QuizHistoryItem {
@@ -15,13 +15,13 @@ interface QuizHistoryItem {
   submittedAt: string;
   author?: string; 
   imageUrl?: string; 
-  // correctCount와 totalCount 필드 제거
 }
 
 const HistoryMain = () => {
   const [quizHistoryList, setQuizHistoryList] = useState<QuizHistoryItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [userId, setUserId] = useState<number | null>(null);
   
   const [selectedBook, setSelectedBook] = useState<{
     id: number;
@@ -33,9 +33,9 @@ const HistoryMain = () => {
   // 모달 상태 관리
   const [showQuizModal, setShowQuizModal] = useState(false);
   
-  // 퀴즈 상태 관리
-  const [currentQuizIndex, setCurrentQuizIndex] = useState(0);
-  const [selectedAnswerIndex, setSelectedAnswerIndex] = useState<number | undefined>(undefined);
+  // API로 불러온 퀴즈 상세 데이터
+  const [historyData, setHistoryData] = useState<QuizHistoryDetail | null>(null);
+  const [isLoadingDetail, setIsLoadingDetail] = useState(false);
 
   useEffect(() => {
     const loadQuizHistory = async () => {
@@ -44,6 +44,7 @@ const HistoryMain = () => {
         
         const userProfile = await fetchUserProfile();
         const userId = userProfile.id;
+        setUserId(userId); // 사용자 ID 저장
         
         const historyData = await fetchUserQuizHistory(userId);
         
@@ -71,7 +72,6 @@ const HistoryMain = () => {
             submittedAt: item.submittedAt,
             author,
             imageUrl,
-            // correctCount와 totalCount 계산 제거
           };
         });
 
@@ -89,35 +89,33 @@ const HistoryMain = () => {
     loadQuizHistory();
   }, []);
 
-  // 퀴즈 카드 클릭 핸들러
-  const handleQuizCardSelect = (book: { id: number; title: string; author?: string; imageUrl?: string }) => {
-    setSelectedBook(book);
-    setShowQuizModal(true);
-    setCurrentQuizIndex(0);
-    setSelectedAnswerIndex(undefined); // 초기에는 선택된 답변 없음
+  // 퀴즈 카드 클릭 핸들러 - API 호출 추가
+  const handleQuizCardSelect = async (book: { id: number; title: string; author?: string; imageUrl?: string }) => {
+    if (!userId) {
+      console.error("사용자 ID를 찾을 수 없습니다.");
+      return;
+    }
+    
+    try {
+      setIsLoadingDetail(true);
+      setSelectedBook(book);
+      
+      // API에서 선택한 책의 퀴즈 히스토리 상세 정보 로드
+      const detailData = await fetchBookQuizHistoryDetail(userId, book.id);
+      setHistoryData(detailData);
+      setShowQuizModal(true);
+    } catch (error) {
+      console.error("퀴즈 히스토리 상세 정보 로드 실패:", error);
+      alert("퀴즈 히스토리 상세 정보를 불러오는데 실패했습니다.");
+    } finally {
+      setIsLoadingDetail(false);
+    }
   };
   
   // 퀴즈 모달 핸들러들
   const handleQuizClose = () => {
     setShowQuizModal(false);
-  };
-  
-  const handleNextQuiz = () => {
-    // sampleQuizData.options.length를 기반으로 하거나, 실제 퀴즈 데이터 길이를 사용해야 합니다.
-    // 현재는 예시로 3개의 퀴즈가 있다고 가정 (인덱스 0, 1, 2)
-    if (currentQuizIndex < 2) { 
-      setCurrentQuizIndex(prev => prev + 1);
-      setSelectedAnswerIndex(undefined);
-    } else {
-      setShowQuizModal(false); // 마지막 퀴즈 후 모달 닫기
-    }
-  };
-  
-  const handlePrevQuiz = () => {
-    if (currentQuizIndex > 0) {
-      setCurrentQuizIndex(prev => prev - 1);
-      setSelectedAnswerIndex(undefined); // 이전 문제로 가면 선택 초기화
-    }
+    setHistoryData(null); // 모달을 닫을 때 히스토리 데이터 초기화
   };
 
   // 로딩 중 표시
@@ -154,7 +152,7 @@ const HistoryMain = () => {
                 title={quiz.bookTitle}
                 author={quiz.author || '작자미상'}
                 thumbnailUrl={quiz.imageUrl || '/images/default-book.png'}
-                score={quiz.score} // correctCount, totalCount 대신 score로 변경
+                score={quiz.score}
                 onQuizSelect={() => handleQuizCardSelect({
                   id: quiz.bookId,
                   title: quiz.bookTitle,
@@ -172,22 +170,28 @@ const HistoryMain = () => {
         }
       </ListFrame>
       
-      {/* 퀴즈 모달 */}
+      {/* 상세 정보 로딩 중 표시 */}
+      {isLoadingDetail && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black/50 z-50">
+          <div className="bg-white p-6 rounded-xl shadow-xl">
+            <p className="text-lg">퀴즈 상세 정보를 불러오는 중...</p>
+          </div>
+        </div>
+      )}
+
+      {/* 퀴즈 모달 - API 데이터 전달 */}
       {showQuizModal && selectedBook && (
         <QuizModal
           bookTitle={selectedBook.title}
-          score={quizHistoryList.find(q => q.bookId === selectedBook.id)?.score || 0} // 선택된 책의 점수 찾기
-          quizNumber={currentQuizIndex + 1}
-          question={sampleQuizData.question} // 실제 퀴즈 데이터로 교체 필요
-          options={sampleQuizData.options} // 실제 퀴즈 데이터로 교체 필요
-          correctAnswerIndex={sampleQuizData.correctAnswerIndex} // 실제 퀴즈 데이터로 교체 필요
-          selectedAnswerIndex={selectedAnswerIndex}
-          explanation={sampleQuizData.explanation} // 실제 퀴즈 데이터로 교체 필요
+          score={quizHistoryList.find(q => q.bookId === selectedBook.id)?.score || 0}
+          quizNumber={1} // API 데이터를 사용할 때는 사용되지 않음
+          question="" // API 데이터를 사용할 때는 사용되지 않음
+          options={[]} // API 데이터를 사용할 때는 사용되지 않음
+          correctAnswerIndex={0} // API 데이터를 사용할 때는 사용되지 않음
           onClose={handleQuizClose}
-          onNext={handleNextQuiz}
-          onPrev={handlePrevQuiz}
-          isLastQuestion={currentQuizIndex === 2} // 실제 퀴즈 개수에 따라 동적으로 변경 필요
-          isFirstQuestion={currentQuizIndex === 0}
+          onNext={() => {}} // API 데이터 사용 시 컴포넌트 내부에서 처리함
+          onPrev={() => {}} // API 데이터 사용 시 컴포넌트 내부에서 처리함
+          historyData={historyData || undefined}
         />
       )}
     </div>
