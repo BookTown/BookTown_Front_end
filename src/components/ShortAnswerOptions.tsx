@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { QuizSubmission } from "../interfaces/quizInterface";
 import { getOptionStyle } from '../utils/quizStyles';
 
@@ -7,15 +7,6 @@ interface ShortAnswerResultProps {
 }
 
 const ShortAnswerOptions: React.FC<ShortAnswerResultProps> = ({ currentSubmission }) => {
-  // 컴포넌트 마운트 시 로그 출력
-  useEffect(() => {
-    console.log("ShortAnswerOptions 렌더링:", { 
-      currentSubmission,
-      userAnswer: currentSubmission.userAnswer,
-      correctAnswer: currentSubmission.correctAnswer
-    });
-  }, [currentSubmission]);
-
   const { correct, userAnswer, correctAnswer } = currentSubmission;
   
   return (

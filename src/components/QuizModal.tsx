@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import Button from "./Button";
 import { ChevronDown, ChevronUp, X } from "lucide-react";
 import { QuizHistoryDetail, QuizSubmission, QuizType, determineQuizType } from "../interfaces/quizInterface";
@@ -38,18 +38,6 @@ const QuizModal: React.FC<QuizModalProps> = ({
   // 총 문제 수
   const totalQuestions = hasApiData ? historyData!.submissions.length : 0;
 
-  // 로그 출력
-  useEffect(() => {
-    if (hasApiData) {
-      console.log("QuizModal 데이터 로드:", { 
-        historyData,
-        totalSubmissions: historyData?.submissions.length,
-        currentIndex,
-        currentSubmission
-      });
-    }
-  }, [historyData, hasApiData, currentIndex, currentSubmission]);
-
   // 다음 문제로 이동
   const handleNext = () => {
     if (currentIndex < totalQuestions - 1) {
@@ -78,9 +66,7 @@ const QuizModal: React.FC<QuizModalProps> = ({
 
   // 퀴즈 렌더링
   const renderQuiz = (submission: QuizSubmission) => {
-    console.log("퀴즈 렌더링:", { submission });
     const quizType = determineQuizType(submission);
-    console.log("판별된 퀴즈 타입:", { quizType });
     
     return (
       <div className="bg-gray-50 rounded-lg p-4 mb-5 border border-black/20">

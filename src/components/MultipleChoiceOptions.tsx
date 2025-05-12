@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { QuizSubmission } from '../interfaces/quizInterface';
 import { getOptionStyle, getStatusBadge } from '../utils/quizStyles';
 
@@ -7,15 +7,6 @@ interface MultipleChoiceOptionsProps {
 }
 
 const MultipleChoiceOptions: React.FC<MultipleChoiceOptionsProps> = ({ currentSubmission }) => {
-  // 컴포넌트 마운트 시 로그 출력
-  useEffect(() => {
-    console.log("MultipleChoiceOptions 렌더링:", { 
-      currentSubmission,
-      options: currentSubmission.options,
-      hasOptions: Array.isArray(currentSubmission.options) && currentSubmission.options.length > 0
-    });
-  }, [currentSubmission]);
-  
   // 옵션 레이블 생성 함수
   const getOptionLabel = (index: number): string => {
     return String.fromCharCode(65 + index) + '. '; // A, B, C, D 생성
@@ -33,7 +24,6 @@ const MultipleChoiceOptions: React.FC<MultipleChoiceOptionsProps> = ({ currentSu
   
   // options가 없거나 빈 배열인 경우 확인
   if (!currentSubmission.options || currentSubmission.options.length === 0) {
-    console.log("객관식 문제의 선택지가 없습니다.", currentSubmission);
     return <div className="text-sm text-red-500">선택지 정보를 불러올 수 없습니다.</div>;
   }
   
