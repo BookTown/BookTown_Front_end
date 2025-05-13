@@ -1,23 +1,16 @@
-// API에서 가져오는 데이터 타입 정의
-export interface QuizOption {
-  id: number;
-  index: number;
-  text: string;
-}
-
 export interface QuizSubmission {
-  id: number;                
+  id: number;               
   bookSummary: string | null;
-  user: any | null;          
+  user: any | null;         
   questionType: "MULTIPLE_CHOICE" | "SHORT_ANSWER" | "TRUE_FALSE"; 
   difficulty: "EASY" | "MEDIUM" | "HARD"; 
   question: string;          
   correctAnswer: string;     
   userAnswer?: string;       
-  score: number;            
-  correct?: boolean;        
-  explanation: string;    
-  options: QuizOption[] | null; 
+  score: number;        
+  correct?: boolean;         
+  explanation: string;     
+  options: string[] | null; 
 }
 
 export interface QuizHistoryDetail {
@@ -42,6 +35,7 @@ export const determineQuizType = (submission: QuizSubmission): QuizType => {
     return submission.questionType as QuizType;
   }
   
+  // 이전 버전과의 호환성을 위한 코드
   // 객관식 퀴즈인 경우 (options 배열이 있음)
   if (Array.isArray(submission.options) && submission.options.length > 0) {
     return QuizType.MULTIPLE_CHOICE;
