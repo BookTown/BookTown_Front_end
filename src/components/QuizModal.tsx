@@ -64,51 +64,52 @@ const QuizModal: React.FC<QuizModalProps> = ({
     </div>
   );
 
+  // 해설 토글 핸들러
+  const toggleExplanation = () => {
+    setShowExplanation(!showExplanation);
+  };
+
   // 퀴즈 렌더링
   const renderQuiz = (submission: QuizSubmission) => {
     const quizType = determineQuizType(submission);
     
     return (
       <div className="bg-gray-50 rounded-lg p-4 mb-5 border border-black/20">
-        {/* 문제 번호 */}
-        <div className="mb-3">
+        {/* 문제 번호 및 정답 여부 */}
+        <div className="flex justify-between items-center mb-3">
           <h3 className="font-medium">Quiz {currentIndex + 1}</h3>
-        </div>
-
-        {/* 문제 내용 */}
-        <p className="mb-5 text-sm">{submission.question}</p>
-        
-        {/* 퀴즈 유형에 따른 컴포넌트 렌더링 */}
-        <div className="relative">
-          {/* 정답/오답 라벨 */}
-          <span className={`absolute -top-3 right-2 z-10 px-3 py-1 text-xs font-bold rounded-full shadow-sm ${
+          <span className={`px-2 py-0.5 text-xs rounded-full ${
             submission.correct 
               ? 'bg-[#B2EBF2] text-[#4B8E96]' 
               : 'bg-[#FFEBEE] text-[#C75C5C]'
           }`}>
             {submission.correct ? '정답' : '오답'}
           </span>
-          
-          {quizType === QuizType.TRUE_FALSE && (
-            <OxQuizOptions currentSubmission={submission} />
-          )}
-          
-          {quizType === QuizType.MULTIPLE_CHOICE && (
-            <MultipleChoiceOptions currentSubmission={submission} />
-          )}
-          
-          {quizType === QuizType.SHORT_ANSWER && (
-            <ShortAnswerOptions currentSubmission={submission} />
-          )}
         </div>
+
+        {/* 문제 내용 */}
+        <p className="mb-5 text-sm">{submission.question}</p>
+        
+        {/* 퀴즈 유형에 따른 컴포넌트 렌더링 */}
+        {quizType === QuizType.TRUE_FALSE && (
+          <OxQuizOptions currentSubmission={submission} />
+        )}
+        
+        {quizType === QuizType.MULTIPLE_CHOICE && (
+          <MultipleChoiceOptions currentSubmission={submission} />
+        )}
+        
+        {quizType === QuizType.SHORT_ANSWER && (
+          <ShortAnswerOptions currentSubmission={submission} />
+        )}
 
         {/* 해설 섹션 */}
         <div className="mt-4 border-[1.5px] border-black rounded-lg overflow-hidden">
           <button
-            className="w-full p-3 flex items-center justify-center relative bg-white"
-            onClick={() => setShowExplanation(!showExplanation)}
+            className="w-full p-1 h-8 flex items-center justify-center relative bg-white"
+            onClick={toggleExplanation}
           >
-            <span className="text-center">해설보기</span>
+            <span className="text-center">{showExplanation ? "해설닫기" : "해설보기"}</span>
             <span className="absolute right-4">
               {showExplanation ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
             </span>
@@ -124,7 +125,7 @@ const QuizModal: React.FC<QuizModalProps> = ({
       </div>
     );
   };
-
+  
   // 네비게이션 버튼 렌더링
   const renderNavigationButtons = () => {
     const isFirst = currentIndex === 0;
@@ -176,16 +177,16 @@ const QuizModal: React.FC<QuizModalProps> = ({
         {/* 퀴즈 컨텐츠 또는 에러 상태 */}
         {currentSubmission ? renderQuiz(currentSubmission) : renderErrorState()}
 
-        {/* 이전/다음 버튼 (데이터가 있는 경우에만) */}
-        {currentSubmission && (
-          <div className="flex justify-center gap-2">
+        {/* 이전/다음 버튼 (데이터가 있는 경우에만, 해설이 열려있지 않을 때만 표시) */}
+        {currentSubmission && !showExplanation && (
+          <div className="flex justify-center gap-2 transition-all duration-300">
             {renderNavigationButtons()}
           </div>
         )}
 
         {/* 퀴즈 진행 상황 표시 */}
-        {hasApiData && (
-          <div className="mt-4 text-center text-sm text-gray-500">
+        {hasApiData && !showExplanation && (
+          <div className="mt-4 text-center text-sm text-gray-500 transition-all duration-300">
             {currentIndex + 1} / {totalQuestions}
           </div>
         )}

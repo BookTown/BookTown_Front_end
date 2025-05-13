@@ -15,9 +15,9 @@ export const getStatusBadge = (status: 'correct' | 'wrong' | 'default') => {
   }
   
   return {
-    className: status === 'correct' 
-      ? 'bg-[#4B8E96] text-white' 
-      : 'bg-[#C75C5C] text-white',
+    className: status === 'correct'
+      ? 'absolute -top-2 right-2 px-3 py-1 text-xs font-bold rounded-full shadow-sm bg-[#4B8E96] text-white'
+      : 'absolute -top-2 right-2 px-3 py-1 text-xs font-bold rounded-full shadow-sm bg-[#C75C5C] text-white',
     text: status === 'correct' ? '정답' : '오답'
   };
 };

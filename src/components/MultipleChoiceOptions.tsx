@@ -39,9 +39,9 @@ const MultipleChoiceOptions: React.FC<MultipleChoiceOptionsProps> = ({ currentSu
             key={index}
             className={`relative p-3 rounded-lg ${getOptionStyle(status)}`}
           >
-            <div className="flex items-center">
+            <div className="flex items-center justify-center text-center">
               <span className="font-medium mr-2">{getOptionLabel(index)}</span>
-              <div className="flex-1">{optionText}</div>
+              <div className="flex-1 text-center">{optionText}</div>
               
               {showBadge && (
                 <span className={`ml-2 px-2 py-0.5 text-xs rounded-full ${getStatusBadge(status).className}`}>
