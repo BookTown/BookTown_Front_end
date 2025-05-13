@@ -99,24 +99,24 @@ const QuizModal: React.FC<QuizModalProps> = ({
         )}
 
         {/* 해설 섹션 */}
-        {submission.explanation && (
-          <div className="border-[1.5px] border-black rounded-lg overflow-hidden">
-            <button
-              className="w-full p-3 flex items-center justify-center relative bg-white"
-              onClick={() => setShowExplanation(!showExplanation)}
-            >
-              <span className="text-center">해설보기</span>
-              <span className="absolute right-4">
-                {showExplanation ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
-              </span>
-            </button>
-            {showExplanation && (
-              <div className="p-6 border-t border-black/20 bg-gray-50 text-center">
-                <p className="text-sm">{submission.explanation}</p>
-              </div>
-            )}
-          </div>
-        )}
+        <div className="mt-4 border-[1.5px] border-black rounded-lg overflow-hidden">
+          <button
+            className="w-full p-3 flex items-center justify-center relative bg-white"
+            onClick={() => setShowExplanation(!showExplanation)}
+          >
+            <span className="text-center">해설보기</span>
+            <span className="absolute right-4">
+              {showExplanation ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
+            </span>
+          </button>
+          {showExplanation && (
+            <div className="p-6 border-t border-black/20 bg-gray-50 text-center">
+              <p className="text-sm">
+                {submission.explanation ? submission.explanation : "해설이 없습니다."}
+              </p>
+            </div>
+          )}
+        </div>
       </div>
     );
   };
