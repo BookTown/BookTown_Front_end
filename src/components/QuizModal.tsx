@@ -93,15 +93,15 @@ const QuizModal: React.FC<QuizModalProps> = ({
           <div className="relative mr-2">
             <h3 className="font-medium">Quiz {currentIndex + 1}</h3>
             {submission.correct ? (
-              // 정답 표시 - 빨간색 동그라미 (숫자 위에 배치)
+              // 정답 표시 - 빨간색 동그라미
               <svg width="20" height="20" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" 
-                className="absolute -top-3 -right-4">
+                className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
                 <circle cx="20" cy="20" r="18" stroke="#FF0000" strokeWidth="4" />
               </svg>
             ) : (
-              // 오답 표시 - 빨간색 슬래시 (숫자 위에 배치)
+              // 오답 표시 - 빨간색 슬래시
               <svg width="20" height="20" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" 
-                className="absolute -top-3 -right-4">
+                className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
                 <line x1="10" y1="30" x2="30" y2="10" stroke="#FF0000" strokeWidth="4" strokeLinecap="round" />
               </svg>
             )}
