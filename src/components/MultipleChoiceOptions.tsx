@@ -1,5 +1,5 @@
 import React from 'react';
-import { QuizSubmission } from '../interfaces/quizInterface';
+import { QuizSubmission, QuizOption } from '../interfaces/quizInterface';
 import { getOptionStyle, getStatusBadge } from '../utils/quizStyles';
 
 interface MultipleChoiceOptionsProps {
@@ -13,9 +13,9 @@ const MultipleChoiceOptions: React.FC<MultipleChoiceOptionsProps> = ({ currentSu
   };
   
   // 옵션 상태 결정 함수
-  const getOptionStatus = (option: string): 'correct' | 'wrong' | 'default' => {
-    const isUserAnswer = option === currentSubmission.userAnswer;
-    const isCorrectAnswer = option === currentSubmission.correctAnswer;
+  const getOptionStatus = (option: QuizOption): 'correct' | 'wrong' | 'default' => {
+    const isUserAnswer = option.text === currentSubmission.userAnswer;
+    const isCorrectAnswer = option.text === currentSubmission.correctAnswer;
     
     if (isCorrectAnswer) return 'correct';
     if (isUserAnswer && !isCorrectAnswer) return 'wrong';
@@ -29,19 +29,18 @@ const MultipleChoiceOptions: React.FC<MultipleChoiceOptionsProps> = ({ currentSu
   
   return (
     <div className="space-y-3 mb-4">
-      {currentSubmission.options.map((option, index) => {
-        const optionText = option; // API 응답에서는 이미 문자열로 제공됨
-        const status = getOptionStatus(optionText);
+      {currentSubmission.options.map((option) => {
+        const status = getOptionStatus(option);
         const showBadge = status !== 'default';
         
         return (
           <div 
-            key={index}
+            key={option.id}
             className={`relative p-3 rounded-lg ${getOptionStyle(status)}`}
           >
             <div className="flex items-center">
-              <span className="font-medium mr-2">{getOptionLabel(index)}</span>
-              <div className="flex-1">{optionText}</div>
+              <span className="font-medium mr-2">{getOptionLabel(option.index)}</span>
+              <div className="flex-1">{option.text}</div>
               
               {showBadge && (
                 <span className={`ml-2 px-2 py-0.5 text-xs rounded-full ${getStatusBadge(status).className}`}>
