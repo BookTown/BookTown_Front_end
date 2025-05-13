@@ -174,7 +174,6 @@ const QuizModal: React.FC<QuizModalProps> = ({
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
       {/* 배경 딤처리 - 클릭 시 모달 닫기 */}
       <div className="absolute inset-0" onClick={onClose} />
-
       {/* 모달 본문 */}
       <div className="bg-white rounded-xl p-5 w-[90%] max-w-md shadow-lg z-10 max-h-[90vh] overflow-y-auto">
         {/* 헤더: 책 제목 및 닫기 버튼 */}
@@ -189,20 +188,21 @@ const QuizModal: React.FC<QuizModalProps> = ({
             <X size={20} />
           </button>
         </div>
-
         {/* 퀴즈 컨텐츠 또는 에러 상태 */}
         {currentSubmission ? renderQuiz(currentSubmission) : renderErrorState()}
-
-        {/* 이전/다음 버튼 */}
-        {currentSubmission && !showExplanation && (
-          <div className="flex justify-center gap-2 transition-all duration-300">
-            {renderNavigationButtons()}
-          </div>
-        )}
-
+        {/* 이전/다음 버튼 - 항상 렌더링하지만 상태에 따라 높이와 투명도 조절 */}
+        <div 
+          className={`flex justify-center gap-2 overflow-hidden transition-all duration-300 ease-in-out ${
+            currentSubmission && !showExplanation
+              ? 'max-h-20 opacity-100 mt-4 mb-2' 
+              : 'max-h-0 opacity-0 mt-0 mb-0'
+          }`}
+        >
+          {renderNavigationButtons()}
+        </div>
         {/* 퀴즈 진행 상황 표시 */}
         {hasApiData && (
-          <div className="mt-4 text-center text-sm text-gray-500">
+          <div className="mt-2 text-center text-sm text-gray-500">
             {currentIndex + 1} / {totalQuestions}
           </div>
         )}

@@ -16,8 +16,8 @@ export const getStatusBadge = (status: 'correct' | 'wrong' | 'default') => {
   
   return {
     className: status === 'correct'
-      ? 'absolute -top-2 right-2 w-10 h-7 flex items-center justify-center text-sm rounded-full shadow-sm bg-[#4B8E96] text-white border border-black/20'
-      : 'absolute -top-2 right-2 w-10 h-7 flex items-center justify-center text-sm rounded-full shadow-sm bg-[#C75C5C] text-white border border-black/20',
+      ? 'absolute -top-2 right-2 w-10 h-7 flex items-center justify-center text-sm rounded-[10px] shadow-sm bg-[#4B8E96] text-white border border-black/20'
+      : 'absolute -top-2 right-2 w-10 h-7 flex items-center justify-center text-sm rounded-[10px] shadow-sm bg-[#C75C5C] text-white border border-black/20',
     text: status === 'correct' ? '정답' : '오답'
   };
 };
