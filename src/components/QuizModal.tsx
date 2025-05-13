@@ -91,20 +91,39 @@ const QuizModal: React.FC<QuizModalProps> = ({
         {/* 문제 번호 및 정답 여부 */}
         <div className="flex items-center mb-3">
           <div className="relative mr-2">
-            <h3 className="font-medium">Quiz {currentIndex + 1}</h3>
-            {submission.correct ? (
-              // 정답 표시 - 빨간색 동그라미
-              <svg width="20" height="20" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" 
-                className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
-                <circle cx="20" cy="20" r="18" stroke="#FF0000" strokeWidth="4" />
-              </svg>
-            ) : (
-              // 오답 표시 - 빨간색 슬래시
-              <svg width="20" height="20" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" 
-                className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
-                <line x1="10" y1="30" x2="30" y2="10" stroke="#FF0000" strokeWidth="4" strokeLinecap="round" />
-              </svg>
-            )}
+            <h3 className="font-medium flex items-center">
+              <span>Quiz</span>
+              <span className="relative inline-block ml-1">
+                {currentIndex + 1}
+                {submission.correct ? (
+                  // 정답 표시 - 색연필 느낌의 동그라미
+                  <svg width="22" height="22" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" 
+                    className="absolute -top-[3px] -left-[3px]">
+                    <defs>
+                      <filter id="pencilCircle" x="-20%" y="-20%" width="140%" height="140%">
+                        <feTurbulence type="fractalNoise" baseFrequency="0.05" numOctaves="2" result="noise"/>
+                        <feDisplacementMap in="SourceGraphic" in2="noise" scale="1.5" />
+                      </filter>
+                    </defs>
+                    <circle cx="20" cy="20" r="18" stroke="#FF6666" strokeWidth="4" 
+                      strokeDasharray="2,2" filter="url(#pencilCircle)" />
+                  </svg>
+                ) : (
+                  // 오답 표시 - 색연필 느낌의 슬래시
+                  <svg width="22" height="22" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" 
+                    className="absolute -top-[3px] -left-[3px]">
+                    <defs>
+                      <filter id="pencilSlash" x="-20%" y="-20%" width="140%" height="140%">
+                        <feTurbulence type="fractalNoise" baseFrequency="0.05" numOctaves="2" result="noise"/>
+                        <feDisplacementMap in="SourceGraphic" in2="noise" scale="1.5" />
+                      </filter>
+                    </defs>
+                    <line x1="10" y1="30" x2="30" y2="10" stroke="#FF6666" strokeWidth="4" 
+                      strokeLinecap="round" strokeDasharray="2,2" filter="url(#pencilSlash)" />
+                  </svg>
+                )}
+              </span>
+            </h3>
           </div>
         </div>
 
