@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import Button from "./Button";
-import { ChevronDown, ChevronUp, X } from "lucide-react";
+import { ChevronDown, X } from "lucide-react";
 import { QuizHistoryDetail, QuizSubmission, QuizType, determineQuizType } from "../interfaces/quizInterface";
 import OxQuizOptions from "./OxQuizOptions";
 import MultipleChoiceOptions from "./MultipleChoiceOptions";
@@ -110,17 +110,23 @@ const QuizModal: React.FC<QuizModalProps> = ({
             onClick={toggleExplanation}
           >
             <span className="text-center">{showExplanation ? "해설닫기" : "해설보기"}</span>
-            <span className="absolute right-4">
-              {showExplanation ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
+            <span className={`absolute right-4 transition-transform duration-300 ${showExplanation ? 'rotate-180' : 'rotate-0'}`}>
+              <ChevronDown size={18} />
             </span>
           </button>
-          {showExplanation && (
-            <div className="p-6 border-t border-black/20 bg-gray-50 text-center">
+          <div 
+            className={`transition-all duration-300 ease-in-out border-t border-black/20 bg-gray-50 overflow-hidden ${
+              showExplanation 
+                ? 'max-h-96 opacity-100' 
+                : 'max-h-0 opacity-0'
+            }`}
+          >
+            <div className="p-6 text-center">
               <p className="text-sm">
                 {submission.explanation ? submission.explanation : "해설이 없습니다."}
               </p>
             </div>
-          )}
+          </div>
         </div>
       </div>
     );
