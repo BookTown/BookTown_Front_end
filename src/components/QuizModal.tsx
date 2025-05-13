@@ -89,15 +89,23 @@ const QuizModal: React.FC<QuizModalProps> = ({
     return (
       <div className="bg-gray-50 rounded-lg p-4 mb-5 border border-black/20">
         {/* 문제 번호 및 정답 여부 */}
-        <div className="flex justify-between items-center mb-3">
-          <h3 className="font-medium">Quiz {currentIndex + 1}</h3>
-          <span className={`px-2 py-0.5 text-xs rounded-full ${
-            submission.correct 
-              ? 'bg-[#B2EBF2] text-[#4B8E96]' 
-              : 'bg-[#FFEBEE] text-[#C75C5C]'
-          }`}>
-            {submission.correct ? '정답' : '오답'}
-          </span>
+        <div className="flex items-center mb-3">
+          <div className="relative mr-2">
+            <h3 className="font-medium">Quiz {currentIndex + 1}</h3>
+            {submission.correct ? (
+              // 정답 표시 - 빨간색 동그라미 (숫자 위에 배치)
+              <svg width="20" height="20" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" 
+                className="absolute -top-3 -right-4">
+                <circle cx="20" cy="20" r="18" stroke="#FF0000" strokeWidth="4" />
+              </svg>
+            ) : (
+              // 오답 표시 - 빨간색 슬래시 (숫자 위에 배치)
+              <svg width="20" height="20" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" 
+                className="absolute -top-3 -right-4">
+                <line x1="10" y1="30" x2="30" y2="10" stroke="#FF0000" strokeWidth="4" strokeLinecap="round" />
+              </svg>
+            )}
+          </div>
         </div>
 
         {/* 문제 내용 */}
