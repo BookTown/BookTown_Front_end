@@ -98,13 +98,13 @@ const QuizModal: React.FC<QuizModalProps> = ({
                 {submission.correct ? (
                   // 정답 표시 - 빨간색 동그라미
                   <svg width="22" height="22" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" 
-                    className="absolute -top-[3px] -left-[3px]">
+                    className="absolute -top-[2px] -left-[6px]">
                     <circle cx="20" cy="20" r="18" stroke="#FF0000" strokeWidth="4" />
                   </svg>
                 ) : (
                   // 오답 표시 - 빨간색 슬래시
                   <svg width="22" height="22" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" 
-                    className="absolute -top-[3px] -left-[3px]">
+                    className="absolute -top-[2px] -left-[6px]">
                     <line x1="10" y1="30" x2="30" y2="10" stroke="#FF0000" strokeWidth="4" strokeLinecap="round" />
                   </svg>
                 )}
