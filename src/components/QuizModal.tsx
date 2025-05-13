@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import Button from "./Button";
 import { ChevronDown, X } from "lucide-react";
 import { QuizHistoryDetail, QuizSubmission, QuizType, determineQuizType } from "../interfaces/quizInterface";
@@ -28,6 +28,8 @@ const QuizModal: React.FC<QuizModalProps> = ({
 }) => {
   const [showExplanation, setShowExplanation] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [explanationHeight, setExplanationHeight] = useState(0);
+  const explanationRef = useRef<HTMLDivElement>(null);
   
   // API 데이터 존재 여부 확인
   const hasApiData = !!historyData && historyData.submissions.length > 0;
@@ -37,6 +39,17 @@ const QuizModal: React.FC<QuizModalProps> = ({
   
   // 총 문제 수
   const totalQuestions = hasApiData ? historyData!.submissions.length : 0;
+
+  // 해설 박스의 실제 높이를 측정
+  useEffect(() => {
+    if (explanationRef.current) {
+      if (showExplanation) {
+        setExplanationHeight(explanationRef.current.scrollHeight);
+      } else {
+        setExplanationHeight(0);
+      }
+    }
+  }, [showExplanation, currentSubmission]);
 
   // 다음 문제로 이동
   const handleNext = () => {
@@ -110,18 +123,15 @@ const QuizModal: React.FC<QuizModalProps> = ({
             onClick={toggleExplanation}
           >
             <span className="text-center">{showExplanation ? "해설닫기" : "해설보기"}</span>
-            <span className={`absolute right-4 transition-transform duration-300 ${showExplanation ? 'rotate-180' : 'rotate-0'}`}>
+            <span className={`absolute right-4 transition-transform duration-300 ease-in-out ${showExplanation ? 'rotate-180' : 'rotate-0'}`}>
               <ChevronDown size={18} />
             </span>
           </button>
           <div 
-            className={`transition-all duration-300 ease-in-out border-t border-black/20 bg-gray-50 overflow-hidden ${
-              showExplanation 
-                ? 'max-h-96 opacity-100' 
-                : 'max-h-0 opacity-0'
-            }`}
+            style={{ height: `${explanationHeight}px` }}
+            className="transition-all duration-300 ease-in-out border-t border-black/20 bg-gray-50 overflow-hidden"
           >
-            <div className="p-6 text-center">
+            <div ref={explanationRef} className="p-6 text-center">
               <p className="text-sm">
                 {submission.explanation ? submission.explanation : "해설이 없습니다."}
               </p>
