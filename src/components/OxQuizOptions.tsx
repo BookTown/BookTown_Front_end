@@ -1,53 +1,57 @@
 import React from 'react';
 import { QuizSubmission } from '../interfaces/quizInterface';
-import { getOptionStyle } from '../utils/quizStyles';
+import { getOptionStyle, getStatusBadge } from '../utils/quizStyles';
 
 interface OxQuizOptionsProps {
   currentSubmission: QuizSubmission;
 }
 
 const OxQuizOptions: React.FC<OxQuizOptionsProps> = ({ currentSubmission }) => {
-  const { correct, correctAnswer, userAnswer } = currentSubmission;
-
-  // OX 옵션 렌더링 함수
-  const renderOption = (value: "TRUE" | "FALSE", symbol: string) => {
-    const isCorrectAnswer = correctAnswer === value;
-    const isUserAnswer = userAnswer === value;
+  const trueSelected = currentSubmission.userAnswer === 'true';
+  const falseSelected = currentSubmission.userAnswer === 'false';
+  
+  // 정답 상태 확인
+  const trueStatus = currentSubmission.correctAnswer === 'true' 
+    ? 'correct' 
+    : (trueSelected ? 'wrong' : 'default');
     
-    // 상태에 따른 스타일 결정
-    let status: 'correct' | 'wrong' | 'default' = 'default';
-    if (isCorrectAnswer) status = 'correct';
-    else if (isUserAnswer && !correct) status = 'wrong';
-    
-    return (
-      <div className={`relative p-12 rounded-lg flex items-center justify-center ${getOptionStyle(status)}`}>
-        {isCorrectAnswer && (
-          <span className="absolute top-2 left-2 text-xs text-gray-500">정답:</span>
-        )}
-        {isUserAnswer && !isCorrectAnswer && (
-          <span className="absolute top-2 left-2 text-xs text-gray-500">사용자 답변:</span>
-        )}
-        <span className="text-6xl font-bold">{symbol}</span>
-      </div>
-    );
-  };
-
+  const falseStatus = currentSubmission.correctAnswer === 'false'
+    ? 'correct'
+    : (falseSelected ? 'wrong' : 'default');
+  
+  // 배지 표시 여부
+  const showTrueBadge = trueStatus !== 'default';
+  const showFalseBadge = falseStatus !== 'default';
+  
   return (
-    <div className="mb-4">
-      {correct ? (
-        // 정답인 경우: 정답만 표시
-        <div className="flex justify-center">
-          {correctAnswer === "TRUE" 
-            ? renderOption("TRUE", "O") 
-            : renderOption("FALSE", "X")}
+    <div className="flex flex-col space-y-3 mb-4">
+      {/* O 옵션 */}
+      <div className={`relative p-3 rounded-lg ${getOptionStyle(trueStatus)}`}>
+        <div className="flex items-center justify-center text-center">
+          <span className="font-bold mr-2">O</span>
+          <div className="flex-1 text-center">맞습니다</div>
+          
+          {showTrueBadge && (
+            <span className={getStatusBadge(trueStatus).className}>
+              {getStatusBadge(trueStatus).text}
+            </span>
+          )}
         </div>
-      ) : (
-        // 오답인 경우: OX 두 개 표시
-        <div className="grid grid-cols-2 gap-3">
-          {renderOption("TRUE", "O")}
-          {renderOption("FALSE", "X")}
+      </div>
+      
+      {/* X 옵션 */}
+      <div className={`relative p-3 rounded-lg ${getOptionStyle(falseStatus)}`}>
+        <div className="flex items-center justify-center text-center">
+          <span className="font-bold mr-2">X</span>
+          <div className="flex-1 text-center">아닙니다</div>
+          
+          {showFalseBadge && (
+            <span className={getStatusBadge(falseStatus).className}>
+              {getStatusBadge(falseStatus).text}
+            </span>
+          )}
         </div>
-      )}
+      </div>
     </div>
   );
 };

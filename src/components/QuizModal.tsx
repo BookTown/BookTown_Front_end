@@ -177,7 +177,7 @@ const QuizModal: React.FC<QuizModalProps> = ({
         {/* 퀴즈 컨텐츠 또는 에러 상태 */}
         {currentSubmission ? renderQuiz(currentSubmission) : renderErrorState()}
 
-        {/* 이전/다음 버튼 (데이터가 있는 경우에만, 해설이 열려있지 않을 때만 표시) */}
+        {/* 이전/다음 버튼 */}
         {currentSubmission && !showExplanation && (
           <div className="flex justify-center gap-2 transition-all duration-300">
             {renderNavigationButtons()}
@@ -185,8 +185,8 @@ const QuizModal: React.FC<QuizModalProps> = ({
         )}
 
         {/* 퀴즈 진행 상황 표시 */}
-        {hasApiData && !showExplanation && (
-          <div className="mt-4 text-center text-sm text-gray-500 transition-all duration-300">
+        {hasApiData && (
+          <div className="mt-4 text-center text-sm text-gray-500">
             {currentIndex + 1} / {totalQuestions}
           </div>
         )}

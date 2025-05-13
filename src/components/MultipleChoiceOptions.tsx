@@ -39,7 +39,7 @@ const MultipleChoiceOptions: React.FC<MultipleChoiceOptionsProps> = ({ currentSu
             key={index}
             className={`relative p-2 rounded-lg ${getOptionStyle(status)}`}
           >
-            <div className="flex items-center justify-center text-center">
+            <div className="flex items-center justify-center">
               <span className="mr-2">{getOptionLabel(index)}</span>
               <div className="flex-1">{optionText}</div>
               
