@@ -2,14 +2,13 @@ import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { RootState } from "../redux/store";
-import { fetchBookDetailById } from "../api/api"; // 책 정보를 가져오는 API
+import { fetchBookDetailById } from "../api/api";
 
 interface TopTitleProps {
   bookId?: string | number;
-  title?: string;
 }
 
-const TopTitle: React.FC<TopTitleProps> = ({ bookId, title }) => {
+const TopTitle: React.FC<TopTitleProps> = ({ bookId }) => {
   const [bookTitle, setBookTitle] = useState<string>("책고을");
   const location = useLocation();
   
@@ -17,13 +16,7 @@ const TopTitle: React.FC<TopTitleProps> = ({ bookId, title }) => {
   const { cartoon } = useSelector((state: RootState) => state.cartoon);
   
   useEffect(() => {
-    // 1. prop으로 직접 제목이 전달된 경우
-    if (title) {
-      setBookTitle(title);
-      return;
-    }
-    
-    // 2. prop으로 bookId가 전달된 경우 API로 제목 조회
+    // prop으로 bookId가 전달된 경우 API로 제목 조회
     if (bookId) {
       const fetchBookInfo = async () => {
         try {
@@ -40,7 +33,7 @@ const TopTitle: React.FC<TopTitleProps> = ({ bookId, title }) => {
       return;
     }
     
-    // 3. 경로에 따라 제목 결정 (기존 로직 활용)
+    // 경로에 따라 제목 결정
     const isCartoonPage = location.pathname.includes('/cartoon/');
     const isQuizPage = location.pathname.includes('/quiz/');
     
@@ -54,8 +47,8 @@ const TopTitle: React.FC<TopTitleProps> = ({ bookId, title }) => {
       return;
     }
     
-    // 4. 기본값은 "책고을"로 설정 (이미 초기값으로 설정됨)
-  }, [bookId, title, cartoon, location]);
+    // 3. 기본값은 책고을로 설정
+  }, [bookId, cartoon, location]);
 
   return (
     <div className="w-full max-w-[1440px] mx-auto bg-[#FFFAF0]">
