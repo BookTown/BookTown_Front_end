@@ -194,7 +194,7 @@ const Quiz: React.FC = () => {
 
   return (
     <>
-      <TopTitle />
+      <TopTitle bookId={quizParams?.bookId} />
       <div className="pt-1 md:pt-9 md:w-[650px] px-6 md:mx-auto">
         <ProgressBar current={currentIndex + 1} total={quizList.length} />
 
