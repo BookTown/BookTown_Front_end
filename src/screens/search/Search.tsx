@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { ArrowLeft, Search as SearchIcon } from "lucide-react";
+import { ArrowLeft, Search as SearchIcon, X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import BookModal from "../../components/BookModal";
 import { searchBooks } from "../../api/api";
@@ -69,6 +69,14 @@ const Search = () => {
       ...recentSearches.filter(item => item.id !== book.bookId)
     ].slice(0, 8); // 최대 8개까지만 저장
 
+    setRecentSearches(updatedSearches);
+    localStorage.setItem("recentSearches", JSON.stringify(updatedSearches));
+  };
+
+  // 단일 검색 기록 삭제 함수 추가
+  const removeSearchItem = (e: React.MouseEvent, bookId: number) => {
+    e.stopPropagation(); // 이벤트 버블링 방지
+    const updatedSearches = recentSearches.filter(book => book.id !== bookId);
     setRecentSearches(updatedSearches);
     localStorage.setItem("recentSearches", JSON.stringify(updatedSearches));
   };
@@ -150,17 +158,24 @@ const Search = () => {
                     setSelectedBook(book);
                     setShowModal(true);
                   }}
-                  className="flex items-center gap-4 p-4 border-b border-gray-200 cursor-pointer hover:bg-gray-50"
+                  className="flex items-center gap-4 p-4 border-b border-gray-200 cursor-pointer hover:bg-gray-50 relative"
                 >
                   <img
                     src={book.imageUrl}
                     alt={book.title}
                     className="w-12 h-12 object-cover rounded"
                   />
-                  <div>
+                  <div className="flex-1">
                     <h3 className="font-medium">{book.title}</h3>
                     <p className="text-sm text-[#9CAAB9]">{book.author}</p>
                   </div>
+                  <button 
+                    onClick={(e) => removeSearchItem(e, book.id)}
+                    className="p-2 rounded-full hover:bg-gray-200"
+                    aria-label="검색 기록 삭제"
+                  >
+                    <X size={18} className="text-[#9CAAB9]" />
+                  </button>
                 </div>
               ))
             ) : (
