@@ -101,6 +101,11 @@ const SettingMain = () => {
 
   return (
     <div className="min-h-screen bg-[#FFFAF0] text-black px-4 pt-20 pb-24 md:pt-20 md:px-6">
+      <div className="pl-6 pt-4 mb-6">
+        <h1 className="text-3xl">마이페이지</h1>
+        <p className="text-xl text-[#A39C9C] pb-2">사용자 맞춤 설정을 할수있어요</p>
+      </div>
+      
       {/* 프로필 섹션 */}
       <section className="w-full max-w-sm mx-6 md:mx-auto mb-8 md:mb-12 md:max-w-md relative">
         <div className="flex items-center space-x-4">
