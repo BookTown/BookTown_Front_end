@@ -143,68 +143,65 @@ const SceneFrame = ({
   };
 
   return (
-    <>
-      <TopTitle />
-      <div className="w-full flex flex-col">
-        {/* 이미지 컨테이너 */}
-        <div
-          className="w-full aspect-square relative overflow-hidden cursor-grab select-none touch-none"
-          ref={imageRef}
-          onTouchStart={onTouchStart}
-          onTouchMove={onTouchMove}
-          onTouchEnd={onTouchEnd}
-          onMouseDown={onMouseDown}
-          onMouseMove={onMouseMove}
-          onMouseUp={onMouseUp}
-          onMouseLeave={onMouseLeave}
-        >
-          <img
-            src={illustrationUrl}
-            alt="장면 이미지"
-            className="w-full h-full object-cover absolute inset-0 select-none pointer-events-none will-change-transform"
-            draggable="false"
-          />
+    <div className="w-full flex flex-col">
+      {/* 이미지 컨테이너 */}
+      <div
+        className="w-full aspect-square relative overflow-hidden cursor-grab select-none touch-none"
+        ref={imageRef}
+        onTouchStart={onTouchStart}
+        onTouchMove={onTouchMove}
+        onTouchEnd={onTouchEnd}
+        onMouseDown={onMouseDown}
+        onMouseMove={onMouseMove}
+        onMouseUp={onMouseUp}
+        onMouseLeave={onMouseLeave}
+      >
+        <img
+          src={illustrationUrl}
+          alt="장면 이미지"
+          className="w-full h-full object-cover absolute inset-0 select-none pointer-events-none will-change-transform"
+          draggable="false"
+        />
+      </div>
+
+      {/* 화살표 네비게이션 */}
+      <div className="flex justify-between items-center mt-2 px-2">
+        <div className="w-10 h-10 flex items-center justify-center">
+          {!isFirst ? (
+            <button
+              onClick={onPrev}
+              className="p-2 rounded-full opacity-70 hover:opacity-100 transition"
+              aria-label="이전 페이지"
+            >
+              <ArrowLeft size={24} color="#333" />
+            </button>
+          ) : (
+            <div></div> // 빈 공간 유지
+          )}
         </div>
 
-        {/* 화살표 네비게이션 */}
-        <div className="flex justify-between items-center mt-2 px-2">
-          <div className="w-10 h-10 flex items-center justify-center">
-            {!isFirst ? (
-              <button
-                onClick={onPrev}
-                className="p-2 rounded-full opacity-70 hover:opacity-100 transition"
-                aria-label="이전 페이지"
-              >
-                <ArrowLeft size={24} color="#333" />
-              </button>
-            ) : (
-              <div></div> // 빈 공간 유지
-            )}
-          </div>
+        {/* 페이지 인디케이터 - 중앙에 배치 */}
+        <div className="flex-1 text-center">
+          <span className="text-sm text-gray-600">
+            {currentPage + 1} / {totalPages}
+          </span>
+        </div>
 
-          {/* 페이지 인디케이터 - 중앙에 배치 */}
-          <div className="flex-1 text-center">
-            <span className="text-sm text-gray-600">
-              {currentPage + 1} / {totalPages}
-            </span>
-          </div>
-
-          <div className="w-10 h-10 flex items-center justify-center">
-            {!isLast ? (
-              <button
-                onClick={onNext}
-                className="p-2 rounded-full opacity-70 hover:opacity-100 transition"
-                aria-label="다음 페이지"
-              >
-                <ArrowRight size={24} color="#333" />
-              </button>
-            ) : (
-              <div></div> // 빈 공간 유지
-            )}
-          </div>
+        <div className="w-10 h-10 flex items-center justify-center">
+          {!isLast ? (
+            <button
+              onClick={onNext}
+              className="p-2 rounded-full opacity-70 hover:opacity-100 transition"
+              aria-label="다음 페이지"
+            >
+              <ArrowRight size={24} color="#333" />
+            </button>
+          ) : (
+            <div></div> // 빈 공간 유지
+          )}
         </div>
       </div>
-    </>
+    </div>
   );
 };
 
@@ -278,7 +275,8 @@ const CartoonMain = () => {
   const isLastScene = currentPage === scenes.length - 1;
 
   return (
-    <div className="pt-[4.5rem] pb-4 px-4 flex flex-col items-center">
+    <div className="pb-4 px-4 flex flex-col items-center">
+      <TopTitle />
       <div className="w-full max-w-[24rem] md:max-w-[32rem] lg:max-w-[36rem]">
         {/* 만화 장면 */}
         <SceneFrame
