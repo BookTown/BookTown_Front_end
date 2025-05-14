@@ -136,6 +136,7 @@ const QuizModal: React.FC<QuizModalProps> = ({
                       strokeWidth="2.2"
                       fill="none"
                       filter="url(#roughEffectO)"
+                      transform="rotate(15 12 12)"
                     />
                   </svg>
                 ) : (
