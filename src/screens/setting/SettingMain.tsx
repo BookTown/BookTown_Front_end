@@ -101,7 +101,7 @@ const SettingMain = () => {
 
   return (
     <div className="min-h-screen bg-[#FFFAF0] text-black px-4 pt-14 pb-24 md:pt-12 md:px-6">
-      <div className="pl-6 pt-4 mb-6">
+      <div className="pl-0 pt-4 mb-6">
         <h1 className="text-3xl">마이페이지</h1>
         <p className="text-xl text-[#A39C9C] pb-2">사용자 맞춤 설정을 할수있어요</p>
       </div>
