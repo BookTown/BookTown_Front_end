@@ -1,7 +1,12 @@
 import React, { useState, useRef, useEffect } from "react";
 import Button from "./Button";
 import { ChevronDown, X } from "lucide-react";
-import { QuizHistoryDetail, QuizSubmission, QuizType, determineQuizType } from "../interfaces/quizInterface";
+import {
+  QuizHistoryDetail,
+  QuizSubmission,
+  QuizType,
+  determineQuizType,
+} from "../interfaces/quizInterface";
 import OxQuizOptions from "./OxQuizOptions";
 import MultipleChoiceOptions from "./MultipleChoiceOptions";
 import ShortAnswerOptions from "./ShortAnswerOptions";
@@ -30,13 +35,15 @@ const QuizModal: React.FC<QuizModalProps> = ({
   const [currentIndex, setCurrentIndex] = useState(0);
   const [explanationHeight, setExplanationHeight] = useState(0);
   const explanationRef = useRef<HTMLDivElement>(null);
-  
+
   // API 데이터 존재 여부 확인
   const hasApiData = !!historyData && historyData.submissions.length > 0;
-  
+
   // 현재 문제 데이터
-  const currentSubmission = hasApiData ? historyData!.submissions[currentIndex] : null;
-  
+  const currentSubmission = hasApiData
+    ? historyData!.submissions[currentIndex]
+    : null;
+
   // 총 문제 수
   const totalQuestions = hasApiData ? historyData!.submissions.length : 0;
 
@@ -85,7 +92,7 @@ const QuizModal: React.FC<QuizModalProps> = ({
   // 퀴즈 렌더링
   const renderQuiz = (submission: QuizSubmission) => {
     const quizType = determineQuizType(submission);
-    
+
     return (
       <div className="bg-gray-50 rounded-lg p-4 mb-5 border border-black/20">
         {/* 문제 번호 및 정답 여부 */}
@@ -96,16 +103,76 @@ const QuizModal: React.FC<QuizModalProps> = ({
               <span className="relative inline-block ml-1">
                 {currentIndex + 1}
                 {submission.correct ? (
-                  // 정답 표시 - 빨간색 동그라미
-                  <svg width="24" height="24" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" 
-                    className="absolute -top-[2px] -left-[7px]">
-                    <circle cx="20" cy="20" r="18" stroke="#FF0000" strokeWidth="4" />
+                  // 정답 표시 - 색연필 느낌 가로 타원
+                  <svg
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="absolute -top-[2px] -left-[7px]"
+                  >
+                    <defs>
+                      <filter id="roughEffectO">
+                        <feTurbulence
+                          type="fractalNoise"
+                          baseFrequency="0.7"
+                          numOctaves="2"
+                          result="noise"
+                        />
+                        <feDisplacementMap
+                          in="SourceGraphic"
+                          in2="noise"
+                          scale="0.6"
+                        />
+                      </filter>
+                    </defs>
+                    <ellipse
+                      cx="12"
+                      cy="12"
+                      rx="9.5"
+                      ry="7.5"
+                      stroke="#F44336"
+                      strokeWidth="2.2"
+                      fill="none"
+                      filter="url(#roughEffectO)"
+                    />
                   </svg>
                 ) : (
-                  // 오답 표시 - 빨간색 슬래시
-                  <svg width="24" height="24" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" 
-                    className="absolute -top-[2px] -left-[7px]">
-                    <line x1="10" y1="30" x2="30" y2="10" stroke="#FF0000" strokeWidth="4" strokeLinecap="round" />
+                  // 오답 표시 - 색연필 느낌 슬래시
+                  <svg
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="absolute -top-[2px] -left-[7px]"
+                  >
+                    <defs>
+                      <filter id="roughEffectX">
+                        <feTurbulence
+                          type="fractalNoise"
+                          baseFrequency="0.7"
+                          numOctaves="2"
+                          result="noise"
+                        />
+                        <feDisplacementMap
+                          in="SourceGraphic"
+                          in2="noise"
+                          scale="0.6"
+                        />
+                      </filter>
+                    </defs>
+                    <line
+                      x1="6"
+                      y1="18"
+                      x2="18"
+                      y2="6"
+                      stroke="#F44336"
+                      strokeWidth="2.5"
+                      strokeLinecap="round"
+                      filter="url(#roughEffectX)"
+                    />
                   </svg>
                 )}
               </span>
@@ -115,16 +182,16 @@ const QuizModal: React.FC<QuizModalProps> = ({
 
         {/* 문제 내용 */}
         <p className="mb-5 text-sm">{submission.question}</p>
-        
+
         {/* 퀴즈 유형에 따른 컴포넌트 렌더링 */}
         {quizType === QuizType.TRUE_FALSE && (
           <OxQuizOptions currentSubmission={submission} />
         )}
-        
+
         {quizType === QuizType.MULTIPLE_CHOICE && (
           <MultipleChoiceOptions currentSubmission={submission} />
         )}
-        
+
         {quizType === QuizType.SHORT_ANSWER && (
           <ShortAnswerOptions currentSubmission={submission} />
         )}
@@ -135,18 +202,26 @@ const QuizModal: React.FC<QuizModalProps> = ({
             className="w-full p-1 h-8 flex items-center justify-center relative bg-white"
             onClick={toggleExplanation}
           >
-            <span className="text-center">{showExplanation ? "해설닫기" : "해설보기"}</span>
-            <span className={`absolute right-4 transition-transform duration-300 ease-in-out ${showExplanation ? 'rotate-180' : 'rotate-0'}`}>
+            <span className="text-center">
+              {showExplanation ? "해설닫기" : "해설보기"}
+            </span>
+            <span
+              className={`absolute right-4 transition-transform duration-300 ease-in-out ${
+                showExplanation ? "rotate-180" : "rotate-0"
+              }`}
+            >
               <ChevronDown size={18} />
             </span>
           </button>
-          <div 
+          <div
             style={{ height: `${explanationHeight}px` }}
             className="transition-all duration-300 ease-in-out border-t border-black/20 bg-gray-50 overflow-hidden"
           >
             <div ref={explanationRef} className="p-6 text-center">
               <p className="text-sm">
-                {submission.explanation ? submission.explanation : "해설이 없습니다."}
+                {submission.explanation
+                  ? submission.explanation
+                  : "해설이 없습니다."}
               </p>
             </div>
           </div>
@@ -154,27 +229,29 @@ const QuizModal: React.FC<QuizModalProps> = ({
       </div>
     );
   };
-  
+
   // 네비게이션 버튼 렌더링
   const renderNavigationButtons = () => {
     const isFirst = currentIndex === 0;
     const isLast = currentIndex === totalQuestions - 1;
-    
+
     return (
       <>
-        <Button 
-          size="md" 
-          color="white" 
-          onClick={handlePrev} 
+        <Button
+          size="md"
+          color="white"
+          onClick={handlePrev}
           disabled={isFirst}
-          className={`w-[48%] ${isFirst ? 'opacity-50 cursor-not-allowed' : ''}`}
+          className={`w-[48%] ${
+            isFirst ? "opacity-50 cursor-not-allowed" : ""
+          }`}
         >
           이전
         </Button>
-        <Button 
-          size="md" 
-          color="pink" 
-          onClick={isLast ? onClose : handleNext} 
+        <Button
+          size="md"
+          color="pink"
+          onClick={isLast ? onClose : handleNext}
           className="w-[48%]"
         >
           {isLast ? "완료" : "다음"}
@@ -192,23 +269,31 @@ const QuizModal: React.FC<QuizModalProps> = ({
         {/* 헤더: 책 제목 및 닫기 버튼 */}
         <div className="flex justify-between items-center mb-4">
           <div>
-            <h2 className="text-base font-medium">{historyData?.bookTitle || bookTitle || "퀴즈 결과"}</h2>
+            <h2 className="text-base font-medium">
+              {historyData?.bookTitle || bookTitle || "퀴즈 결과"}
+            </h2>
             {hasApiData && (
-              <p className="text-sm text-gray-500">총점: {historyData!.totalScore}점</p>
+              <p className="text-sm text-gray-500">
+                총점: {historyData!.totalScore}점
+              </p>
             )}
           </div>
-          <button onClick={onClose} className="p-1 rounded-full hover:bg-gray-100" aria-label="닫기">
+          <button
+            onClick={onClose}
+            className="p-1 rounded-full hover:bg-gray-100"
+            aria-label="닫기"
+          >
             <X size={20} />
           </button>
         </div>
         {/* 퀴즈 컨텐츠 또는 에러 상태 */}
         {currentSubmission ? renderQuiz(currentSubmission) : renderErrorState()}
         {/* 이전/다음 버튼 - 항상 렌더링하지만 상태에 따라 높이와 투명도 조절 */}
-        <div 
+        <div
           className={`flex justify-center gap-2 overflow-hidden transition-all duration-300 ease-in-out ${
             currentSubmission && !showExplanation
-              ? 'max-h-20 opacity-100 mt-4 mb-2' 
-              : 'max-h-0 opacity-0 mt-0 mb-0'
+              ? "max-h-20 opacity-100 mt-4 mb-2"
+              : "max-h-0 opacity-0 mt-0 mb-0"
           }`}
         >
           {renderNavigationButtons()}
