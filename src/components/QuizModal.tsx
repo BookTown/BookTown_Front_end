@@ -243,7 +243,7 @@ const QuizModal: React.FC<QuizModalProps> = ({
           color="white"
           onClick={handlePrev}
           disabled={isFirst}
-          className={`w-[48%] ${
+          className={`!w-[12.25rem] !h-[2.25rem] ${
             isFirst ? "opacity-50 cursor-not-allowed" : ""
           }`}
         >
@@ -253,7 +253,7 @@ const QuizModal: React.FC<QuizModalProps> = ({
           size="md"
           color="pink"
           onClick={isLast ? onClose : handleNext}
-          className="w-[48%]"
+          className="!w-[12.25rem] !h-[2.25rem]"
         >
           {isLast ? "완료" : "다음"}
         </Button>
