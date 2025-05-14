@@ -1,26 +1,64 @@
-import React from "react";
-import { Link, useParams } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { Link, useLocation } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { RootState } from "../redux/store";
+import { fetchBookDetailById } from "../api/api"; // 책 정보를 가져오는 API
 
-const TopTitle = () => {
-  const { bookId } = useParams();
+interface TopTitleProps {
+  bookId?: string | number;
+  title?: string;
+}
+
+const TopTitle: React.FC<TopTitleProps> = ({ bookId, title }) => {
+  const [bookTitle, setBookTitle] = useState<string>("책고을");
+  const location = useLocation();
   
-  // Mock 데이터: 실제 구현 시 API 호출이나 Redux 등으로 대체
-  const mockBookTitles: Record<string, string> = {
-    "1": "로빈슨 크루소",
-    "2": "걸리버 여행기",
-    "3": "데미안",
-    "4": "변신",
-    "5": "동물농장",
-    // 더 많은 책 추가 가능
-  };
+  // Redux 스토어에서 만화 데이터 가져오기 (Cartoon 페이지에서 사용)
+  const { cartoon } = useSelector((state: RootState) => state.cartoon);
   
-  // bookId가 없으면 기본 타이틀, 있으면 해당 책 제목
-  const bookTitle = bookId && mockBookTitles[bookId] 
-    ? mockBookTitles[bookId] 
-    : "책고을";
+  useEffect(() => {
+    // 1. prop으로 직접 제목이 전달된 경우
+    if (title) {
+      setBookTitle(title);
+      return;
+    }
+    
+    // 2. prop으로 bookId가 전달된 경우 API로 제목 조회
+    if (bookId) {
+      const fetchBookInfo = async () => {
+        try {
+          const bookDetail = await fetchBookDetailById(Number(bookId));
+          if (bookDetail && bookDetail.title) {
+            setBookTitle(bookDetail.title);
+          }
+        } catch (error) {
+          console.error("책 정보를 가져오는데 실패했습니다:", error);
+        }
+      };
+      
+      fetchBookInfo();
+      return;
+    }
+    
+    // 3. 경로에 따라 제목 결정 (기존 로직 활용)
+    const isCartoonPage = location.pathname.includes('/cartoon/');
+    const isQuizPage = location.pathname.includes('/quiz/');
+    
+    if (isCartoonPage && cartoon && cartoon.title) {
+      setBookTitle(cartoon.title);
+      return;
+    }
+    
+    if (isQuizPage && location.state?.quizParams?.bookTitle) {
+      setBookTitle(location.state.quizParams.bookTitle);
+      return;
+    }
+    
+    // 4. 기본값은 "책고을"로 설정 (이미 초기값으로 설정됨)
+  }, [bookId, title, cartoon, location]);
 
   return (
-    <div className="fixed top-0 left-0 right-0 z-40 max-w-[1440px] mx-auto bg-[#FFFAF0] border-b border-gray-300">
+    <div className="w-full max-w-[1440px] mx-auto bg-[#FFFAF0]">
       <div className="mx-auto flex items-center h-[60px] px-4 relative">
         {/* 좌측: 로고 */}
         <div className="absolute left-4">

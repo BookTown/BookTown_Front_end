@@ -4,11 +4,20 @@ import { ArrowLeft, ArrowRight, RotateCw, BookOpenCheck } from "lucide-react";
 import { IScene } from "../../interfaces/bookInterface";
 import { useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
-import { fetchBookSummary } from "../../api/api"; 
+import { fetchBookSummary } from "../../api/api";
 import Button from "../../components/Button";
+import TopTitle from "../../components/TopTitle";
 
 // 장면 프레임 컴포넌트
-const SceneFrame = ({ illustrationUrl, onPrev, onNext, isFirst, isLast, currentPage, totalPages }: {
+const SceneFrame = ({
+  illustrationUrl,
+  onPrev,
+  onNext,
+  isFirst,
+  isLast,
+  currentPage,
+  totalPages,
+}: {
   illustrationUrl: string;
   onPrev: () => void;
   onNext: () => void;
@@ -21,7 +30,7 @@ const SceneFrame = ({ illustrationUrl, onPrev, onNext, isFirst, isLast, currentP
   const [touchEnd, setTouchEnd] = useState<number | null>(null);
   const [isDragging, setIsDragging] = useState(false);
   const imageRef = useRef<HTMLDivElement>(null);
-  
+
   // 최소 스와이프 거리 설정
   const minSwipeDistance = 50;
 
@@ -35,7 +44,7 @@ const SceneFrame = ({ illustrationUrl, onPrev, onNext, isFirst, isLast, currentP
   const onTouchMove = (e: React.TouchEvent) => {
     if (isDragging) {
       setTouchEnd(e.targetTouches[0].clientX);
-      
+
       // 드래그 중 슬라이드 효과
       if (imageRef.current && touchStart !== null) {
         const xDiff = (e.targetTouches[0].clientX - touchStart) / 3; // 이동 거리 조절
@@ -46,24 +55,24 @@ const SceneFrame = ({ illustrationUrl, onPrev, onNext, isFirst, isLast, currentP
 
   const onTouchEnd = () => {
     setIsDragging(false);
-    
+
     // 이미지 위치 초기화 (부드러운 애니메이션 추가)
     if (imageRef.current) {
-      imageRef.current.style.transition = 'transform 0.3s ease';
-      imageRef.current.style.transform = 'translateX(0)';
+      imageRef.current.style.transition = "transform 0.3s ease";
+      imageRef.current.style.transform = "translateX(0)";
       setTimeout(() => {
         if (imageRef.current) {
-          imageRef.current.style.transition = '';
+          imageRef.current.style.transition = "";
         }
       }, 300);
     }
-    
+
     if (!touchStart || !touchEnd) return;
-    
+
     const distance = touchStart - touchEnd;
     const isLeftSwipe = distance > minSwipeDistance;
     const isRightSwipe = distance < -minSwipeDistance;
-    
+
     if (isLeftSwipe && !isLast) {
       onNext();
     } else if (isRightSwipe && !isFirst) {
@@ -73,13 +82,13 @@ const SceneFrame = ({ illustrationUrl, onPrev, onNext, isFirst, isLast, currentP
 
   // 마우스 이벤트 핸들러
   const [mouseStart, setMouseStart] = useState<number | null>(null);
-  
+
   const onMouseDown = (e: React.MouseEvent) => {
     e.preventDefault(); // 기본 드래그 동작 방지
     setMouseStart(e.clientX);
     setIsDragging(true);
   };
-  
+
   const onMouseMove = (e: React.MouseEvent) => {
     if (isDragging && mouseStart !== null) {
       const xDiff = (e.clientX - mouseStart) / 3;
@@ -88,44 +97,44 @@ const SceneFrame = ({ illustrationUrl, onPrev, onNext, isFirst, isLast, currentP
       }
     }
   };
-  
+
   const onMouseUp = (e: React.MouseEvent) => {
     if (isDragging && mouseStart !== null) {
       const distance = mouseStart - e.clientX;
       const isLeftSwipe = distance > minSwipeDistance;
       const isRightSwipe = distance < -minSwipeDistance;
-      
+
       if (isLeftSwipe && !isLast) {
         onNext();
       } else if (isRightSwipe && !isFirst) {
         onPrev();
       }
     }
-    
+
     // 이미지 위치 초기화
     if (imageRef.current) {
-      imageRef.current.style.transition = 'transform 0.3s ease';
-      imageRef.current.style.transform = 'translateX(0)';
+      imageRef.current.style.transition = "transform 0.3s ease";
+      imageRef.current.style.transform = "translateX(0)";
       setTimeout(() => {
         if (imageRef.current) {
-          imageRef.current.style.transition = '';
+          imageRef.current.style.transition = "";
         }
       }, 300);
     }
-    
+
     setIsDragging(false);
     setMouseStart(null);
   };
-  
+
   const onMouseLeave = () => {
     if (isDragging) {
       setIsDragging(false);
       if (imageRef.current) {
-        imageRef.current.style.transition = 'transform 0.3s ease';
-        imageRef.current.style.transform = 'translateX(0)';
+        imageRef.current.style.transition = "transform 0.3s ease";
+        imageRef.current.style.transform = "translateX(0)";
         setTimeout(() => {
           if (imageRef.current) {
-            imageRef.current.style.transition = '';
+            imageRef.current.style.transition = "";
           }
         }, 300);
       }
@@ -134,65 +143,68 @@ const SceneFrame = ({ illustrationUrl, onPrev, onNext, isFirst, isLast, currentP
   };
 
   return (
-    <div className="w-full flex flex-col">   
-      {/* 이미지 컨테이너 */}
-      <div 
-        className="w-full aspect-square relative overflow-hidden cursor-grab select-none touch-none"
-        ref={imageRef}
-        onTouchStart={onTouchStart}
-        onTouchMove={onTouchMove}
-        onTouchEnd={onTouchEnd}
-        onMouseDown={onMouseDown}
-        onMouseMove={onMouseMove}
-        onMouseUp={onMouseUp}
-        onMouseLeave={onMouseLeave}
-      >
-        <img 
-          src={illustrationUrl} 
-          alt="장면 이미지" 
-          className="w-full h-full object-cover absolute inset-0 select-none pointer-events-none will-change-transform"
-          draggable="false"
-        />
+    <>
+      <TopTitle />
+      <div className="w-full flex flex-col">
+        {/* 이미지 컨테이너 */}
+        <div
+          className="w-full aspect-square relative overflow-hidden cursor-grab select-none touch-none"
+          ref={imageRef}
+          onTouchStart={onTouchStart}
+          onTouchMove={onTouchMove}
+          onTouchEnd={onTouchEnd}
+          onMouseDown={onMouseDown}
+          onMouseMove={onMouseMove}
+          onMouseUp={onMouseUp}
+          onMouseLeave={onMouseLeave}
+        >
+          <img
+            src={illustrationUrl}
+            alt="장면 이미지"
+            className="w-full h-full object-cover absolute inset-0 select-none pointer-events-none will-change-transform"
+            draggable="false"
+          />
+        </div>
+
+        {/* 화살표 네비게이션 */}
+        <div className="flex justify-between items-center mt-2 px-2">
+          <div className="w-10 h-10 flex items-center justify-center">
+            {!isFirst ? (
+              <button
+                onClick={onPrev}
+                className="p-2 rounded-full opacity-70 hover:opacity-100 transition"
+                aria-label="이전 페이지"
+              >
+                <ArrowLeft size={24} color="#333" />
+              </button>
+            ) : (
+              <div></div> // 빈 공간 유지
+            )}
+          </div>
+
+          {/* 페이지 인디케이터 - 중앙에 배치 */}
+          <div className="flex-1 text-center">
+            <span className="text-sm text-gray-600">
+              {currentPage + 1} / {totalPages}
+            </span>
+          </div>
+
+          <div className="w-10 h-10 flex items-center justify-center">
+            {!isLast ? (
+              <button
+                onClick={onNext}
+                className="p-2 rounded-full opacity-70 hover:opacity-100 transition"
+                aria-label="다음 페이지"
+              >
+                <ArrowRight size={24} color="#333" />
+              </button>
+            ) : (
+              <div></div> // 빈 공간 유지
+            )}
+          </div>
+        </div>
       </div>
-      
-      {/* 화살표 네비게이션 */}
-      <div className="flex justify-between items-center mt-2 px-2">
-        <div className="w-10 h-10 flex items-center justify-center">
-          {!isFirst ? (
-            <button 
-              onClick={onPrev} 
-              className="p-2 rounded-full opacity-70 hover:opacity-100 transition"
-              aria-label="이전 페이지"
-            >
-              <ArrowLeft size={24} color="#333" />
-            </button>
-          ) : (
-            <div></div> // 빈 공간 유지
-          )}
-        </div>
-        
-        {/* 페이지 인디케이터 - 중앙에 배치 */}
-        <div className="flex-1 text-center">
-          <span className="text-sm text-gray-600">
-            {currentPage + 1} / {totalPages}
-          </span>
-        </div>
-        
-        <div className="w-10 h-10 flex items-center justify-center">
-          {!isLast ? (
-            <button 
-              onClick={onNext} 
-              className="p-2 rounded-full opacity-70 hover:opacity-100 transition"
-              aria-label="다음 페이지"
-            >
-              <ArrowRight size={24} color="#333" />
-            </button>
-          ) : (
-            <div></div> // 빈 공간 유지
-          )}
-        </div>
-      </div>
-    </div>
+    </>
   );
 };
 
@@ -209,11 +221,11 @@ const CartoonMain = () => {
   const { bookId } = useParams();
   const [currentPage, setCurrentPage] = useState(0);
   const navigate = useNavigate();
-  
+
   // Redux 스토어에서 cartoon 데이터 가져오기
   const { cartoon } = useSelector((state: RootState) => state.cartoon);
   const [scenes, setScenes] = useState<IScene[]>([]);
-  
+
   useEffect(() => {
     // 스토어에 데이터가 있으면 사용, 없으면 API 호출
     if (cartoon.scenes.length > 0 && cartoon.id.toString() === bookId) {
@@ -228,59 +240,65 @@ const CartoonMain = () => {
           console.error("줄거리를 불러오는 중 오류가 발생했습니다:", error);
         }
       };
-      
+
       loadSummary();
     }
   }, [bookId, cartoon]);
-  
+
   const goToPrevPage = () => {
     if (currentPage > 0) {
       setCurrentPage(currentPage - 1);
     }
   };
-  
+
   const goToNextPage = () => {
     if (currentPage < scenes.length - 1) {
       setCurrentPage(currentPage + 1);
     }
   };
-  
+
   // 다시 보기 핸들러 - 첫 페이지로 이동
   const handleViewSummaryAgain = () => {
     setCurrentPage(0);
   };
-  
+
   // 퀴즈 풀기 핸들러 - 퀴즈 페이지로 이동
   const handleSolveQuiz = () => {
     navigate(`/quizStart/${bookId}`);
   };
-  
+
   if (scenes.length === 0) {
-    return <div className="pt-14 text-center">줄거리 정보를 불러올 수 없습니다.</div>;
+    return (
+      <div className="pt-14 text-center">줄거리 정보를 불러올 수 없습니다.</div>
+    );
   }
-  
+
   const currentScene = scenes[currentPage];
   const isFirstScene = currentPage === 0;
   const isLastScene = currentPage === scenes.length - 1;
-  
+
   return (
     <div className="pt-[4.5rem] pb-4 px-4 flex flex-col items-center">
       <div className="w-full max-w-[24rem] md:max-w-[32rem] lg:max-w-[36rem]">
         {/* 만화 장면 */}
-        <SceneFrame 
-          illustrationUrl={currentScene.illustrationUrl || 
-            (cartoon.thumbnailUrl ? cartoon.thumbnailUrl : "/images/default-book.png")} 
-          onPrev={goToPrevPage} 
+        <SceneFrame
+          illustrationUrl={
+            currentScene.illustrationUrl ||
+            (cartoon.thumbnailUrl
+              ? cartoon.thumbnailUrl
+              : "/images/default-book.png")
+          }
+          onPrev={goToPrevPage}
           onNext={goToNextPage}
           isFirst={isFirstScene}
           isLast={isLastScene}
           currentPage={currentPage}
           totalPages={scenes.length}
         />
-        
+
         {/* 텍스트 내용 */}
         <PromptFrame content={currentScene.content} />
-        
+
         {/* 마지막 페이지일 때만 버튼 표시 */}
         {isLastScene && (
           <div className="mt-4 flex justify-center gap-8 md:gap-12 lg:gap-20">
@@ -291,10 +309,14 @@ const CartoonMain = () => {
               onClick={handleViewSummaryAgain}
               className="flex items-center justify-center"
             >
-              <RotateCw className="mr-1.5 md:mr-2 lg:mr-4 stroke-[#C75C5C]" size={16} strokeWidth={2} />
+              <RotateCw
+                className="mr-1.5 md:mr-2 lg:mr-4 stroke-[#C75C5C]"
+                size={16}
+                strokeWidth={2}
+              />
               다시 보기
             </Button>
-            
+
             <Button
               size="md"
               color="pink"
@@ -302,7 +324,11 @@ const CartoonMain = () => {
               onClick={handleSolveQuiz}
               className="flex items-center justify-center"
             >
-              <BookOpenCheck className="mr-1.5 md:mr-2 lg:mr-4 stroke-[#FFFFFF]" size={16} strokeWidth={2} />
+              <BookOpenCheck
+                className="mr-1.5 md:mr-2 lg:mr-4 stroke-[#FFFFFF]"
+                size={16}
+                strokeWidth={2}
+              />
               퀴즈 풀기
             </Button>
           </div>
