@@ -97,7 +97,7 @@ const Search = () => {
           <div className="relative flex-1">
             <input
               type="text"
-              placeholder="책 제목 또는 저자 검색"
+              placeholder="책 제목 검색"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="w-full py-2 px-4 pl-10 rounded-full border border-gray-300 bg-white focus:outline-none focus:ring-2 focus:ring-[#C75C5C] focus:border-transparent"
