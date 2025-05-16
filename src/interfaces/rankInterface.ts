@@ -15,5 +15,5 @@ export interface RankUser {
   userId: number;
   username: string;
   score: number;
-  profileImageUrl?: string;
+  profileImageUrl?: string | null;
 }
