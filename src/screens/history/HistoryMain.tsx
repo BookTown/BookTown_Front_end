@@ -121,8 +121,8 @@ const HistoryMain = () => {
   // 로딩 중 표시
   if (isLoading) {
     return (
-      <div className="pt-14 md:pt-12 flex justify-center items-center h-[50vh]">
-        <p className="text-xl">로딩 중...</p>
+      <div className="pt-14 flex justify-center items-center h-[80vh]">
+        <p className="text-2xl">로딩 중...</p>
       </div>
     );
   }
@@ -130,8 +130,8 @@ const HistoryMain = () => {
   // 에러 표시
   if (error) {
     return (
-      <div className="pt-14 md:pt-12 flex justify-center items-center h-[50vh]">
-        <p className="text-xl text-red-500">{error}</p>
+      <div className="pt-14 flex justify-center items-center h-[80vh]">
+        <p className="text-2xl text-red-500">{error}</p>
       </div>
     );
   }
@@ -163,8 +163,8 @@ const HistoryMain = () => {
               />
             ))
           : [
-              <div className="w-full text-center py-10" key="no-history">
-                <p className="text-[#9CAAB9]">풀었던 퀴즈가 없습니다.</p>
+              <div className="pt-14 flex justify-center items-center h-[80vh]" key="no-history">
+                <p className="text-[#9CAAB9] text-2xl">풀었던 퀴즈가 없습니다.</p>
               </div>
             ]
         }
