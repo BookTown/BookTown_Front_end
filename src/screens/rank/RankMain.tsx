@@ -199,11 +199,11 @@ const RankMain = () => {
                       </td>
                       <td className="px-2 py-2">
                         <img 
-                          src={user.profileImageUrl ?? '/assets/basicProfile.png'} 
+                          src={user.profileImageUrl ?? basicProfile} 
                           alt="프로필사진" 
                           className="w-8 h-8 rounded-full"
                           onError={(e) => {
-                            e.currentTarget.src = '/assets/basicProfile.png';
+                            e.currentTarget.src = basicProfile;
                           }}
                         />
                       </td>
