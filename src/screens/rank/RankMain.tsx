@@ -47,7 +47,7 @@ const RankMain = () => {
         username: user.username,
         email: '',
         score: user.score,
-        profileImage: user.profileImage
+        profileImage: user.profileImageUrl
       });
       setShowModal(true);
     }
@@ -112,7 +112,7 @@ const RankMain = () => {
                 onClick={() => handleUserClick(top3Users[1])}
               >
                 <img
-                  src={top3Users[1].profileImage || '/assets/basicProfile.png'}
+                  src={top3Users[1].profileImageUrl || '/assets/basicProfile.png'}
                   alt="2등"
                   className="w-24 h-24 md:w-24 md:h-24 lg:w-32 lg:h-32 rounded-full border-4 border-gray-400 mb-4"
                   onError={(e) => {
@@ -134,7 +134,7 @@ const RankMain = () => {
                 onClick={() => handleUserClick(top3Users[0])}
               >
                 <img
-                  src={top3Users[0].profileImage || '/assets/basicProfile.png'}
+                  src={top3Users[0].profileImageUrl || '/assets/basicProfile.png'}
                   alt="1등"
                   className="w-28 h-28 md:w-28 md:h-28 lg:w-40 lg:h-40 rounded-full border-4 border-yellow-400 mb-4"
                   onError={(e) => {
@@ -156,7 +156,7 @@ const RankMain = () => {
                 onClick={() => handleUserClick(top3Users[2])}
               >
                 <img
-                  src={top3Users[2].profileImage || '/assets/basicProfile.png'}
+                  src={top3Users[2].profileImageUrl || '/assets/basicProfile.png'}
                   alt="3등"
                   className="w-20 h-20 md:w-20 md:h-20 lg:w-28 lg:h-28 rounded-full border-4 border-orange-400 mb-4"
                   onError={(e) => {
@@ -198,7 +198,7 @@ const RankMain = () => {
                       </td>
                       <td className="px-2 py-2">
                         <img 
-                          src={user.profileImage || '/assets/basicProfile.png'} 
+                          src={user.profileImageUrl || '/assets/basicProfile.png'} 
                           alt="프로필사진" 
                           className="w-8 h-8 rounded-full"
                           onError={(e) => {
