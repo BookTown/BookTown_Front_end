@@ -1,6 +1,7 @@
 // apis/user.ts
 
 import axiosApi from '../axios';
+import { UserProfileData } from '../interfaces/rankInterface';
 
 export interface UpdateProfileInfoPayload {
   username: string;
@@ -97,6 +98,19 @@ export const fetchBookQuizHistoryDetail = async (userId: number, bookId: number)
     return res.data;
   } catch (error: any) {
     console.error("❌ 책 퀴즈 상세 히스토리 조회 실패:", error.response || error.message);
+    throw error;
+  }
+};
+
+// 특정 사용자 프로필 조회
+export const fetchUserProfileById = async (userId: number): Promise<UserProfileData> => {
+  console.log(`사용자 프로필 조회 API 호출 시작 (userId: ${userId})`);
+  try {
+    const response = await axiosApi.get<UserProfileData>(`/profile/${userId}`);
+    console.log('사용자 프로필 API 응답 성공:', response.data);
+    return response.data;
+  } catch (error) {
+    console.error('사용자 프로필 API 오류:', error);
     throw error;
   }
 };

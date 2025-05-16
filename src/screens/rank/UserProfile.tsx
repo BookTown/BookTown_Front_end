@@ -1,13 +1,8 @@
 import Button from '../../components/Button';
+import { UserProfileData } from '../../interfaces/rankInterface';
 
 interface UserProfileProps {
-  user: {
-    name: string;
-    email: string;
-    profileImage: string;
-    score: number;
-    introduce?: string;
-  };
+  user: UserProfileData;
   onClose: () => void;
 }
 
@@ -21,18 +16,21 @@ export const UserProfile = ({ user, onClose }: UserProfileProps) => {
         
         <div className="flex flex-col items-center gap-4">
           <img 
-            src={user.profileImage} 
-            alt={user.name} 
+            src={user.profileImage || '/assets/basicProfile.png'} 
+            alt={user.username} 
             className="w-24 h-24 rounded-full border-2 border-gray-300"
+            onError={(e) => {
+              e.currentTarget.src = '/assets/basicProfile.png';
+            }}
           />
           <div className="text-center">
-            <h3 className="text-lg font-bold">{user.name}</h3>
+            <h3 className="text-lg font-bold">{user.username}</h3>
             <p className="text-[#C75C5C] font-bold">현재 점수: {user.score}점</p>
           </div>
           <div className="w-full">
             <h4 className="font-medium mb-2">자기소개</h4>
             <p className="text-gray-600 bg-gray-50 p-3 rounded-lg">
-              {user.introduce || "아직 자기소개가 없습니다."}
+              {user.introduction || "아직 자기소개가 없습니다."}
             </p>
           </div>
           <Button 
@@ -50,5 +48,3 @@ export const UserProfile = ({ user, onClose }: UserProfileProps) => {
 };
 
 export default UserProfile;
-
-export {};

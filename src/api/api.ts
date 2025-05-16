@@ -1,6 +1,7 @@
 import axiosApi from "../axios";
 import { IBookList, IScene, IBookDetail } from "../interfaces/bookInterface";
 import { IBookSearch } from "../interfaces/bookInterface";
+import { RankUser } from "../interfaces/rankInterface";
 
 // 작가 정보 처리 함수 - API 응답에서 바로 처리
 const processAuthorField = (data: any) => {
@@ -257,6 +258,32 @@ export const submitQuizAnswers = async (answers: {
     return response.data;
   } catch (error) {
     console.error('퀴즈 제출 API 오류:', error);
+    throw error;
+  }
+};
+
+// 상위 3등 랭킹 조회
+export const fetchTop3Ranks = async (): Promise<RankUser[]> => {
+  console.log('상위 3등 랭킹 조회 API 호출 시작');
+  try {
+    const response = await axiosApi.get<RankUser[]>('/rank/top3');
+    console.log('상위 3등 랭킹 API 응답 성공:', response.data);
+    return response.data;
+  } catch (error) {
+    console.error('상위 3등 랭킹 API 오류:', error);
+    throw error;
+  }
+};
+
+// 전체 랭킹 조회
+export const fetchAllRanks = async (): Promise<RankUser[]> => {
+  console.log('전체 랭킹 조회 API 호출 시작');
+  try {
+    const response = await axiosApi.get<RankUser[]>('/rank/all');
+    console.log('전체 랭킹 API 응답 성공:', response.data);
+    return response.data;
+  } catch (error) {
+    console.error('전체 랭킹 API 오류:', error);
     throw error;
   }
 };

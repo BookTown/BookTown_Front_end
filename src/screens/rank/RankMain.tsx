@@ -1,43 +1,98 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Medal, Trophy } from "lucide-react";
-import { mockUser } from '../../mocks/mockUser';
+import { fetchTop3Ranks, fetchAllRanks } from '../../api/api';
+import { fetchUserProfileById } from '../../api/user';
+import { RankUser, UserProfileData } from '../../interfaces/rankInterface';
 import UserProfile from './UserProfile';
 
-interface RankUser {
-  email: string;
-  name: string;
-  introduce?: string;
-  score: number;
-  profileImage: string;
-}
-
 const RankMain = () => {
-  const [selectedUser, setSelectedUser] = useState<RankUser | null>(null);
+  const [top3Users, setTop3Users] = useState<RankUser[]>([]);
+  const [rankList, setRankList] = useState<RankUser[]>([]);
+  const [selectedUser, setSelectedUser] = useState<UserProfileData | null>(null);
   const [showModal, setShowModal] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  // API 호출 주석 처리
-  /*
   useEffect(() => {
-    fetch('http://localhost:8080/rank/top3')
-      .then(res => res.json())
-      .then(data => setTop3Users(data))
-      .catch(err => console.error('Error fetching top 3:', err));
+    const fetchRankingData = async () => {
+      try {
+        setLoading(true);
+        const [top3Data, allRanksData] = await Promise.all([
+          fetchTop3Ranks(),
+          fetchAllRanks()
+        ]);
+        setTop3Users(top3Data);
+        setRankList(allRanksData);
+      } catch (err) {
+        console.error('랭킹 데이터 가져오기 실패:', err);
+        setError('랭킹 정보를 불러오는데 실패했습니다.');
+      } finally {
+        setLoading(false);
+      }
+    };
 
-    fetch('http://localhost:8080/rank/top100')
-      .then(res => res.json())
-      .then(data => setRankList(data))
-      .catch(err => console.error('Error fetching rankings:', err));
+    fetchRankingData();
   }, []);
-  */
 
+  const handleUserClick = async (user: RankUser) => {
+    try {
+      const userProfile = await fetchUserProfileById(user.userId);
+      setSelectedUser(userProfile);
+      setShowModal(true);
+    } catch (err) {
+      console.error('사용자 프로필 가져오기 실패:', err);
+      // 에러가 발생해도 기본 정보라도 보여주기 위해
+      setSelectedUser({
+        id: user.userId,
+        username: user.username,
+        email: '',
+        score: user.score,
+        profileImage: user.profileImage
+      });
+      setShowModal(true);
+    }
+  };
+
+  // 로딩 상태 표시
+  if (loading) {
+    return (
+      <div className="pt-14 md:pt-12 flex justify-center items-center h-[60vh]">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-[#C75C5C] border-solid mx-auto"></div>
+          <p className="mt-4 text-lg">랭킹 정보를 불러오는 중입니다...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // 에러 표시
+  if (error) {
+    return (
+      <div className="pt-14 md:pt-12 flex justify-center items-center h-[60vh]">
+        <div className="text-center">
+          <p className="text-red-500 text-lg">{error}</p>
+          <button 
+            className="mt-4 px-4 py-2 bg-[#C75C5C] text-white rounded-lg"
+            onClick={() => window.location.reload()}
+          >
+            다시 시도하기
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   // 랭킹에 아무도 없을 때 빈화면 처리
-  // EX) 랭킹에 아무도 없습니다. 도전해보세여
-
-  const handleUserClick = (user: RankUser) => {
-    setSelectedUser(user);
-    setShowModal(true);
-  };
+  if (rankList.length === 0) {
+    return (
+      <div className="pt-14 md:pt-12 flex justify-center items-center h-[60vh]">
+        <div className="text-center">
+          <p className="text-xl">아직 랭킹에 등록된 사용자가 없습니다.</p>
+          <p className="mt-2 text-lg text-gray-600">퀴즈를 풀고 랭킹에 도전해보세요!</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="pt-14 md:pt-12">
@@ -50,56 +105,71 @@ const RankMain = () => {
         {/* Top 3 시상대 */}
         <div className="relative flex flex-col items-center md:w-3/5 md:pt-24">
           <div className="flex items-end justify-center gap-8 mb-8">
-            {/* 2등 */}
-            <div 
-              className="flex flex-col items-center cursor-pointer hover:scale-105 transition-transform" 
-              onClick={() => handleUserClick(mockUser[1])}
-            >
-              <img
-                src={mockUser[1].profileImage}
-                alt="2등"
-                className="w-24 h-24 md:w-24 md:h-24 lg:w-32 lg:h-32 rounded-full border-4 border-gray-400 mb-4"
-              />
-              <div className="bg-[#C75C5C] text-white rounded-lg px-6 py-4 text-center w-24 h-28">
-                <Medal className="w-8 h-8 mx-auto mb-2" />
-                <div className="text-base font-bold">{mockUser[1].score}점</div>
-                <div className="text-sm truncate">{mockUser[1].name}</div>
+            {/* 2등 - top3가 2명 이상 있을 경우에만 표시 */}
+            {top3Users.length > 1 && (
+              <div 
+                className="flex flex-col items-center cursor-pointer hover:scale-105 transition-transform" 
+                onClick={() => handleUserClick(top3Users[1])}
+              >
+                <img
+                  src={top3Users[1].profileImage || '/assets/basicProfile.png'}
+                  alt="2등"
+                  className="w-24 h-24 md:w-24 md:h-24 lg:w-32 lg:h-32 rounded-full border-4 border-gray-400 mb-4"
+                  onError={(e) => {
+                    e.currentTarget.src = '/assets/basicProfile.png';
+                  }}
+                />
+                <div className="bg-[#C75C5C] text-white rounded-lg px-6 py-4 text-center w-24 h-28">
+                  <Medal className="w-8 h-8 mx-auto mb-2" />
+                  <div className="text-base font-bold">{top3Users[1].score}점</div>
+                  <div className="text-sm truncate">{top3Users[1].username}</div>
+                </div>
               </div>
-            </div>
+            )}
             
-            {/* 1등 */}
-            <div 
-              className="flex flex-col items-center cursor-pointer hover:scale-105 transition-transform" 
-              onClick={() => handleUserClick(mockUser[0])}
-            >
-              <img
-                src={mockUser[0].profileImage}
-                alt="1등"
-                className="w-28 h-28 md:w-28 md:h-28 lg:w-40 lg:h-40 rounded-full border-4 border-yellow-400 mb-4"
-              />
-              <div className="bg-[#C75C5C] text-white rounded-lg px-6 pt-8 text-center w-28 h-36">
-                <Trophy className="w-10 h-10 mx-auto mb-2" />
-                <div className="text-lg font-bold">{mockUser[0].score}점</div>
-                <div className="text-base truncate">{mockUser[0].name}</div>
+            {/* 1등 - top3가 1명 이상 있을 경우에만 표시 */}
+            {top3Users.length > 0 && (
+              <div 
+                className="flex flex-col items-center cursor-pointer hover:scale-105 transition-transform" 
+                onClick={() => handleUserClick(top3Users[0])}
+              >
+                <img
+                  src={top3Users[0].profileImage || '/assets/basicProfile.png'}
+                  alt="1등"
+                  className="w-28 h-28 md:w-28 md:h-28 lg:w-40 lg:h-40 rounded-full border-4 border-yellow-400 mb-4"
+                  onError={(e) => {
+                    e.currentTarget.src = '/assets/basicProfile.png';
+                  }}
+                />
+                <div className="bg-[#C75C5C] text-white rounded-lg px-6 pt-8 text-center w-28 h-36">
+                  <Trophy className="w-10 h-10 mx-auto mb-2" />
+                  <div className="text-lg font-bold">{top3Users[0].score}점</div>
+                  <div className="text-base truncate">{top3Users[0].username}</div>
+                </div>
               </div>
-            </div>
+            )}
             
-            {/* 3등 */}
-            <div 
-              className="flex flex-col items-center cursor-pointer hover:scale-105 transition-transform"
-              onClick={() => handleUserClick(mockUser[2])}
-            >
-              <img
-                src={mockUser[2].profileImage}
-                alt="3등"
-                className="w-20 h-20 md:w-20 md:h-20 lg:w-28 lg:h-28 rounded-full border-4 border-orange-400 mb-4"
-              />
-              <div className="bg-[#C75C5C] text-white rounded-lg px-6 py-2 text-center w-20 h-24">
-                <Medal className="w-7 h-7 mx-auto mb-2" />
-                <div className="text-base font-bold">{mockUser[2].score}점</div>
-                <div className="text-sm truncate">{mockUser[2].name}</div>
+            {/* 3등 - top3가 3명 있을 경우에만 표시 */}
+            {top3Users.length > 2 && (
+              <div 
+                className="flex flex-col items-center cursor-pointer hover:scale-105 transition-transform"
+                onClick={() => handleUserClick(top3Users[2])}
+              >
+                <img
+                  src={top3Users[2].profileImage || '/assets/basicProfile.png'}
+                  alt="3등"
+                  className="w-20 h-20 md:w-20 md:h-20 lg:w-28 lg:h-28 rounded-full border-4 border-orange-400 mb-4"
+                  onError={(e) => {
+                    e.currentTarget.src = '/assets/basicProfile.png';
+                  }}
+                />
+                <div className="bg-[#C75C5C] text-white rounded-lg px-6 py-2 text-center w-20 h-24">
+                  <Medal className="w-7 h-7 mx-auto mb-2" />
+                  <div className="text-base font-bold">{top3Users[2].score}점</div>
+                  <div className="text-sm truncate">{top3Users[2].username}</div>
+                </div>
               </div>
-            </div>
+            )}
           </div>
         </div>
 
@@ -117,9 +187,9 @@ const RankMain = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {mockUser.map((user, index) => (
+                  {rankList.map((user, index) => (
                     <tr 
-                      key={user.email}
+                      key={user.userId}
                       className="border-b hover:bg-gray-50 cursor-pointer"
                       onClick={() => handleUserClick(user)}
                     >
@@ -127,10 +197,17 @@ const RankMain = () => {
                         {index + 1}
                       </td>
                       <td className="px-2 py-2">
-                        <img src={user.profileImage} alt="프로필사진" className="w-8 h-8 rounded-full" />
+                        <img 
+                          src={user.profileImage || '/assets/basicProfile.png'} 
+                          alt="프로필사진" 
+                          className="w-8 h-8 rounded-full"
+                          onError={(e) => {
+                            e.currentTarget.src = '/assets/basicProfile.png';
+                          }}
+                        />
                       </td>
                       <td className="px-2 py-2 font-medium">
-                        {user.name}
+                        {user.username}
                       </td>
                       <td className="px-4 py-2 text-center">
                         <span className="text-red-500 font-bold">{user.score}점</span>
