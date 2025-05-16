@@ -5,7 +5,7 @@ export interface UserProfileData {
   provider?: string;
   providerId?: string;
   username: string;
-  profileImage?: string;
+  profileImage?: string | null;
   score: number;
   introduction?: string;
 }
@@ -15,5 +15,5 @@ export interface RankUser {
   userId: number;
   username: string;
   score: number;
-  profileImageUrl?: string | null;
+  profileImageUrl: string | null;
 }
