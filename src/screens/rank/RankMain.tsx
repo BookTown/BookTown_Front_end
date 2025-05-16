@@ -4,6 +4,7 @@ import { fetchTop3Ranks, fetchAllRanks } from '../../api/api';
 import { fetchUserProfileById } from '../../api/user';
 import { RankUser, UserProfileData } from '../../interfaces/rankInterface';
 import UserProfile from './UserProfile';
+import basicProfile from '../../assets/basicProfile.png';
 
 const RankMain = () => {
   const [top3Users, setTop3Users] = useState<RankUser[]>([]);
@@ -112,11 +113,11 @@ const RankMain = () => {
                 onClick={() => handleUserClick(top3Users[1])}
               >
                 <img
-                  src={top3Users[1].profileImageUrl ?? '/assets/basicProfile.png'}
+                  src={top3Users[1].profileImageUrl ?? basicProfile}
                   alt="2등"
                   className="w-24 h-24 md:w-24 md:h-24 lg:w-32 lg:h-32 rounded-full border-4 border-gray-400 mb-4"
                   onError={(e) => {
-                    e.currentTarget.src = '/assets/basicProfile.png';
+                    e.currentTarget.src = basicProfile;
                   }}
                 />
                 <div className="bg-[#C75C5C] text-white rounded-lg px-6 py-4 text-center w-24 h-28">
@@ -134,11 +135,11 @@ const RankMain = () => {
                 onClick={() => handleUserClick(top3Users[0])}
               >
                 <img
-                  src={top3Users[0].profileImageUrl ?? '/assets/basicProfile.png'}
+                  src={top3Users[0].profileImageUrl ?? basicProfile}
                   alt="1등"
                   className="w-28 h-28 md:w-28 md:h-28 lg:w-40 lg:h-40 rounded-full border-4 border-yellow-400 mb-4"
                   onError={(e) => {
-                    e.currentTarget.src = '/assets/basicProfile.png';
+                    e.currentTarget.src = basicProfile;
                   }}
                 />
                 <div className="bg-[#C75C5C] text-white rounded-lg px-6 pt-8 text-center w-28 h-36">
@@ -156,11 +157,11 @@ const RankMain = () => {
                 onClick={() => handleUserClick(top3Users[2])}
               >
                 <img
-                  src={top3Users[2].profileImageUrl ?? '/assets/basicProfile.png'}
+                  src={top3Users[2].profileImageUrl ?? basicProfile}
                   alt="3등"
                   className="w-20 h-20 md:w-20 md:h-20 lg:w-28 lg:h-28 rounded-full border-4 border-orange-400 mb-4"
                   onError={(e) => {
-                    e.currentTarget.src = '/assets/basicProfile.png';
+                    e.currentTarget.src = basicProfile;
                   }}
                 />
                 <div className="bg-[#C75C5C] text-white rounded-lg px-6 py-2 text-center w-20 h-24">

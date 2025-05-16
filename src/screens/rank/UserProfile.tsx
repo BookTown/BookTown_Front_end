@@ -1,5 +1,6 @@
 import Button from '../../components/Button';
 import { UserProfileData } from '../../interfaces/rankInterface';
+import basicProfile from '../../assets/basicProfile.png';
 
 interface UserProfileProps {
   user: UserProfileData;
@@ -16,11 +17,11 @@ export const UserProfile = ({ user, onClose }: UserProfileProps) => {
         
         <div className="flex flex-col items-center gap-4">
           <img 
-            src={user.profileImage ?? '/assets/basicProfile.png'} 
+            src={user.profileImage ?? basicProfile} 
             alt={user.username} 
             className="w-24 h-24 rounded-full border-2 border-gray-300"
             onError={(e) => {
-              e.currentTarget.src = '/assets/basicProfile.png';
+              e.currentTarget.src = basicProfile;
             }}
           />
           <div className="text-center">
