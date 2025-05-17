@@ -46,34 +46,34 @@ const PopularMain = () => {
         <h1 className="text-3xl">인기고전</h1>
         <p className="text-xl text-[#A39C9C] pb-6">모든 인기 등록 작품을 모아봤어요</p>
       </div>
-      <ListFrame gapSize="small">
-        {[
-          isBookArray ? (
-            books.map((book: IBook) => (
-              <BookCard
-                key={book.id}
-                id={book.id}
-                thumbnailUrl={book.thumbnailUrl}
-                title={book.title}
-                author={book.author}
-                onBookSelect={() => {
-                  setSelectedBook({
-                    id: book.id,
-                    title: book.title,
-                    author: book.author,
-                    imageUrl: book.thumbnailUrl
-                  });
-                  setShowModal(true);
-                }}
-                size="lg"
-              />
-            ))
-          ) : (
-            <div className="w-full text-center py-10">
+      <ListFrame>
+        {isBookArray ? (
+          books.map((book: IBook) => (
+            <BookCard
+              key={book.id}
+              id={book.id}
+              thumbnailUrl={book.thumbnailUrl}
+              title={book.title}
+              author={book.author}
+              onBookSelect={() => {
+                setSelectedBook({
+                  id: book.id,
+                  title: book.title,
+                  author: book.author,
+                  imageUrl: book.thumbnailUrl
+                });
+                setShowModal(true);
+              }}
+              size="lg"
+            />
+          ))
+        ) : (
+          [
+            <div className="w-full text-center py-10" key="no-books">
               <p className="text-[#9CAAB9]">인기 도서가 없습니다.</p>
             </div>
-          )
-        ]}
+          ]
+        )}
       </ListFrame>
       {showModal && selectedBook && (
         <BookModal book={selectedBook} onClose={() => setShowModal(false)} />
