@@ -46,7 +46,7 @@ const PopularMain = () => {
         <h1 className="text-3xl">인기고전</h1>
         <p className="text-xl text-[#A39C9C] pb-6">모든 인기 등록 작품을 모아봤어요</p>
       </div>
-      <ListFrame>
+      <ListFrame gapSize="small">
         {[
           isBookArray ? (
             books.map((book: IBook) => (
