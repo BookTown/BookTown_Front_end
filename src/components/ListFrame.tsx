@@ -3,9 +3,14 @@ import React, { useState, useEffect } from "react";
 interface ListFrameProps {
   children: React.ReactNode[];
   itemsPerPage?: number;
+  gapSize?: "small" | "medium" | "large";
 }
 
-const ListFrame = ({ children, itemsPerPage = 8 }: ListFrameProps) => {
+const ListFrame = ({ 
+  children, 
+  itemsPerPage = 8,
+  gapSize = "medium" 
+}: ListFrameProps) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerView, setItemsPerView] = useState(itemsPerPage);
 
@@ -26,6 +31,13 @@ const ListFrame = ({ children, itemsPerPage = 8 }: ListFrameProps) => {
     });
   };
 
+  // gap 크기에 따른 클래스 결정
+  const gapClasses = {
+    small: "gap-4 md:gap-5",
+    medium: "gap-5 md:gap-6",
+    large: "gap-6 md:gap-8" 
+  };
+
   const totalPages = Math.ceil(children.length / itemsPerView);
   const currentItems = children.slice(
     (currentPage - 1) * itemsPerView,
@@ -34,9 +46,9 @@ const ListFrame = ({ children, itemsPerPage = 8 }: ListFrameProps) => {
 
   return (
     <div className="px-4 pb-20 md:pb-0 flex flex-col min-h-[calc(100vh-12rem)]">
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-10 mx-auto my-auto mb-8 flex-grow w-full">
+      <div className={`grid grid-cols-2 md:grid-cols-4 ${gapClasses[gapSize]} mx-auto my-auto mb-8 flex-grow w-full`}>
         {currentItems.map((item, index) => (
-          <div key={index} className="p-2 relative" style={{ transformOrigin: 'center' }}>
+          <div key={index} className="p-1 relative" style={{ transformOrigin: 'center' }}>
             {item}
           </div>
         ))}
