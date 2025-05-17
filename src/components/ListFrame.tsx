@@ -34,9 +34,9 @@ const ListFrame = ({ children, itemsPerPage = 8 }: ListFrameProps) => {
 
   return (
     <div className="px-4 pb-20 md:pb-0 flex flex-col min-h-[calc(100vh-12rem)]">
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 mx-auto my-auto mb-8 flex-grow w-full">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-10 mx-auto my-auto mb-8 flex-grow w-full">
         {currentItems.map((item, index) => (
-          <div key={index} className="overflow-hidden h-fit">
+          <div key={index} className="p-2 relative" style={{ transformOrigin: 'center' }}>
             {item}
           </div>
         ))}
