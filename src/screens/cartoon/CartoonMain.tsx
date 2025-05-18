@@ -223,6 +223,25 @@ const CartoonMain = () => {
   const { cartoon } = useSelector((state: RootState) => state.cartoon);
   const [scenes, setScenes] = useState<IScene[]>([]);
 
+  // 뒤로가기 처리를 위한 useEffect 추가
+  useEffect(() => {
+    // 뒤로가기 버튼 클릭 시 이벤트 핸들러
+    const handlePopState = (event: PopStateEvent) => {
+      // 브라우저의 뒤로가기 이벤트를 가로채서 홈으로 리다이렉트
+      event.preventDefault();
+      console.log("뒤로가기 감지: 홈으로 이동");
+      navigate('/home', { replace: true });
+    };
+
+    // 뒤로가기 이벤트 리스너 등록
+    window.addEventListener('popstate', handlePopState);
+
+    // 컴포넌트 언마운트 시 이벤트 리스너 제거
+    return () => {
+      window.removeEventListener('popstate', handlePopState);
+    };
+  }, [navigate]);
+
   useEffect(() => {
     // 스토어에 데이터가 있으면 사용, 없으면 API 호출
     if (cartoon.scenes.length > 0 && cartoon.id.toString() === bookId) {
