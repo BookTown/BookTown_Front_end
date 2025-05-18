@@ -223,13 +223,37 @@ const CartoonMain = () => {
   const { cartoon } = useSelector((state: RootState) => state.cartoon);
   const [scenes, setScenes] = useState<IScene[]>([]);
 
-  // 뒤로가기 처리를 위한 useEffect 추가
+  // 컴포넌트가 마운트될 때 히스토리 스택 조작
   useEffect(() => {
-    // 뒤로가기 버튼 클릭 시 이벤트 핸들러
+    console.log("📚 CartoonMain 페이지 마운트");
+    
+    // 히스토리 스택에서 loading 항목 제거 - 두 가지 방법 모두 적용
+    
+    // 1. 현재 상태를 새로운 상태로 교체하여 이전 히스토리 로그 덮어쓰기
+    window.history.replaceState(
+      { ...window.history.state }, 
+      '', 
+      window.location.pathname
+    );
+    
+    // 2. 뒤로가기 시 홈으로 이동하는 스크립트를 페이지 상태에 저장
+    window.history.pushState(
+      { preventGoBack: true }, 
+      '', 
+      window.location.pathname
+    );
+    
+    console.log("📚 히스토리 스택 정리 완료");
+  }, []);
+
+  // 뒤로가기 처리를 위한 핸들러
+  useEffect(() => {
     const handlePopState = (event: PopStateEvent) => {
-      // 브라우저의 뒤로가기 이벤트를 가로채서 홈으로 리다이렉트
+      console.log("📚 뒤로가기 감지됨", event.state);
+      
+      // 뒤로가기 이벤트 캡처하여 홈으로 리다이렉트
       event.preventDefault();
-      console.log("뒤로가기 감지: 홈으로 이동");
+      console.log("📚 홈으로 리다이렉트");
       navigate('/home', { replace: true });
     };
 
