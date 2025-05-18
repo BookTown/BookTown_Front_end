@@ -52,6 +52,14 @@ const BookModal = ({ book, onClose, requireSubmit = false }: BookModalProps) => 
     
     console.log('📚 줄거리 보기 버튼 클릭', { id: book.id });
     
+    // 먼저 모달 닫기
+    onClose();
+    
+    // 로딩 화면으로 이동
+    console.log('📚 로딩 화면으로 이동');
+    navigate('/loading');
+    
+    // 백그라운드에서 API 호출 시작
     try {
       console.log('📚 줄거리 데이터 요청 시작');
       
@@ -80,12 +88,14 @@ const BookModal = ({ book, onClose, requireSubmit = false }: BookModalProps) => 
       
       console.log('📚 Redux 스토어 저장 완료, 페이지 이동 준비');
       
-      onClose(); // 모달 닫기
       console.log(`📚 줄거리 페이지로 이동: /cartoon/${book.id}`);
       navigate(`/cartoon/${book.id}`); // 줄거리 화면으로 이동
     } catch (error) {
       console.error("줄거리를 불러오는 중 오류가 발생했습니다:", error);
-      // 오류 처리 (예: 알림 표시)
+      // 오류 발생 시 홈으로 이동하거나 에러 페이지로 이동
+      navigate('/home');
+      // 오류 알림 표시 (alert 또는 toast 메시지)
+      alert("줄거리를 불러오는 중 오류가 발생했습니다. 다시 시도해주세요.");
     }
   };
 
