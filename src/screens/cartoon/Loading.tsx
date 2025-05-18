@@ -37,7 +37,7 @@ const Loading = () => {
             </p>
             <p className="text-lg md:text-xl text-center text-[#9CAAB9] mb-6">
                 <br />
-                "{currentMotivation.motivation}"
+                🗣 "{currentMotivation.motivation}"
                 <br />
                 {currentMotivation.characters}, {"<"}{currentMotivation.title}{">"}
             </p>
