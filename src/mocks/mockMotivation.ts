@@ -1,0 +1,147 @@
+export const mockMotivation = [
+    {
+      id: 1,
+      title: "피터 팬",
+      characters: "피터 팬",
+      motivation: " 절대 어른이 되지 마. 상상력은 네 가장 큰 힘이야. ",
+    },
+    {
+      id: 2,
+      title: "모비 딕",
+      characters: "이스마엘",
+      motivation: " 바다를 두려워하지 마. 그건 너를 단단하게 만들어줄 거야. ",
+    },
+    {
+      id: 3,
+      title: "정글북",
+      characters: "모글리",
+      motivation: " 진짜 가족은 너를 있는 그대로 받아들여주는 사람들이야. ",
+    },
+    {
+      id: 4,
+      title: "로미오와 줄리엣",
+      characters: "줄리엣",
+      motivation: " 두려워 말고 진심을 선택해. 진심은 결국 닿게 되어 있어. ",
+    },
+    {
+      id: 5,
+      title: "위대한 개츠비",
+      characters: "개츠비",
+      motivation: " 위대한 꿈은 절대 사라지지 않아. 넌 그걸 이룰 수 있어. ",
+    },
+    {
+      id: 6,
+      title: "오즈의 마법사",
+      characters: "도로시",
+      motivation: " 진짜 소중한 건, 항상 네 안에 있어. ",
+    },
+    {
+      id: 7,
+      title: "보물섬",
+      characters: "짐 호킨스",
+      motivation: " 진짜 모험은 용기를 낼 때 시작돼. ",
+    },
+    {
+      id: 8,
+      title: "드라큘라",
+      characters: "미나 머리",
+      motivation: " 지식과 냉정함은 어둠 속에서 빛이 돼. ",
+    },
+    {
+      id: 9,
+      title: "아라비안 나이트",
+      characters: "셰헤라자드",
+      motivation: " 지혜로운 이야기는 생명을 살리고 마음을 움직여. ",
+    },
+    {
+      id: 10,
+      title: "햄릿, 덴마크의 왕자",
+      characters: "햄릿",
+      motivation: " 행동이 두려움을 이기므로 고민만으론 진실에 닿을 수 없어. ",
+    },
+    {
+      id: 11,
+      title: "레오나르도 다 빈치의 노트",
+      characters: "다 빈치",
+      motivation: " 배움은 결코 늦지 않아. 네 안의 호기심을 따르라. ",
+    },
+    {
+      id: 12,
+      title: "로미오와 줄리엣",
+      characters: "로미오",
+      motivation: " 사랑을 믿는 순간, 두려움은 사라져. ",
+    },
+    {
+      id: 13,
+      title: "돈키호테",
+      characters: "돈키호테",
+      motivation: " 세상이 비웃어도 괜찮아. 네가 믿는 정의를 향해 달려. ",
+    },
+    {
+      id: 14,
+      title: "피터 팬",
+      characters: "웬디",
+      motivation: " 믿음과 약간의 요정 가루면 어디든 갈 수 있어. ",
+    },
+    {
+      id: 15,
+      title: "보물섬",
+      characters: "실버 선장",
+      motivation: " 진짜 보물은 너의 선택 안에 숨어 있어. ",
+    },
+    {
+      id: 16,
+      title: "드라큘라",
+      characters: "반 헬싱",
+      motivation: " 두려움을 이기는 건, 지식과 용기의 조합이란다. ",
+    },
+    {
+      id: 17,
+      title: "위대한 개츠비",
+      characters: "닉 캐러웨이",
+      motivation: " 세상을 이해하려면, 먼저 사람을 이해해야 해. ",
+    },
+    {
+      id: 18,
+      title: "오즈의 마법사",
+      characters: "허수아비",
+      motivation: " 진짜 지혜는 머리가 아니라 마음에서 나와. ",
+    },
+    {
+      id: 19,
+      title: "모비 딕",
+      characters: "스타벅",
+      motivation: " 신념은 흔들려도, 옳은 일은 절대 흔들리지 않아. ",
+    },
+    {
+      id: 20,
+      title: "정글북",
+      characters: "바기라",
+      motivation: " 가장 강한 건 몸이 아니라, 스스로를 지키려는 지혜야. ",
+    },
+    {
+      id: 21,
+      title: "아라비안 나이트",
+      characters: "왕 샤흐리아르",
+      motivation: " 진정한 용서는, 마음의 깊이에서 비롯된단다. ",
+    },
+    {
+      id: 22,
+      title: "햄릿, 덴마크의 왕자",
+      characters: "호레이쇼",
+      motivation: " 차분함은 혼란 속에서 진실을 지킬 수 있는 유일한 방패야. ",
+    },
+    {
+      id: 23,
+      title: "돈키호테",
+      characters: "산초 판사",
+      motivation: " 현실을 아는 건 나쁘지 않아. 하지만 꿈을 믿는 친구는 더 멋져. ",
+    },
+    {
+      id: 24,
+      title: "레오나르도 다 빈치의 노트",
+      characters: "다빈치의 스승 안드레아 델 베로키오",
+      motivation: " 제자가 스승을 넘는 건 기쁨이지 두려움이 아니란다. ",
+    }
+];
+  

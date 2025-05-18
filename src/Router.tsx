@@ -14,6 +14,7 @@ import LikedBooks from "./screens/setting/LikedBooks";
 import Quiz from "./screens/quiz/Quiz";
 import QuizEntry from "./screens/quiz/QuizEntry";
 import CartoonMain from "./screens/cartoon/CartoonMain";
+import Loading from "./screens/cartoon/Loading";
 
 const router = createBrowserRouter([
     {
@@ -75,6 +76,10 @@ const router = createBrowserRouter([
             {
                 path: "/quizStart/:bookId",
                 element: <QuizEntry />,
+            },
+            {
+                path: "/loading",
+                element: <Loading />,
             }
         ]
     },
