@@ -31,8 +31,10 @@ const OAuthCallback = () => {
             console.error('OAuth 로그인 후 좋아요 목록 로드 실패:', result.payload);
           }
           
-          // 메인 페이지로 리다이렉트
-          navigate('/home');
+          // 저장된 리다이렉션 경로가 있으면 해당 경로로, 없으면 홈으로 이동
+          const redirectPath = sessionStorage.getItem('redirectPath') || '/home';
+          sessionStorage.removeItem('redirectPath'); // 사용 후 삭제
+          navigate(redirectPath);
         })
         .catch(error => {
           console.error('OAuth 로그인 후 좋아요 요청 오류:', error);
@@ -52,4 +54,4 @@ const OAuthCallback = () => {
   );
 };
 
-export default OAuthCallback; 
+export default OAuthCallback;
