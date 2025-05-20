@@ -1,6 +1,6 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useState, useEffect, useRef } from "react";
-import { ArrowLeft, ArrowRight, RotateCw, BookOpenCheck } from "lucide-react";
+import { ArrowLeft, ArrowRight, RotateCw, BookOpenCheck, Volume2, Pause } from "lucide-react";
 import { IScene } from "../../interfaces/bookInterface";
 import { useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
@@ -207,9 +207,30 @@ const SceneFrame = ({
 
 // 텍스트 프레임 컴포넌트
 const PromptFrame = ({ content }: { content: string }) => {
+  const [isPlaying, setIsPlaying] = useState(false);
+
+  const togglePlayPause = () => {
+    setIsPlaying(!isPlaying);
+    // 여기에 실제 TTS 호출/정지 로직 추가 예정
+    console.log(isPlaying ? "TTS 정지" : "TTS 재생");
+  };
+
   return (
     <div className="w-full p-4 my-2 bg-[#F4F7F9] border border-black border-opacity-20 rounded-lg">
-      <p className="text-base text-gray-800">{content}</p>
+      <div className="flex items-center">
+        <p className="text-base text-gray-800 flex-1">{content}</p>
+        <button
+          onClick={togglePlayPause}
+          className="ml-3 p-1 text-[#C75C5C] hover:scale-110 transition-all duration-200 rounded-full"
+          aria-label={isPlaying ? "음성 정지" : "음성 듣기"}
+        >
+          {isPlaying ? (
+            <Pause className="w-5 h-5" />
+          ) : (
+            <Volume2 className="w-5 h-5" />
+          )}
+        </button>
+      </div>
     </div>
   );
 };
