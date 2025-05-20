@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 
 export const useTokenValidation = () => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
+  const [tokenStatus, setTokenStatus] = useState<'valid' | 'expired' | 'missing' | 'invalid'>('missing');
 
   useEffect(() => {
     const validateToken = () => {
@@ -9,6 +10,7 @@ export const useTokenValidation = () => {
 
       if (!token) {
         setIsAuthenticated(false);
+        setTokenStatus('missing');
         return;
       }
 
@@ -24,14 +26,17 @@ export const useTokenValidation = () => {
           localStorage.removeItem('accessToken');
           localStorage.removeItem('refreshToken');
           setIsAuthenticated(false);
+          setTokenStatus('expired');
           console.log('토큰이 만료되었습니다.');
         } else {
           setIsAuthenticated(true);
+          setTokenStatus('valid');
           console.log('유효한 토큰입니다.');
         }
       } catch (error) {
         console.error('토큰 검증 중 오류 발생:', error);
         setIsAuthenticated(false);
+        setTokenStatus('invalid');
       }
     };
 
@@ -43,5 +48,5 @@ export const useTokenValidation = () => {
     return () => clearInterval(intervalId);
   }, []);
 
-  return { isAuthenticated };
+  return { isAuthenticated, tokenStatus };
 };
