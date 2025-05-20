@@ -31,6 +31,7 @@ const DesktopBar = () => {
     } finally {
       localStorage.removeItem("accessToken");
       localStorage.removeItem("refreshToken");
+      sessionStorage.removeItem("redirectPath");
       // 좋아요 상태 초기화
       dispatch(clearLikes());
       navigate("/");
