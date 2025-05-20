@@ -221,7 +221,7 @@ const PromptFrame = ({ content }: { content: string }) => {
         <span className="text-base text-gray-800">{content}</span>
         <button
           onClick={togglePlayPause}
-          className="inline-flex items-center align-middle ml-1 text-[#C75C5C] hover:scale-110 transition-all duration-200"
+          className="inline-flex items-center align-top ml-2 text-[#C75C5C] hover:scale-110 transition-all duration-200"
           aria-label={isPlaying ? "음성 정지" : "음성 듣기"}
         >
           {isPlaying ? (
