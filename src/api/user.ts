@@ -76,7 +76,7 @@ export const deleteProfileImage = async () => {
   }
 };
 
-// 사용자 퀴즈 히스토리 조회
+// 사용자 퀴즈 히스토리 조회 (책별로 그룹화된 히스토리)
 export const fetchUserQuizHistory = async (userId: number) => {
   console.log('사용자 퀴즈 히스토리 조회 API 호출 시작');
   try {
@@ -89,11 +89,11 @@ export const fetchUserQuizHistory = async (userId: number) => {
   }
 };
 
-// 특정 책에 대한 퀴즈 히스토리 상세 조회
-export const fetchBookQuizHistoryDetail = async (userId: number, bookId: number) => {
-  console.log(`책 퀴즈 상세 히스토리 조회 API 호출 시작 (userId: ${userId}, bookId: ${bookId})`);
+// 특정 책에 대한 퀴즈 히스토리 상세 조회 (그룹 인덱스별)
+export const fetchBookQuizHistoryDetail = async (userId: number, bookId: number, groupIndex: number) => {
+  console.log(`책 퀴즈 상세 히스토리 조회 API 호출 시작 (userId: ${userId}, bookId: ${bookId}, groupIndex: ${groupIndex})`);
   try {
-    const res = await axiosApi.get(`/history/${userId}/book/${bookId}`);
+    const res = await axiosApi.get(`/history/${userId}/book/${bookId}/${groupIndex}`);
     console.log("✅ 책 퀴즈 상세 히스토리 조회 완료:", res.data);
     return res.data;
   } catch (error: any) {
