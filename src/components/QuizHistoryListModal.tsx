@@ -10,8 +10,8 @@ interface QuizHistoryItem {
   score: number;
   submittedAt: string;
   groupIndex: number;
-  correctCount?: number; // 맞은 문제 개수 (있을 경우)
-  quizType?: string; // quizType 추가 (questionType 대신)
+  correctCount?: number; 
+  quizType?: string; 
 }
 
 interface QuizHistorySelectModalProps {
@@ -195,11 +195,10 @@ const QuizHistoryListModal: React.FC<QuizHistorySelectModalProps> = ({
                 // quizType 직접 사용
                 const quizTypeText = history.quizType || "퀴즈";
                 
-                // 정답 수로 색상 결정
-                const estimatedCorrectCount = Math.floor(history.score / 10);
+                // 전달된 correctCount 사용, 없을 경우에만 score로 추정
                 const correctCount = history.correctCount !== undefined 
-                  ? history.correctCount 
-                  : estimatedCorrectCount;
+                  ? history.correctCount
+                  : Math.floor(history.score / 10);
                 
                 // 6개 이상 맞으면 초록색, 5개 이하면 빨간색
                 const scoreColor = correctCount >= 6 ? "text-[#7BC8A0]" : "text-[#EB645F]";
@@ -227,13 +226,19 @@ const QuizHistoryListModal: React.FC<QuizHistorySelectModalProps> = ({
                     </div>
                     
                     <div className="flex justify-between items-center">
-                      <div className={`text-2xl font-bold ${scoreColor}`}>
-                        {history.score}/10
+                      <div className="flex flex-col">
+                        <div className={`text-2xl font-bold ${scoreColor}`}>
+                          {correctCount}/10
+                        </div>
+                        <div className="text-xs text-gray-500">
+                          {correctCount}개 정답
+                        </div>
                       </div>
                       <Button 
                         size="sm" 
                         color="pink"
                         onClick={() => onSelectHistory(history.bookId, history.groupIndex)}
+                        className="!w-[7.5rem] !h-[2.25rem]"
                       >
                         결과보기
                       </Button>

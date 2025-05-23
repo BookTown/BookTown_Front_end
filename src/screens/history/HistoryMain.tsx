@@ -26,6 +26,7 @@ interface QuizHistoryItem {
   submittedAt: string;
   groupIndex: number;
   correctCount?: number;
+  quizType?: string;
 }
 
 // 문제 제출 항목에 대한 인터페이스 추가
@@ -75,7 +76,7 @@ const HistoryMain = () => {
               // 각 history 항목에 correctCount 추정값 추가
               const historiesWithCorrectCount = book.histories.map(history => ({
                 ...history,
-                // 점수 기반으로 맞은 문제 수 추정 (10문제 중 몇 문제를 맞췄는지)
+                // 일단 점수 기반으로 맞은 문제 수 추정 (실제 submissions에서 계산한 값으로 나중에 업데이트)
                 correctCount: Math.round(history.score / 10)
               }));
               
@@ -136,8 +137,37 @@ const HistoryMain = () => {
       // API에서 선택한 책과 그룹의 퀴즈 히스토리 상세 정보 로드
       const detailData = await fetchBookQuizHistoryDetail(userId, bookId, groupIndex);
       
-      // 정답 수 계산 (submissions 배열에서 correct: true인 항목의 수)
+      // submissions 배열에서 correct: true인 항목의 개수 계산
       const correctCount = detailData.submissions.filter((sub: QuizSubmission) => sub.correct === true).length;
+      
+      // bookHistoryList 상태 업데이트하여 정확한 correctCount 반영
+      const updatedBookList = bookHistoryList.map(book => {
+        if (book.bookId === bookId) {
+          return {
+            ...book,
+            histories: book.histories.map(history => {
+              if (history.groupIndex === groupIndex) {
+                // 이 특정 히스토리 아이템의 correctCount 업데이트
+                return {
+                  ...history,
+                  correctCount: correctCount // 실제 계산된 정답 수로 업데이트
+                };
+              }
+              return history;
+            })
+          };
+        }
+        return book;
+      });
+      
+      // 업데이트된 리스트로 상태 갱신
+      setBookHistoryList(updatedBookList);
+      
+      // 선택된 책도 업데이트
+      if (selectedBook && selectedBook.bookId === bookId) {
+        const updatedSelectedBook = updatedBookList.find(book => book.bookId === bookId) || selectedBook;
+        setSelectedBook(updatedSelectedBook);
+      }
       
       // 정답 수에 따른 색상 결정을 위해 correctCount 정보 추가
       setHistoryData({
