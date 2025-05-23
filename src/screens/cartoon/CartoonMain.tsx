@@ -214,7 +214,6 @@ const PromptFrame = ({ content, femaleAudioUrl, maleAudioUrl, onPageChange }: {
 }) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
-  const playPromiseRef = useRef<Promise<void> | null>(null);
   
   // Redux에서 음성 타입 가져오기
   const voiceType = useSelector((state: RootState) => state.tts.voiceType);
@@ -222,60 +221,45 @@ const PromptFrame = ({ content, femaleAudioUrl, maleAudioUrl, onPageChange }: {
   // 선택된 음성 타입에 따라 오디오 URL 결정
   const audioUrl = voiceType === 'female' ? femaleAudioUrl : maleAudioUrl;
 
-  // 페이지 변경 시 오디오 정리를 위한 함수
-  const cleanup = useCallback(() => {
-    if (audioRef.current) {
-      if (playPromiseRef.current) {
-        playPromiseRef.current
-          .then(() => {
-            audioRef.current?.pause();
-            setIsPlaying(false);
-          })
-          .catch(() => {
-            setIsPlaying(false);
-          });
-      } else {
-        audioRef.current.pause();
-        setIsPlaying(false);
-      }
-      audioRef.current = null;
-    }
-  }, []);
+  useEffect(() => {
+    // 새로운 오디오 URL이 설정될 때마다 새 Audio 객체 생성
+    audioRef.current = new Audio(audioUrl);
+    audioRef.current.onended = () => {
+      setIsPlaying(false);
+    };
 
-  // 페이지 변경 감지 시 cleanup 실행
+    // cleanup
+    return () => {
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current = null;
+      }
+      setIsPlaying(false);
+    };
+  }, [audioUrl]);
+
+  // 페이지 변경 시 cleanup
   useEffect(() => {
     return () => {
-      cleanup();
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current = null;
+      }
+      setIsPlaying(false);
     };
-  }, [cleanup, audioUrl]);
-
-  // onPageChange가 호출될 때도 cleanup 실행
-  useEffect(() => {
-    onPageChange();
-    cleanup();
-  }, [onPageChange, cleanup]);
+  }, [content]); // content가 변경될 때 (페이지 전환 시)
 
   const togglePlayPause = () => {
-    if (!audioRef.current) return;
+    if (!audioRef.current) {
+      audioRef.current = new Audio(audioUrl);
+      audioRef.current.onended = () => setIsPlaying(false);
+    }
 
     if (isPlaying) {
-      if (playPromiseRef.current) {
-        playPromiseRef.current
-          .then(() => {
-            audioRef.current?.pause();
-            setIsPlaying(false);
-          })
-          .catch(() => {
-            // 재생이 실패하거나 이미 중지된 경우 상태만 업데이트
-            setIsPlaying(false);
-          });
-      } else {
-        audioRef.current.pause();
-        setIsPlaying(false);
-      }
+      audioRef.current.pause();
+      setIsPlaying(false);
     } else {
-      playPromiseRef.current = audioRef.current.play();
-      playPromiseRef.current
+      audioRef.current.play()
         .then(() => {
           setIsPlaying(true);
         })
@@ -377,8 +361,14 @@ const CartoonMain = () => {
     }
   }, [bookId, cartoon]);
 
+  const handlePageChange = useCallback(() => {
+    // 페이지 전환 시 필요한 정리 작업
+    console.log("페이지 전환: TTS 정리");
+  }, []);
+
   const goToPrevPage = () => {
     if (currentPage > 0) {
+      handlePageChange();
       setCurrentPage(currentPage - 1);
     }
   };
@@ -398,6 +388,10 @@ const CartoonMain = () => {
   const handleSolveQuiz = () => {
     navigate(`/quizStart/${bookId}`);
   };
+
+  const handleAudioCleanup = useCallback(() => {
+    console.log("오디오 정리");
+  }, []);
 
   if (scenes.length === 0) {
     return (
@@ -434,7 +428,7 @@ const CartoonMain = () => {
           content={currentScene.content} 
           femaleAudioUrl={currentScene.femaleAudioUrl}
           maleAudioUrl={currentScene.maleAudioUrl}
-          onPageChange={goToNextPage}
+          onPageChange={handleAudioCleanup}
         />
 
         {/* 마지막 페이지일 때만 버튼 표시 */}
