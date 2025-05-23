@@ -275,7 +275,7 @@ const QuizModal: React.FC<QuizModalProps> = ({
             </h2>
             {hasApiData && (
               <p className="text-sm text-gray-500">
-                총점: {historyData!.totalScore}점
+                점수: {historyData!.totalScore}점
               </p>
             )}
           </div>

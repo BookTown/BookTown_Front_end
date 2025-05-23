@@ -5,6 +5,7 @@ import { fetchUserProfileById } from '../../api/user';
 import { RankUser, UserProfileData } from '../../interfaces/rankInterface';
 import UserProfile from './UserProfile';
 import basicProfile from '../../assets/basicProfile.png';
+import Loader from '../../components/Loader/Loader';
 
 const RankMain = () => {
   const [top3Users, setTop3Users] = useState<RankUser[]>([]);
@@ -57,29 +58,17 @@ const RankMain = () => {
   // 로딩 상태 표시
   if (loading) {
     return (
-      <div className="pt-14 md:pt-12 flex justify-center items-center h-[60vh]">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-[#C75C5C] border-solid mx-auto"></div>
-          <p className="mt-4 text-lg">랭킹 정보를 불러오는 중입니다...</p>
+        <div className="flex flex-col justify-center items-center h-[100dvh] text-2xl">
+          <Loader />
+          <div className="pt-5">데이터를 불러오는 중...</div>
         </div>
-      </div>
     );
   }
 
   // 에러 표시
   if (error) {
     return (
-      <div className="pt-14 md:pt-12 flex justify-center items-center h-[60vh]">
-        <div className="text-center">
-          <p className="text-red-500 text-lg">{error}</p>
-          <button 
-            className="mt-4 px-4 py-2 bg-[#C75C5C] text-white rounded-lg"
-            onClick={() => window.location.reload()}
-          >
-            다시 시도하기
-          </button>
-        </div>
-      </div>
+      <div className="flex justify-center items-center h-[100dvh] text-2xl">데이터를 불러오는데 실패했습니다.</div>
     );
   }
 

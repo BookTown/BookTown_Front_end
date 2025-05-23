@@ -20,7 +20,7 @@ const OxQuizOptions: React.FC<OxQuizOptionsProps> = ({ currentSubmission }) => {
     else if (isUserAnswer && !correct) status = 'wrong';
     
     return (
-      <div className={`relative w-[11.25rem] h-40 rounded-lg flex items-center justify-center ${getOptionStyle(status)}`}>
+      <div className={`relative w-32 md:w-[11.25rem] h-32 md:h-40 rounded-lg flex items-center justify-center ${getOptionStyle(status)}`}>
         {/* 정답/오답 라벨 추가 */}
         {status !== 'default' && (
           <span className={getStatusBadge(status).className}>

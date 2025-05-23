@@ -225,7 +225,7 @@ const QuizHistoryListModal: React.FC<QuizHistorySelectModalProps> = ({
                     <div className="flex justify-between items-start mb-4">
                       <div>
                         <p className="font-medium">{quizTypeText}</p>
-                        <p className="text-sm text-gray-500">{formattedDate}</p>
+                        <p className="text-sm text-gray-500">생성일: {formattedDate}</p>
                       </div>
                       <button 
                         className="text-gray-400"

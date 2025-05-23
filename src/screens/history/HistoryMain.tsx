@@ -6,6 +6,7 @@ import QuizHistoryListModal from "../../components/QuizHistoryListModal";
 import { fetchUserQuizHistory, fetchUserProfile, fetchBookQuizHistoryDetail } from "../../api/user";
 import { fetchBookDetailById } from "../../api/api";
 import { QuizHistoryDetail } from "../../interfaces/quizInterface";
+import Loader from "../../components/Loader/Loader";
 
 // 새로운 API 응답 형식에 맞는 인터페이스
 interface BookHistoryItem {
@@ -166,18 +167,17 @@ const HistoryMain = () => {
   // 로딩 중 표시
   if (isLoading) {
     return (
-      <div className="pt-14 flex justify-center items-center h-[80vh]">
-        <p className="text-2xl">로딩 중...</p>
-      </div>
+        <div className="flex flex-col justify-center items-center h-[100dvh] text-2xl">
+          <Loader />
+          <div className="pt-5">데이터를 불러오는 중...</div>
+        </div>
     );
   }
 
   // 에러 표시
   if (error) {
     return (
-      <div className="pt-14 flex justify-center items-center h-[80vh]">
-        <p className="text-2xl text-red-500">{error}</p>
-      </div>
+      <div className="flex justify-center items-center h-[100dvh] text-2xl">데이터를 불러오는데 실패했습니다.</div>
     );
   }
 
