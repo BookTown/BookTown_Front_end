@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { X } from "lucide-react";
+import { X, Trash2Icon } from "lucide-react";
 import Button from "./Button";
 import { formatDate } from "../utils/dateUtils";
 
@@ -11,7 +11,7 @@ interface QuizHistoryItem {
   submittedAt: string;
   groupIndex: number;
   correctCount?: number; // 맞은 문제 개수 (있을 경우)
-  questionType?: string; // 문제 유형 추가
+  quizType?: string; // quizType 추가 (questionType 대신)
 }
 
 interface QuizHistorySelectModalProps {
@@ -41,14 +41,9 @@ const QuizHistoryListModal: React.FC<QuizHistorySelectModalProps> = ({
     
     // 필터 적용
     if (filter !== "전체") {
-      const typeMap: Record<string, string> = {
-        "객관식": "MULTIPLE_CHOICE",
-        "주관식": "SHORT_ANSWER",
-        "O/X": "TRUE_FALSE"
-      };
-      
+      // API 응답의 quizType을 직접 사용
       result = histories.filter(history => 
-        history.questionType === typeMap[filter]
+        history.quizType === filter
       );
     }
     
@@ -197,16 +192,8 @@ const QuizHistoryListModal: React.FC<QuizHistorySelectModalProps> = ({
                 const date = new Date(history.submittedAt);
                 const formattedDate = formatDate(date);
                 
-                // 퀴즈 유형 한글로 변환
-                const quizTypeMap: Record<string, string> = {
-                  "MULTIPLE_CHOICE": "객관식",
-                  "SHORT_ANSWER": "주관식",
-                  "TRUE_FALSE": "O/X"
-                };
-                
-                const quizTypeText = history.questionType 
-                  ? quizTypeMap[history.questionType] || "퀴즈" 
-                  : "퀴즈";
+                // quizType 직접 사용
+                const quizTypeText = history.quizType || "퀴즈";
                 
                 // 정답 수로 색상 결정
                 const estimatedCorrectCount = Math.floor(history.score / 10);
@@ -235,7 +222,7 @@ const QuizHistoryListModal: React.FC<QuizHistorySelectModalProps> = ({
                           console.log("삭제 버튼 클릭:", history.id);
                         }}
                       >
-                        <X size={20} />
+                        <Trash2Icon size={20} />
                       </button>
                     </div>
                     
