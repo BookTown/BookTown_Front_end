@@ -5,7 +5,7 @@ interface QuizCardProps {
   title: string;
   author: string;
   thumbnailUrl: string;
-  totalScore?: number; // score 대신 totalScore로 변경
+  totalScore?: number; // totalScore로 변경
   onQuizSelect?: (quiz: { id: number; title: string; author: string; imageUrl: string }) => void;
   size?: "sm" | "lg";
 }
@@ -15,7 +15,7 @@ const QuizCard: React.FC<QuizCardProps> = ({
   title,
   author,
   thumbnailUrl,
-  totalScore, // score 대신 totalScore로 변경
+  totalScore, // totalScore로 변경
   onQuizSelect,
   size = "sm"
 }) => {

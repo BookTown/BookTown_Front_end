@@ -15,6 +15,7 @@ interface BookHistoryItem {
   author: string;
   histories: QuizHistoryItem[];
   imageUrl?: string;
+  totalScore?: number;
 }
 
 interface QuizHistoryItem {
@@ -111,7 +112,7 @@ const HistoryMain = () => {
   }, []);
 
   // 퀴즈 카드 클릭 핸들러 - 히스토리 선택 모달 표시
-  const handleQuizCardSelect = (quiz: { id: number; title: string; author: string; imageUrl: string }) => {
+  const handleQuizCardSelect = (quiz: { id: number; title: string; author: string; imageUrl: string, }) => {
     // 선택된 책 ID에 해당하는 책 찾기
     const book = bookHistoryList.find(item => item.bookId === quiz.id);
     if (book) {
@@ -197,6 +198,7 @@ const HistoryMain = () => {
               title={book.title}
               author={book.author || '작자미상'}
               thumbnailUrl={book.imageUrl || '/images/default-book.png'}
+              totalScore={book.totalScore}
               onQuizSelect={handleQuizCardSelect}
               size="lg"
             />
