@@ -2,36 +2,53 @@ import React, { useState, useEffect } from "react";
 import ListFrame from "../../components/ListFrame";
 import QuizCard from "../../components/QuizCard";
 import QuizModal from "../../components/QuizModal";
+import QuizHistoryListModal from "../../components/QuizHistoryListModal";
 import { fetchUserQuizHistory, fetchUserProfile, fetchBookQuizHistoryDetail } from "../../api/user";
 import { fetchBookDetailById } from "../../api/api";
 import { QuizHistoryDetail } from "../../interfaces/quizInterface";
 
-// 퀴즈 히스토리 인터페이스 정의
+// 새로운 API 응답 형식에 맞는 인터페이스
+interface BookHistoryItem {
+  bookId: number;
+  title: string;
+  author: string;
+  histories: QuizHistoryItem[];
+  imageUrl?: string;
+}
+
 interface QuizHistoryItem {
-  id: number; // 퀴즈 기록 자체의 ID (API 응답에 null일 수 있으므로 주의)
+  id: number;
   bookId: number;
   bookTitle: string;
   score: number;
   submittedAt: string;
-  author?: string; 
-  imageUrl?: string; 
+  groupIndex: number;
+  correctCount?: number;
+}
+
+// 문제 제출 항목에 대한 인터페이스 추가
+interface QuizSubmission {
+  question: string;
+  userAnswer: string;
+  correctAnswer: string;
+  score: number;
+  explanation: string | null;
+  options: string[] | null;
+  correct: boolean;
 }
 
 const HistoryMain = () => {
-  const [quizHistoryList, setQuizHistoryList] = useState<QuizHistoryItem[]>([]);
+  const [bookHistoryList, setBookHistoryList] = useState<BookHistoryItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [userId, setUserId] = useState<number | null>(null);
   
-  const [selectedBook, setSelectedBook] = useState<{
-    id: number;
-    title: string;
-    author?: string;
-    imageUrl?: string;
-  } | null>(null);
-  
   // 모달 상태 관리
+  const [showHistorySelectModal, setShowHistorySelectModal] = useState(false);
   const [showQuizModal, setShowQuizModal] = useState(false);
+  
+  // 선택된 책 정보
+  const [selectedBook, setSelectedBook] = useState<BookHistoryItem | null>(null);
   
   // API로 불러온 퀴즈 상세 데이터
   const [historyData, setHistoryData] = useState<QuizHistoryDetail | null>(null);
@@ -48,36 +65,39 @@ const HistoryMain = () => {
         
         const historyData = await fetchUserQuizHistory(userId);
         
-        // 각 히스토리 항목에 대해 책 상세 정보 조회
-        const formattedDataPromises = historyData.map(async (item: any) => {
-          let author = '작자미상';
-          let imageUrl = '/images/default-book.png';
-
+        // 책 이미지 정보 추가
+        const updatedData = await Promise.all(historyData.map(async (book: BookHistoryItem) => {
           try {
-            const bookDetail = await fetchBookDetailById(item.bookId);
-            if (bookDetail) {
-              author = bookDetail.author || author;
-              imageUrl = bookDetail.thumbnailUrl || imageUrl;
+            const bookDetail = await fetchBookDetailById(book.bookId);
+            if (bookDetail && bookDetail.thumbnailUrl) {
+              // 각 history 항목에 correctCount 추정값 추가
+              const historiesWithCorrectCount = book.histories.map(history => ({
+                ...history,
+                // 점수 기반으로 맞은 문제 수 추정 (10문제 중 몇 문제를 맞췄는지)
+                correctCount: Math.round(history.score / 10)
+              }));
+              
+              return {
+                ...book,
+                imageUrl: bookDetail.thumbnailUrl,
+                histories: historiesWithCorrectCount
+              };
             }
-          } catch (bookDetailError) {
-            console.error(`Book ID ${item.bookId} 상세 정보 조회 실패:`, bookDetailError);
-            // 책 정보 조회 실패 시 기본값 사용
+          } catch (error) {
+            console.error(`책 ID ${book.bookId}의 세부 정보를 불러오는데 실패했습니다.`, error);
           }
           
+          // 책 정보를 불러오는 데 실패하더라도 correctCount는 추가
           return {
-            id: item.id, // API 응답에 따라 null일 수 있음
-            bookId: item.bookId,
-            bookTitle: item.bookTitle,
-            score: item.score,
-            submittedAt: item.submittedAt,
-            author,
-            imageUrl,
+            ...book,
+            histories: book.histories.map(history => ({
+              ...history,
+              correctCount: Math.round(history.score / 10)
+            }))
           };
-        });
-
-        const formattedData = await Promise.all(formattedDataPromises);
+        }));
         
-        setQuizHistoryList(formattedData);
+        setBookHistoryList(updatedData);
       } catch (err) {
         console.error('퀴즈 히스토리 로딩 오류:', err);
         setError('퀴즈 히스토리를 불러오는 중 오류가 발생했습니다.');
@@ -89,8 +109,20 @@ const HistoryMain = () => {
     loadQuizHistory();
   }, []);
 
-  // 퀴즈 카드 클릭 핸들러 - API 호출 추가
-  const handleQuizCardSelect = async (book: { id: number; title: string; author?: string; imageUrl?: string }) => {
+  // 퀴즈 카드 클릭 핸들러 - 히스토리 선택 모달 표시
+  const handleQuizCardSelect = (quiz: { id: number; title: string; author: string; imageUrl: string }) => {
+    // 선택된 책 ID에 해당하는 책 찾기
+    const book = bookHistoryList.find(item => item.bookId === quiz.id);
+    if (book) {
+      setSelectedBook(book);
+      setShowHistorySelectModal(true);
+    } else {
+      console.error(`ID ${quiz.id}에 해당하는 책을 찾을 수 없습니다.`);
+    }
+  };
+  
+  // 히스토리 항목 선택 핸들러 - 퀴즈 모달 표시
+  const handleHistorySelect = async (bookId: number, groupIndex: number) => {
     if (!userId) {
       console.error("사용자 ID를 찾을 수 없습니다.");
       return;
@@ -98,11 +130,20 @@ const HistoryMain = () => {
     
     try {
       setIsLoadingDetail(true);
-      setSelectedBook(book);
       
-      // API에서 선택한 책의 퀴즈 히스토리 상세 정보 로드
-      const detailData = await fetchBookQuizHistoryDetail(userId, book.id);
-      setHistoryData(detailData);
+      // API에서 선택한 책과 그룹의 퀴즈 히스토리 상세 정보 로드
+      const detailData = await fetchBookQuizHistoryDetail(userId, bookId, groupIndex);
+      
+      // 정답 수 계산 (submissions 배열에서 correct: true인 항목의 수)
+      const correctCount = detailData.submissions.filter((sub: QuizSubmission) => sub.correct === true).length;
+      
+      // 정답 수에 따른 색상 결정을 위해 correctCount 정보 추가
+      setHistoryData({
+        ...detailData,
+        correctCount
+      });
+      
+      setShowHistorySelectModal(false);
       setShowQuizModal(true);
     } catch (error) {
       console.error("퀴즈 히스토리 상세 정보 로드 실패:", error);
@@ -112,10 +153,14 @@ const HistoryMain = () => {
     }
   };
   
-  // 퀴즈 모달 핸들러들
-  const handleQuizClose = () => {
+  // 모달 닫기 핸들러들
+  const handleHistorySelectModalClose = () => {
+    setShowHistorySelectModal(false);
+  };
+  
+  const handleQuizModalClose = () => {
     setShowQuizModal(false);
-    setHistoryData(null); // 모달을 닫을 때 히스토리 데이터 초기화
+    setHistoryData(null);
   };
 
   // 로딩 중 표시
@@ -144,21 +189,15 @@ const HistoryMain = () => {
       </div>
       
       <ListFrame>
-        {quizHistoryList.length > 0 
-          ? quizHistoryList.map((quiz) => (
+        {bookHistoryList.length > 0 
+          ? bookHistoryList.map((book) => (
               <QuizCard
-                key={quiz.id || quiz.bookId} // quiz.id가 null일 수 있으므로 bookId를 fallback으로 사용
-                id={quiz.bookId}
-                title={quiz.bookTitle}
-                author={quiz.author || '작자미상'}
-                thumbnailUrl={quiz.imageUrl || '/images/default-book.png'}
-                score={quiz.score}
-                onQuizSelect={() => handleQuizCardSelect({
-                  id: quiz.bookId,
-                  title: quiz.bookTitle,
-                  author: quiz.author,
-                  imageUrl: quiz.imageUrl
-                })}
+                key={book.bookId}
+                id={book.bookId}
+                title={book.title}
+                author={book.author || '작자미상'}
+                thumbnailUrl={book.imageUrl || '/images/default-book.png'}
+                onQuizSelect={handleQuizCardSelect}
                 size="lg"
               />
             ))
@@ -179,19 +218,22 @@ const HistoryMain = () => {
         </div>
       )}
 
-      {/* 퀴즈 모달 - API 데이터 전달 */}
-      {showQuizModal && selectedBook && (
-        <QuizModal
+      {/* 퀴즈 히스토리 선택 모달 */}
+      {showHistorySelectModal && selectedBook && (
+        <QuizHistoryListModal
           bookTitle={selectedBook.title}
-          score={quizHistoryList.find(q => q.bookId === selectedBook.id)?.score || 0}
-          quizNumber={1} // API 데이터를 사용할 때는 사용되지 않음
-          question="" // API 데이터를 사용할 때는 사용되지 않음
-          options={[]} // API 데이터를 사용할 때는 사용되지 않음
-          correctAnswerIndex={0} // API 데이터를 사용할 때는 사용되지 않음
-          onClose={handleQuizClose}
-          onNext={() => {}} // API 데이터 사용 시 컴포넌트 내부에서 처리함
-          onPrev={() => {}} // API 데이터 사용 시 컴포넌트 내부에서 처리함
-          historyData={historyData || undefined}
+          histories={selectedBook.histories}
+          onClose={handleHistorySelectModalClose}
+          onSelectHistory={handleHistorySelect}
+        />
+      )}
+
+      {/* 퀴즈 결과 모달 */}
+      {showQuizModal && historyData && (
+        <QuizModal
+          bookTitle={historyData.bookTitle}
+          onClose={handleQuizModalClose}
+          historyData={historyData}
         />
       )}
     </div>
