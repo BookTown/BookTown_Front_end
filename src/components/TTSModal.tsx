@@ -17,7 +17,7 @@ type VoiceOption = {
 const TTSModal: React.FC<TTSModalProps> = ({
   isOpen,
   onClose,
-  initialVoice = "노인",
+  initialVoice = "남성",
   onSave,
 }) => {
   const [selectedVoice, setSelectedVoice] = useState(initialVoice);
@@ -27,8 +27,6 @@ const TTSModal: React.FC<TTSModalProps> = ({
   const voiceOptions: VoiceOption[] = [
     { id: "남성", label: "남성" },
     { id: "여성", label: "여성" },
-    { id: "어린이", label: "어린이" },
-    { id: "노인", label: "노인" },
   ];
 
   const handleSave = () => {
@@ -51,7 +49,7 @@ const TTSModal: React.FC<TTSModalProps> = ({
           TTS 설정
         </h2>
 
-        <div className="flex justify-center gap-4 mb-10">
+        <div className="flex justify-center gap-8 mb-10">
           {voiceOptions.map((option) => (
             <VoiceOptionButton
               key={option.id}
