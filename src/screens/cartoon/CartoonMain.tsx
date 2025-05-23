@@ -209,6 +209,7 @@ const SceneFrame = ({
 const PromptFrame = ({ content, audioUrl }: { content: string; audioUrl: string }) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const playPromiseRef = useRef<Promise<void> | null>(null);
 
   useEffect(() => {
     // 컴포넌트 마운트 시 Audio 객체 생성
@@ -222,7 +223,17 @@ const PromptFrame = ({ content, audioUrl }: { content: string; audioUrl: string 
     // 컴포넌트 언마운트 시 정리
     return () => {
       if (audioRef.current) {
-        audioRef.current.pause();
+        if (playPromiseRef.current) {
+          playPromiseRef.current
+            .then(() => {
+              audioRef.current?.pause();
+            })
+            .catch(() => {
+              // 재생이 실패하거나 이미 중지된 경우 무시
+            });
+        } else {
+          audioRef.current.pause();
+        }
         audioRef.current = null;
       }
     };
@@ -232,11 +243,31 @@ const PromptFrame = ({ content, audioUrl }: { content: string; audioUrl: string 
     if (!audioRef.current) return;
 
     if (isPlaying) {
-      audioRef.current.pause();
+      if (playPromiseRef.current) {
+        playPromiseRef.current
+          .then(() => {
+            audioRef.current?.pause();
+            setIsPlaying(false);
+          })
+          .catch(() => {
+            // 재생이 실패하거나 이미 중지된 경우 상태만 업데이트
+            setIsPlaying(false);
+          });
+      } else {
+        audioRef.current.pause();
+        setIsPlaying(false);
+      }
     } else {
-      audioRef.current.play();
+      playPromiseRef.current = audioRef.current.play();
+      playPromiseRef.current
+        .then(() => {
+          setIsPlaying(true);
+        })
+        .catch((error) => {
+          console.error("오디오 재생 실패:", error);
+          setIsPlaying(false);
+        });
     }
-    setIsPlaying(!isPlaying);
   };
 
   return (
