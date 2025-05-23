@@ -75,10 +75,10 @@ const RankMain = () => {
   // 랭킹에 아무도 없을 때 빈화면 처리
   if (rankList.length === 0) {
     return (
-      <div className="pt-14 md:pt-12 flex justify-center items-center h-[60vh]">
+      <div className="w-full py-10 flex justify-center items-center h-[100dvh]">
         <div className="text-center">
-          <p className="text-xl">아직 랭킹에 등록된 사용자가 없습니다.</p>
-          <p className="mt-2 text-lg text-gray-600">퀴즈를 풀고 랭킹에 도전해보세요!</p>
+          <p className="text-2xl">아직 랭킹에 등록된 사용자가 없습니다.</p>
+          <p className="mt-2 text-xl text-[#9CAAB9]">퀴즈를 풀고 랭킹에 도전해보세요!</p>
         </div>
       </div>
     );

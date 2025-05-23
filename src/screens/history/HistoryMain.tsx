@@ -188,26 +188,25 @@ const HistoryMain = () => {
         <p className="text-xl text-[#A39C9C] pb-6">풀었던 퀴즈 목록을 모아봤어요</p>
       </div>
       
-      <ListFrame>
-        {bookHistoryList.length > 0 
-          ? bookHistoryList.map((book) => (
-              <QuizCard
-                key={book.bookId}
-                id={book.bookId}
-                title={book.title}
-                author={book.author || '작자미상'}
-                thumbnailUrl={book.imageUrl || '/images/default-book.png'}
-                onQuizSelect={handleQuizCardSelect}
-                size="lg"
-              />
-            ))
-          : [
-              <div className="pt-14 flex justify-center items-center h-[80vh]" key="no-history">
-                <p className="text-[#9CAAB9] text-2xl">풀었던 퀴즈가 없습니다.</p>
-              </div>
-            ]
-        }
-      </ListFrame>
+      {bookHistoryList.length > 0 ? (
+        <ListFrame>
+          {bookHistoryList.map((book) => (
+            <QuizCard
+              key={book.bookId}
+              id={book.bookId}
+              title={book.title}
+              author={book.author || '작자미상'}
+              thumbnailUrl={book.imageUrl || '/images/default-book.png'}
+              onQuizSelect={handleQuizCardSelect}
+              size="lg"
+            />
+          ))}
+        </ListFrame>
+      ) : (
+        <div className="w-full py-10 flex justify-center items-center h-[100dvh]">
+          <p className="text-[#9CAAB9] text-2xl">풀었던 퀴즈가 없습니다.</p>
+        </div>
+      )}
       
       {/* 상세 정보 로딩 중 표시 */}
       {isLoadingDetail && (

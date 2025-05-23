@@ -97,9 +97,9 @@ const LikedBooksMain = () => {
           ))}
         </ListFrame>
       ) : (
-        <div className="w-full text-center py-10">
-          <p className="text-[#9CAAB9]">아직 관심 작품이 없습니다.</p>
-          <p className="text-[#9CAAB9] mt-2">마음에 드는 작품에 좋아요를 눌러보세요!</p>
+        <div className="w-full py-10 flex justify-center items-center h-[100dvh]">
+          <p className="text-[#9CAAB9] text-2xl">아직 관심 작품이 없습니다.</p>
+          <p className="text-[#9CAAB9] text-2xl mt-2">마음에 드는 작품에 좋아요를 눌러보세요!</p>
         </div>
       )}
       

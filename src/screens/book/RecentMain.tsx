@@ -67,8 +67,8 @@ const RecentMain = () => {
           ))
         ) : (
           [
-            <div className="w-full text-center py-10" key="no-books">
-              <p className="text-[#9CAAB9]">최신 등록된 도서가 없습니다.</p>
+            <div className="w-full py-10 flex justify-center items-center text-center h-[100dvh]" key="no-books">
+              <p className="text-[#9CAAB9] text-2xl">최근 등록된 도서가 없습니다.</p>
             </div>
           ]
         )}
