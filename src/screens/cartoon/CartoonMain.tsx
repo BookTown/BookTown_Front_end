@@ -1,5 +1,5 @@
 import { useParams, useNavigate } from "react-router-dom";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { ArrowLeft, ArrowRight, RotateCw, BookOpenCheck, Volume2, Pause } from "lucide-react";
 import { IScene } from "../../interfaces/bookInterface";
 import { useSelector } from "react-redux";
@@ -206,10 +206,11 @@ const SceneFrame = ({
 };
 
 // 텍스트 프레임 컴포넌트
-const PromptFrame = ({ content, femaleAudioUrl, maleAudioUrl }: { 
+const PromptFrame = ({ content, femaleAudioUrl, maleAudioUrl, onPageChange }: { 
   content: string; 
   femaleAudioUrl: string;
   maleAudioUrl: string;
+  onPageChange: () => void;
 }) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -221,33 +222,38 @@ const PromptFrame = ({ content, femaleAudioUrl, maleAudioUrl }: {
   // 선택된 음성 타입에 따라 오디오 URL 결정
   const audioUrl = voiceType === 'female' ? femaleAudioUrl : maleAudioUrl;
 
-  useEffect(() => {
-    // 컴포넌트 마운트 시 Audio 객체 생성
-    audioRef.current = new Audio(audioUrl);
-    
-    // 오디오 재생 완료 시 상태 업데이트
-    audioRef.current.onended = () => {
-      setIsPlaying(false);
-    };
-
-    // 컴포넌트 언마운트 시 정리
-    return () => {
-      if (audioRef.current) {
-        if (playPromiseRef.current) {
-          playPromiseRef.current
-            .then(() => {
-              audioRef.current?.pause();
-            })
-            .catch(() => {
-              // 재생이 실패하거나 이미 중지된 경우 무시
-            });
-        } else {
-          audioRef.current.pause();
-        }
-        audioRef.current = null;
+  // 페이지 변경 시 오디오 정리를 위한 함수
+  const cleanup = useCallback(() => {
+    if (audioRef.current) {
+      if (playPromiseRef.current) {
+        playPromiseRef.current
+          .then(() => {
+            audioRef.current?.pause();
+            setIsPlaying(false);
+          })
+          .catch(() => {
+            setIsPlaying(false);
+          });
+      } else {
+        audioRef.current.pause();
+        setIsPlaying(false);
       }
+      audioRef.current = null;
+    }
+  }, []);
+
+  // 페이지 변경 감지 시 cleanup 실행
+  useEffect(() => {
+    return () => {
+      cleanup();
     };
-  }, [audioUrl]);
+  }, [cleanup, audioUrl]);
+
+  // onPageChange가 호출될 때도 cleanup 실행
+  useEffect(() => {
+    onPageChange();
+    cleanup();
+  }, [onPageChange, cleanup]);
 
   const togglePlayPause = () => {
     if (!audioRef.current) return;
@@ -428,6 +434,7 @@ const CartoonMain = () => {
           content={currentScene.content} 
           femaleAudioUrl={currentScene.femaleAudioUrl}
           maleAudioUrl={currentScene.maleAudioUrl}
+          onPageChange={goToNextPage}
         />
 
         {/* 마지막 페이지일 때만 버튼 표시 */}
