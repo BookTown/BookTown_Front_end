@@ -4,6 +4,7 @@ import { useState } from "react";
 import BookModal from "../../components/BookModal";
 import { useAllRecentBooks } from "../../hooks/useBookQueries";
 import { IBook } from "../../interfaces/bookInterface";
+import Loader from "../../components/Loader/Loader";
 
 type Book = {
   id: number;
@@ -22,19 +23,16 @@ const RecentMain = () => {
   // 데이터 로딩 중
   if (isLoading) {
     return (
-      <div className="pt-14 text-center py-10 h-[80vh]">
-        <p className="text-[#9CAAB9] text-2xl">데이터를 불러오는 중...</p>
-      </div>
+        <div className="flex flex-col justify-center items-center h-[100dvh] text-2xl">
+          <Loader />
+          <div className="pt-5">데이터를 불러오는 중...</div>
+        </div>
     );
   }
   
   // 에러 처리
   if (isError) {
-    return (
-      <div className="pt-14 text-center py-10 h-[80vh]">
-        <p className="text-[#9CAAB9] text-2xl">데이터를 불러오는데 실패했습니다.</p>
-      </div>
-    );
+    return <div className="flex justify-center items-center h-[100dvh] text-2xl">데이터를 불러오는데 실패했습니다.</div>
   }
   
   // 데이터 존재 여부 확인
@@ -69,8 +67,8 @@ const RecentMain = () => {
           ))
         ) : (
           [
-            <div className="w-full text-center py-10" key="no-books">
-              <p className="text-[#9CAAB9]">최신 등록된 도서가 없습니다.</p>
+            <div className="w-full py-10 flex justify-center items-center text-center h-[100dvh]" key="no-books">
+              <p className="text-[#9CAAB9] text-2xl">최근 등록된 도서가 없습니다.</p>
             </div>
           ]
         )}

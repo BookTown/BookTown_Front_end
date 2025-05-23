@@ -8,6 +8,7 @@ import { usePopularBooks, useRecentBooks, useBannerBook } from "../../hooks/useB
 import { useAppSelector, useAppDispatch } from "../../redux/hooks";
 import { IBook } from "../../interfaces/bookInterface";
 import { selectIsLiked, toggleLike } from "../../redux/slices/likeSlice";
+import Loader from "../../components/Loader/Loader";
 
 type Book = {
   id: number;
@@ -91,11 +92,16 @@ const Main = () => {
   }, [mainBook]);
 
   if (isLoadingPopular || isLoadingRecent || isLoadingBanner) {
-    return <div className="pt-14 flex justify-center items-center h-[80vh] text-2xl">데이터를 불러오는 중...</div>;
+    return (
+        <div className="flex flex-col justify-center items-center h-[100dvh] text-2xl">
+          <Loader />
+          <div className="pt-5">데이터를 불러오는 중...</div>
+        </div>
+    );
   }
 
   if (popularError || recentError || bannerError) {
-    return <div className="pt-14 flex justify-center items-center h-[80vh] text-2xl">데이터를 불러오는데 실패했습니다.</div>;
+    return <div className="flex justify-center items-center h-[100dvh] text-2xl">데이터를 불러오는데 실패했습니다.</div>;
   }
 
   // 데이터 확인 및 안전한 액세스

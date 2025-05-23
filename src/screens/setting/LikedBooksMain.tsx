@@ -5,6 +5,7 @@ import BookModal from "../../components/BookModal";
 import { useLikedBooks } from "../../hooks/useBookQueries";
 import { useAppSelector, useAppDispatch } from "../../redux/hooks";
 import { selectLikedBooks, toggleLike } from "../../redux/slices/likeSlice";
+import Loader from "../../components/Loader/Loader";
 
 type Book = {
   id: number;
@@ -38,24 +39,18 @@ const LikedBooksMain = () => {
   // 데이터 로딩 중
   if (isLoading) {
     return (
-      <div className="pt-14 md:pt-12 text-center py-10">
-        <p className="text-[#9CAAB9]">데이터를 불러오는 중...</p>
-      </div>
+        <div className="flex flex-col justify-center items-center h-[100dvh] text-2xl">
+          <Loader />
+          <div className="pt-5">데이터를 불러오는 중...</div>
+        </div>
     );
+
   }
   
   // 에러 처리
   if (isError) {
     return (
-      <div className="pt-14 md:pt-12 text-center py-10">
-        <p className="text-[#9CAAB9]">데이터를 불러오는데 실패했습니다.</p>
-        <button 
-          onClick={() => refetch()} 
-          className="mt-4 px-4 py-2 bg-[#C75C5C] text-white rounded-lg hover:bg-[#b54d4d]"
-        >
-          다시 시도
-        </button>
-      </div>
+      <div className="flex justify-center items-center h-[100dvh] text-2xl">데이터를 불러오는데 실패했습니다.</div>
     );
   }
   
@@ -102,9 +97,9 @@ const LikedBooksMain = () => {
           ))}
         </ListFrame>
       ) : (
-        <div className="w-full text-center py-10">
-          <p className="text-[#9CAAB9]">아직 관심 작품이 없습니다.</p>
-          <p className="text-[#9CAAB9] mt-2">마음에 드는 작품에 좋아요를 눌러보세요!</p>
+        <div className="w-full py-10 flex justify-center items-center h-[100dvh]">
+          <p className="text-[#9CAAB9] text-2xl">아직 관심 작품이 없습니다.</p>
+          <p className="text-[#9CAAB9] text-2xl mt-2">마음에 드는 작품에 좋아요를 눌러보세요!</p>
         </div>
       )}
       
