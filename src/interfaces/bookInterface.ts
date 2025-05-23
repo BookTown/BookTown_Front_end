@@ -2,7 +2,8 @@ export interface IScene {
   pageNumber: number;    // 페이지 번호
   content: string;       // 장면 내용
   illustrationUrl: string; // 장면 이미지 URL 
-  audioUrl: string; // 장면 음성 URL 
+  femaleAudioUrl: string; // 여성 음성 URL 
+  maleAudioUrl: string; // 남성 음성 URL 
 }
 
 // 개별 도서 상세 정보

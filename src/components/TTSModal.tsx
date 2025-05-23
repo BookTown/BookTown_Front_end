@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { X } from "lucide-react";
 import Button from "../components/Button";
+import { useDispatch } from "react-redux";
+import { setVoiceType } from "../redux/slices/ttsSlice";
 
 interface TTSModalProps {
   isOpen: boolean;
@@ -17,9 +19,10 @@ type VoiceOption = {
 const TTSModal: React.FC<TTSModalProps> = ({
   isOpen,
   onClose,
-  initialVoice = "남성",
+  initialVoice = "female",
   onSave,
 }) => {
+  const dispatch = useDispatch();
   const [selectedVoice, setSelectedVoice] = useState(initialVoice);
 
   if (!isOpen) return null;
@@ -30,6 +33,8 @@ const TTSModal: React.FC<TTSModalProps> = ({
   ];
 
   const handleSave = () => {
+    const voiceType = selectedVoice === "남성" ? "male" : "female";
+    dispatch(setVoiceType(voiceType));
     onSave(selectedVoice);
     onClose();
   };

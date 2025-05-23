@@ -206,10 +206,20 @@ const SceneFrame = ({
 };
 
 // 텍스트 프레임 컴포넌트
-const PromptFrame = ({ content, audioUrl }: { content: string; audioUrl: string }) => {
+const PromptFrame = ({ content, femaleAudioUrl, maleAudioUrl }: { 
+  content: string; 
+  femaleAudioUrl: string;
+  maleAudioUrl: string;
+}) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const playPromiseRef = useRef<Promise<void> | null>(null);
+  
+  // Redux에서 음성 타입 가져오기
+  const voiceType = useSelector((state: RootState) => state.tts.voiceType);
+  
+  // 선택된 음성 타입에 따라 오디오 URL 결정
+  const audioUrl = voiceType === 'female' ? femaleAudioUrl : maleAudioUrl;
 
   useEffect(() => {
     // 컴포넌트 마운트 시 Audio 객체 생성
@@ -414,7 +424,11 @@ const CartoonMain = () => {
         />
 
         {/* 텍스트 내용 */}
-        <PromptFrame content={currentScene.content} audioUrl={currentScene.audioUrl} />
+        <PromptFrame 
+          content={currentScene.content} 
+          femaleAudioUrl={currentScene.femaleAudioUrl}
+          maleAudioUrl={currentScene.maleAudioUrl}
+        />
 
         {/* 마지막 페이지일 때만 버튼 표시 */}
         {isLastScene && (
