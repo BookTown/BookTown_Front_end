@@ -206,13 +206,37 @@ const SceneFrame = ({
 };
 
 // 텍스트 프레임 컴포넌트
-const PromptFrame = ({ content }: { content: string }) => {
+const PromptFrame = ({ content, audioUrl }: { content: string; audioUrl: string }) => {
   const [isPlaying, setIsPlaying] = useState(false);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+
+  useEffect(() => {
+    // 컴포넌트 마운트 시 Audio 객체 생성
+    audioRef.current = new Audio(audioUrl);
+    
+    // 오디오 재생 완료 시 상태 업데이트
+    audioRef.current.onended = () => {
+      setIsPlaying(false);
+    };
+
+    // 컴포넌트 언마운트 시 정리
+    return () => {
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current = null;
+      }
+    };
+  }, [audioUrl]);
 
   const togglePlayPause = () => {
+    if (!audioRef.current) return;
+
+    if (isPlaying) {
+      audioRef.current.pause();
+    } else {
+      audioRef.current.play();
+    }
     setIsPlaying(!isPlaying);
-    // 여기에 실제 TTS 호출/정지 로직 추가 예정
-    console.log(isPlaying ? "TTS 정지" : "TTS 재생");
   };
 
   return (
@@ -359,7 +383,7 @@ const CartoonMain = () => {
         />
 
         {/* 텍스트 내용 */}
-        <PromptFrame content={currentScene.content} />
+        <PromptFrame content={currentScene.content} audioUrl={currentScene.audioUrl} />
 
         {/* 마지막 페이지일 때만 버튼 표시 */}
         {isLastScene && (
