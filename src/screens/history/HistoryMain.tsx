@@ -25,19 +25,7 @@ interface QuizHistoryItem {
   score: number;
   submittedAt: string;
   groupIndex: number;
-  correctCount?: number;
   quizType: string;
-}
-
-// 문제 제출 항목에 대한 인터페이스 추가
-interface QuizSubmission {
-  question: string;
-  userAnswer: string;
-  correctAnswer: string;
-  score: number;
-  explanation: string | null;
-  options: string[] | null;
-  correct: boolean;
 }
 
 const HistoryMain = () => {
@@ -73,30 +61,20 @@ const HistoryMain = () => {
           try {
             const bookDetail = await fetchBookDetailById(book.bookId);
             if (bookDetail && bookDetail.thumbnailUrl) {
-              // 각 history 항목에 correctCount 추정값 추가
-              const historiesWithCorrectCount = book.histories.map(history => ({
-                ...history,
-                // 일단 점수 기반으로 맞은 문제 수 추정 (실제 submissions에서 계산한 값으로 나중에 업데이트)
-                correctCount: Math.round(history.score / 10)
-              }));
-              
               return {
                 ...book,
                 imageUrl: bookDetail.thumbnailUrl,
-                histories: historiesWithCorrectCount
+                histories: book.histories  // correctCount 추가 로직 제거
               };
             }
           } catch (error) {
             console.error(`책 ID ${book.bookId}의 세부 정보를 불러오는데 실패했습니다.`, error);
           }
           
-          // 책 정보를 불러오는 데 실패하더라도 correctCount는 추가
+          // 책 정보를 불러오는 데 실패한 경우
           return {
             ...book,
-            histories: book.histories.map(history => ({
-              ...history,
-              correctCount: Math.round(history.score / 10)
-            }))
+            histories: book.histories  // correctCount 추가 로직 제거
           };
         }));
         
@@ -137,43 +115,12 @@ const HistoryMain = () => {
       // API에서 선택한 책과 그룹의 퀴즈 히스토리 상세 정보 로드
       const detailData = await fetchBookQuizHistoryDetail(userId, bookId, groupIndex);
       
-      // submissions 배열에서 correct: true인 항목의 개수 계산
-      const correctCount = detailData.submissions.filter((sub: QuizSubmission) => sub.correct === true).length;
+      // correctCount 계산 로직 제거
       
-      // bookHistoryList 상태 업데이트하여 정확한 correctCount 반영
-      const updatedBookList = bookHistoryList.map(book => {
-        if (book.bookId === bookId) {
-          return {
-            ...book,
-            histories: book.histories.map(history => {
-              if (history.groupIndex === groupIndex) {
-                // 이 특정 히스토리 아이템의 correctCount 업데이트
-                return {
-                  ...history,
-                  correctCount: correctCount // 실제 계산된 정답 수로 업데이트
-                };
-              }
-              return history;
-            })
-          };
-        }
-        return book;
-      });
+      // bookHistoryList 상태 업데이트 로직 제거
       
-      // 업데이트된 리스트로 상태 갱신
-      setBookHistoryList(updatedBookList);
-      
-      // 선택된 책도 업데이트
-      if (selectedBook && selectedBook.bookId === bookId) {
-        const updatedSelectedBook = updatedBookList.find(book => book.bookId === bookId) || selectedBook;
-        setSelectedBook(updatedSelectedBook);
-      }
-      
-      // 정답 수에 따른 색상 결정을 위해 correctCount 정보 추가
-      setHistoryData({
-        ...detailData,
-        correctCount
-      });
+      // 히스토리 데이터만 설정
+      setHistoryData(detailData);
       
       setShowHistorySelectModal(false);
       setShowQuizModal(true);

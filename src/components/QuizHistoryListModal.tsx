@@ -13,7 +13,6 @@ interface QuizHistoryItem {
   quizType: string;
   submittedAt: string;
   score: number;
-  correctCount?: number;
 }
 
 interface QuizHistorySelectModalProps {
@@ -245,22 +244,17 @@ const QuizHistoryListModal: React.FC<QuizHistorySelectModalProps> = ({
                 // quizType 직접 사용
                 const quizTypeText = history.quizType || "퀴즈";
                 
-                // 전달된 correctCount 사용, 없을 경우에만 score로 추정
-                const correctCount = history.correctCount !== undefined 
-                  ? history.correctCount
-                  : Math.floor(history.score / 10);
-                
-                // 6개 이상 맞으면 초록색, 5개 이하면 빨간색
-                const scoreColor = correctCount >= 6 ? "text-[#7BC8A0]" : "text-[#EB645F]";
+                // BookTown 브랜드 컬러 사용
+                const scoreColor = "text-[#C75C5C]";
                 
                 return (
                   <div 
                     key={history.id} 
-                    className="bg-white rounded-lg px-4 py-1 border border-black/10"
+                    className="bg-white rounded-lg px-4 py-2 border border-black/10"
                   >
-                    <div className="flex justify-between items-start mb-4">
+                    <div className="flex justify-between items-start mb-1">
                       <div>
-                        <p className="text-2xl">{quizTypeText}</p>
+                        <p className="text-3xl">{quizTypeText}</p>
                         <p className="text-sm text-[#9CAAB9]">생성일: {formattedDate}</p>
                       </div>
                       <button 
@@ -276,14 +270,14 @@ const QuizHistoryListModal: React.FC<QuizHistorySelectModalProps> = ({
                     <div className="flex justify-between items-center">
                       <div className="flex flex-col">
                         <div className={`text-5xl ${scoreColor}`}>
-                          {correctCount}/10
+                          점수: {history.score}
                         </div>
                       </div>
                       <Button 
                         size="sm" 
                         color="pink"
                         onClick={() => onSelectHistory(history.bookId, history.groupIndex)}
-                        className="!w-[7.5rem] !h-[2.25rem] rounded-[0.5rem] text-xl"
+                        className="!w-[7.5rem] !h-[2.25rem] !rounded-[0.5rem] !text-xl"
                       >
                         결과보기
                       </Button>
