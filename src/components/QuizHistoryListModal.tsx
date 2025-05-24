@@ -230,10 +230,10 @@ const QuizHistoryListModal: React.FC<QuizHistorySelectModalProps> = ({
         </div>
 
         {/* 메인 콘텐츠 영역 - 그레이 박스 */}
-        <div className="bg-gray-50 rounded-lg p-4 mb-5 border border-black/20">
+        <div className="bg-gray-50 rounded-lg p-4 mb-5 border border-black/20 h-[18.75rem]">
           {noFilteredResults ? (
-            <div className="text-center p-6">
-              <p className="text-sm">선택한 유형의 퀴즈 기록이 없습니다.</p>
+            <div className="flex items-center justify-center h-full">
+              <p className="text-2xl text-[#9CAAB9]">선택한 유형의 퀴즈 기록이 없습니다.</p>
             </div>
           ) : (
             <div className="space-y-4">
@@ -243,9 +243,6 @@ const QuizHistoryListModal: React.FC<QuizHistorySelectModalProps> = ({
                 
                 // quizType 직접 사용
                 const quizTypeText = history.quizType || "퀴즈";
-                
-                // BookTown 브랜드 컬러 사용
-                const scoreColor = "text-[#C75C5C]";
                 
                 return (
                   <div 
@@ -269,8 +266,8 @@ const QuizHistoryListModal: React.FC<QuizHistorySelectModalProps> = ({
                     
                     <div className="flex justify-between items-center">
                       <div className="flex flex-col">
-                        <div className={`text-5xl ${scoreColor}`}>
-                          점수: {history.score}
+                        <div className={`text-5xl text-[#C75C5C]`}>
+                          {history.score}점
                         </div>
                       </div>
                       <Button 
@@ -290,18 +287,15 @@ const QuizHistoryListModal: React.FC<QuizHistorySelectModalProps> = ({
         </div>
 
         {/* 이전/다음 버튼 */}
-        {!noFilteredResults && (
-          <div className="flex justify-center gap-2 mt-4 mb-2">
-            {renderNavigationButtons()}
-          </div>
-        )}
+        <div className="flex justify-center gap-2 mt-4 mb-2">
+          {renderNavigationButtons()}
+        </div>
+
         
         {/* 페이지네이션 인디케이터 */}
-        {!noFilteredResults && filteredHistories.length > 0 && (
-          <div className="mt-2 text-center text-sm text-gray-500">
-            {currentPage + 1} / {totalPages || 1}
-          </div>
-        )}
+        <div className="mt-2 text-center text-sm text-gray-500">
+          {currentPage + 1} / {totalPages || 1}
+        </div>
       </div>
     </div>
   );
