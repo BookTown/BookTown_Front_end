@@ -8,7 +8,6 @@ import { fetchBookDetailById } from "../../api/api";
 import { QuizHistoryDetail } from "../../interfaces/quizInterface";
 import Loader from "../../components/Loader/Loader";
 
-// 새로운 API 응답 형식에 맞는 인터페이스
 interface BookHistoryItem {
   bookId: number;
   title: string;
@@ -64,7 +63,7 @@ const HistoryMain = () => {
               return {
                 ...book,
                 imageUrl: bookDetail.thumbnailUrl,
-                histories: book.histories  // correctCount 추가 로직 제거
+                histories: book.histories 
               };
             }
           } catch (error) {
@@ -74,7 +73,7 @@ const HistoryMain = () => {
           // 책 정보를 불러오는 데 실패한 경우
           return {
             ...book,
-            histories: book.histories  // correctCount 추가 로직 제거
+            histories: book.histories 
           };
         }));
         
@@ -115,10 +114,6 @@ const HistoryMain = () => {
       // API에서 선택한 책과 그룹의 퀴즈 히스토리 상세 정보 로드
       const detailData = await fetchBookQuizHistoryDetail(userId, bookId, groupIndex);
       
-      // correctCount 계산 로직 제거
-      
-      // bookHistoryList 상태 업데이트 로직 제거
-      
       // 히스토리 데이터만 설정
       setHistoryData(detailData);
       
@@ -132,22 +127,41 @@ const HistoryMain = () => {
     }
   };
   
-  // 히스토리 삭제 처리 함수 추가
+  // 히스토리 삭제 처리 함수 수정
   const handleHistoryDeleted = (bookId: number, groupIndex: number) => {
-    // 삭제된 히스토리를 상태에서 제거
-    setBookHistoryList(prevList => 
-      prevList.map(book => {
+    // 삭제된 히스토리를 상태에서 제거하고 totalScore 업데이트
+    setBookHistoryList(prevList => {
+      // 업데이트된 목록 생성
+      const updatedList = prevList.map(book => {
         // 해당 책에 대한 처리만 수행
         if (book.bookId === bookId) {
-          return {
-            ...book,
-            // 삭제된 groupIndex와 일치하지 않는 히스토리만 유지
-            histories: book.histories.filter(history => history.groupIndex !== groupIndex)
-          };
+          // 삭제된 groupIndex와 일치하지 않는 히스토리만 유지
+          const remainingHistories = book.histories.filter(
+            history => history.groupIndex !== groupIndex
+          );
+          
+          // 남은 히스토리가 있으면 totalScore 재계산해서 업데이트
+          if (remainingHistories.length > 0) {
+            // 남은 히스토리의 점수 평균 계산
+            const totalScore = remainingHistories.reduce(
+              (sum, history) => sum + history.score, 0
+            ) / remainingHistories.length;
+            
+            return {
+              ...book,
+              histories: remainingHistories,
+              totalScore: Math.round(totalScore)
+            };
+          }
+          // 모든 히스토리가 삭제된 경우 null 반환 (나중에 필터링할 때 제외됨)
+          return null;
         }
         return book;
-      })
-    );
+      });
+      
+      // null 값(모든 히스토리가 삭제된 책)을 필터링하여 제외
+      return updatedList.filter(book => book !== null) as BookHistoryItem[];
+    });
   };
   
   // 모달 닫기 핸들러들
