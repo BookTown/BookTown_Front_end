@@ -1,6 +1,6 @@
 import { useParams, useNavigate } from "react-router-dom";
-import { useState, useEffect, useRef } from "react";
-import { ArrowLeft, ArrowRight, RotateCw, BookOpenCheck } from "lucide-react";
+import { useState, useEffect, useRef, useCallback } from "react";
+import { ArrowLeft, ArrowRight, RotateCw, BookOpenCheck, Volume2, Pause } from "lucide-react";
 import { IScene } from "../../interfaces/bookInterface";
 import { useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
@@ -206,10 +206,86 @@ const SceneFrame = ({
 };
 
 // 텍스트 프레임 컴포넌트
-const PromptFrame = ({ content }: { content: string }) => {
+const PromptFrame = ({ content, femaleAudioUrl, maleAudioUrl, onPageChange }: { 
+  content: string; 
+  femaleAudioUrl: string;
+  maleAudioUrl: string;
+  onPageChange: () => void;
+}) => {
+  const [isPlaying, setIsPlaying] = useState(false);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+  
+  // Redux에서 음성 타입 가져오기
+  const voiceType = useSelector((state: RootState) => state.tts.voiceType);
+  
+  // 선택된 음성 타입에 따라 오디오 URL 결정
+  const audioUrl = voiceType === 'female' ? femaleAudioUrl : maleAudioUrl;
+
+  useEffect(() => {
+    // 새로운 오디오 URL이 설정될 때마다 새 Audio 객체 생성
+    audioRef.current = new Audio(audioUrl);
+    audioRef.current.onended = () => {
+      setIsPlaying(false);
+    };
+
+    // cleanup
+    return () => {
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current = null;
+      }
+      setIsPlaying(false);
+    };
+  }, [audioUrl]);
+
+  // 페이지 변경 시 cleanup
+  useEffect(() => {
+    return () => {
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current = null;
+      }
+      setIsPlaying(false);
+    };
+  }, [content]); // content가 변경될 때 (페이지 전환 시)
+
+  const togglePlayPause = () => {
+    if (!audioRef.current) {
+      audioRef.current = new Audio(audioUrl);
+      audioRef.current.onended = () => setIsPlaying(false);
+    }
+
+    if (isPlaying) {
+      audioRef.current.pause();
+      setIsPlaying(false);
+    } else {
+      audioRef.current.play()
+        .then(() => {
+          setIsPlaying(true);
+        })
+        .catch((error) => {
+          console.error("오디오 재생 실패:", error);
+          setIsPlaying(false);
+        });
+    }
+  };
+
   return (
     <div className="w-full p-4 my-2 bg-[#F4F7F9] border border-black border-opacity-20 rounded-lg">
-      <p className="text-base text-gray-800">{content}</p>
+      <div className="relative">
+        <span className="text-base text-gray-800">{content}</span>
+        <button
+          onClick={togglePlayPause}
+          className="inline-flex items-center align-top ml-2 text-[#C75C5C] hover:scale-110 transition-all duration-200"
+          aria-label={isPlaying ? "음성 정지" : "음성 듣기"}
+        >
+          {isPlaying ? (
+            <Pause className="w-5 h-5" />
+          ) : (
+            <Volume2 className="w-5 h-5" />
+          )}
+        </button>
+      </div>
     </div>
   );
 };
@@ -285,8 +361,14 @@ const CartoonMain = () => {
     }
   }, [bookId, cartoon]);
 
+  const handlePageChange = useCallback(() => {
+    // 페이지 전환 시 필요한 정리 작업
+    console.log("페이지 전환: TTS 정리");
+  }, []);
+
   const goToPrevPage = () => {
     if (currentPage > 0) {
+      handlePageChange();
       setCurrentPage(currentPage - 1);
     }
   };
@@ -306,6 +388,10 @@ const CartoonMain = () => {
   const handleSolveQuiz = () => {
     navigate(`/quizStart/${bookId}`);
   };
+
+  const handleAudioCleanup = useCallback(() => {
+    console.log("오디오 정리");
+  }, []);
 
   if (scenes.length === 0) {
     return (
@@ -338,7 +424,12 @@ const CartoonMain = () => {
         />
 
         {/* 텍스트 내용 */}
-        <PromptFrame content={currentScene.content} />
+        <PromptFrame 
+          content={currentScene.content} 
+          femaleAudioUrl={currentScene.femaleAudioUrl}
+          maleAudioUrl={currentScene.maleAudioUrl}
+          onPageChange={handleAudioCleanup}
+        />
 
         {/* 마지막 페이지일 때만 버튼 표시 */}
         {isLastScene && (

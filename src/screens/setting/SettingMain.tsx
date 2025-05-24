@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import {
   HeartIcon,
-  BarChart3Icon,
+  AudioLinesIcon,
   BookOpenIcon,
   Trash2Icon,
   LogOutIcon,
@@ -17,6 +17,7 @@ import ExitMember from "./ExitMember";
 import { updateProfileImage } from "../../api/user";
 import { useAppDispatch } from "../../redux/hooks";
 import { clearLikes } from "../../redux/slices/likeSlice";
+import TTSModal from "../../components/TTSModal";
 
 interface UserProfile {
   id: number;
@@ -44,6 +45,8 @@ const SettingMain = () => {
   const [isInfoModalOpen, setIsInfoModalOpen] = useState(false);
   const [isImageModalOpen, setIsImageModalOpen] = useState(false);
   const [isExitModalOpen, setIsExitModalOpen] = useState(false);
+  const [isTTSModalOpen, setIsTTSModalOpen] = useState(false);
+  const [ttsVoice, setTtsVoice] = useState<string>("노인");
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -97,6 +100,15 @@ const SettingMain = () => {
       setUserProfile(data);
     } catch (error) {
       console.error("Failed to update image:", error);
+    }
+  };
+
+  const handleTTSUpdate = (voice: string) => {
+    try {
+      console.log("TTS voice updated:", voice);
+      setTtsVoice(voice);
+    } catch (error) {
+      console.error("Failed to update TTS settings:", error);
     }
   };
 
@@ -155,10 +167,13 @@ const SettingMain = () => {
             iconBg="bg-[#F9A8A8]"
           />
         </Link>
-        <button className="w-full">
+        <button 
+          className="w-full"
+          onClick={() => setIsTTSModalOpen(true)}
+        >
           <MenuItem
-            icon={<BarChart3Icon className="w-6 h-6 text-white" />}
-            label="난이도 설정"
+            icon={<AudioLinesIcon className="w-6 h-6 text-white" />}
+            label="TTS 설정"
             iconBg="bg-[#F9A8A8]"
           />
         </button>
@@ -219,6 +234,13 @@ const SettingMain = () => {
       {isExitModalOpen && (
         <ExitMember onClose={() => setIsExitModalOpen(false)} />
       )}
+      
+      <TTSModal
+        isOpen={isTTSModalOpen}
+        onClose={() => setIsTTSModalOpen(false)}
+        initialVoice={ttsVoice}
+        onSave={handleTTSUpdate}
+      />
     </div>
   );
 };

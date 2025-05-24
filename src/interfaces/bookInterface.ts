@@ -1,8 +1,11 @@
 export interface IScene {
   pageNumber: number;    // 페이지 번호
   content: string;       // 장면 내용
-  illustrationUrl: string; // 장면 이미지 URL (선택적)
+  illustrationUrl: string; // 장면 이미지 URL 
+  femaleAudioUrl: string; // 여성 음성 URL 
+  maleAudioUrl: string; // 남성 음성 URL 
 }
+
 // 개별 도서 상세 정보
 export interface IBookDetail {
   id: number;  // bookId 대신 API 응답에 맞게 id로 정의
