@@ -26,7 +26,7 @@ interface QuizHistoryItem {
   submittedAt: string;
   groupIndex: number;
   correctCount?: number;
-  quizType?: string;
+  quizType: string;
 }
 
 // 문제 제출 항목에 대한 인터페이스 추가

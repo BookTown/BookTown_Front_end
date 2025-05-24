@@ -2,16 +2,18 @@ import React, { useState, useEffect } from "react";
 import { X, Trash2Icon } from "lucide-react";
 import Button from "./Button";
 import { formatDate } from "../utils/dateUtils";
+import { deleteBookQuizHistory, fetchUserProfile } from "../api/user";
 
 interface QuizHistoryItem {
   id: number;
   bookId: number;
   bookTitle: string;
-  score: number;
-  submittedAt: string;
+  bookImageUrl?: string;
   groupIndex: number;
-  correctCount?: number; 
-  quizType?: string; 
+  quizType: string;
+  submittedAt: string;
+  score: number;
+  correctCount?: number;
 }
 
 interface QuizHistorySelectModalProps {
@@ -19,21 +21,39 @@ interface QuizHistorySelectModalProps {
   histories: QuizHistoryItem[];
   onClose: () => void;
   onSelectHistory: (bookId: number, groupIndex: number) => void;
+  onHistoryDeleted?: (historyId: number) => void;
 }
 
 const QuizHistoryListModal: React.FC<QuizHistorySelectModalProps> = ({
   bookTitle,
   histories,
   onClose,
-  onSelectHistory
+  onSelectHistory,
+  onHistoryDeleted
 }) => {
   // 현재 선택된 필터 (전체, 객관식, 주관식, O/X)
   const [filter, setFilter] = useState<string>("전체");
   // 페이지네이션을 위한 상태
   const [currentPage, setCurrentPage] = useState(0);
   const [filteredHistories, setFilteredHistories] = useState<QuizHistoryItem[]>([]);
+  const [isDeleting, setIsDeleting] = useState<number | null>(null);
+  const [userId, setUserId] = useState<number | null>(null);
   const itemsPerPage = 2; // 페이지당 표시할 항목 수
   const totalPages = Math.ceil(filteredHistories.length / itemsPerPage);
+  
+  // 사용자 ID 가져오기
+  useEffect(() => {
+    const getUserId = async () => {
+      try {
+        const userProfile = await fetchUserProfile();
+        setUserId(userProfile.id);
+      } catch (error) {
+        console.error("사용자 프로필을 불러오는데 실패했습니다:", error);
+      }
+    };
+    
+    getUserId();
+  }, []);
   
   // 필터에 따라 히스토리 필터링
   useEffect(() => {
@@ -41,7 +61,6 @@ const QuizHistoryListModal: React.FC<QuizHistorySelectModalProps> = ({
     
     // 필터 적용
     if (filter !== "전체") {
-      // API 응답의 quizType을 직접 사용
       result = histories.filter(history => 
         history.quizType === filter
       );
@@ -56,6 +75,48 @@ const QuizHistoryListModal: React.FC<QuizHistorySelectModalProps> = ({
     currentPage * itemsPerPage,
     (currentPage + 1) * itemsPerPage
   );
+  
+  // 히스토리 삭제 함수
+  const handleDeleteHistory = async (e: React.MouseEvent, history: QuizHistoryItem) => {
+    e.stopPropagation();
+    
+    if (!userId) {
+      alert("사용자 정보를 불러올 수 없습니다. 다시 로그인해주세요.");
+      return;
+    }
+    
+    // 삭제 확인
+    if (!window.confirm("이 퀴즈 기록을 삭제하시겠습니까?")) {
+      return;
+    }
+    
+    try {
+      setIsDeleting(history.id);
+      
+      // API 호출하여 히스토리 삭제
+      await deleteBookQuizHistory(userId, history.bookId, history.groupIndex);
+      
+      // 성공적으로 삭제된 후, 로컬 상태 업데이트
+      const updatedHistories = filteredHistories.filter(item => item.id !== history.id);
+      setFilteredHistories(updatedHistories);
+      
+      // 부모 컴포넌트에 삭제 알림 (옵션)
+      if (onHistoryDeleted) {
+        onHistoryDeleted(history.id);
+      }
+      
+      // 페이지 조정 (현재 페이지의 모든 항목이 삭제된 경우 이전 페이지로)
+      if (currentPage > 0 && currentPage >= Math.ceil(updatedHistories.length / itemsPerPage)) {
+        setCurrentPage(currentPage - 1);
+      }
+      
+    } catch (error) {
+      console.error("퀴즈 히스토리 삭제 중 오류가 발생했습니다:", error);
+      alert("퀴즈 히스토리 삭제에 실패했습니다. 다시 시도해주세요.");
+    } finally {
+      setIsDeleting(null);
+    }
+  };
   
   // 다음 페이지로 이동
   const handleNextPage = () => {
@@ -118,14 +179,6 @@ const QuizHistoryListModal: React.FC<QuizHistorySelectModalProps> = ({
         <div className="absolute inset-0" onClick={onClose} />
         <div className="bg-white rounded-xl p-5 w-[90%] max-w-md shadow-lg z-10">
           <div className="flex justify-between items-center mb-4">
-            <h2 className="text-base font-medium">{bookTitle}</h2>
-            <button
-              onClick={onClose}
-              className="p-1 rounded-full hover:bg-gray-100"
-              aria-label="닫기"
-            >
-              <X size={20} />
-            </button>
           </div>
           {renderErrorState()}
         </div>
@@ -203,39 +256,34 @@ const QuizHistoryListModal: React.FC<QuizHistorySelectModalProps> = ({
                 return (
                   <div 
                     key={history.id} 
-                    className="bg-white rounded-lg p-4 border border-black/10"
+                    className="bg-white rounded-lg px-4 py-1 border border-black/10"
                   >
                     <div className="flex justify-between items-start mb-4">
                       <div>
-                        <p className="font-medium">{quizTypeText}</p>
-                        <p className="text-sm text-gray-500">생성일: {formattedDate}</p>
+                        <p className="text-2xl">{quizTypeText}</p>
+                        <p className="text-sm text-[#9CAAB9]">생성일: {formattedDate}</p>
                       </div>
                       <button 
-                        className="text-gray-400"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          // 삭제 로직 구현 필요
-                          console.log("삭제 버튼 클릭:", history.id);
-                        }}
+                        className={`text-[#9CAAB9] hover:text-[#C75C5C] transition-colors ${isDeleting === history.id ? 'opacity-50 cursor-not-allowed' : ''}`}
+                        onClick={(e) => handleDeleteHistory(e, history)}
+                        disabled={isDeleting !== null}
                       >
                         <Trash2Icon size={20} />
+                        {isDeleting === history.id && <span className="sr-only">삭제 중...</span>}
                       </button>
                     </div>
                     
                     <div className="flex justify-between items-center">
                       <div className="flex flex-col">
-                        <div className={`text-2xl font-bold ${scoreColor}`}>
+                        <div className={`text-5xl ${scoreColor}`}>
                           {correctCount}/10
-                        </div>
-                        <div className="text-xs text-gray-500">
-                          {correctCount}개 정답
                         </div>
                       </div>
                       <Button 
                         size="sm" 
                         color="pink"
                         onClick={() => onSelectHistory(history.bookId, history.groupIndex)}
-                        className="!w-[7.5rem] !h-[2.25rem]"
+                        className="!w-[7.5rem] !h-[2.25rem] rounded-[0.5rem] text-xl"
                       >
                         결과보기
                       </Button>

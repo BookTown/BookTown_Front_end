@@ -102,6 +102,19 @@ export const fetchBookQuizHistoryDetail = async (userId: number, bookId: number,
   }
 };
 
+// 특정 책의 퀴즈 히스토리 삭제 (그룹 인덱스별)
+export const deleteBookQuizHistory = async (userId: number, bookId: number, groupIndex: number) => {
+  console.log(`책 퀴즈 히스토리 삭제 API 호출 시작 (userId: ${userId}, bookId: ${bookId}, groupIndex: ${groupIndex})`);
+  try {
+    const res = await axiosApi.delete(`/history/${userId}/book/${bookId}/${groupIndex}`);
+    console.log("✅ 책 퀴즈 히스토리 삭제 완료:", res.data);
+    return res.data;
+  } catch (error: any) {
+    console.error("❌ 책 퀴즈 히스토리 삭제 실패:", error.response || error.message);
+    throw error;
+  }
+};
+
 // 특정 사용자 프로필 조회
 export const fetchUserProfileById = async (userId: number): Promise<UserProfileData> => {
   console.log(`사용자 프로필 조회 API 호출 시작 (userId: ${userId})`);
