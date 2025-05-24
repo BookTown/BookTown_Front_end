@@ -106,6 +106,8 @@ const QuizHistoryListModal: React.FC<QuizHistorySelectModalProps> = ({
 
        // 모든 히스토리가 삭제되었는지 확인
       if (updatedHistories.length === 0) {
+        // 모든 히스토리가 삭제되었음을 알림
+        alert("모든 퀴즈 기록이 삭제되었습니다.");
         // 모든 히스토리가 삭제되었으면 모달 닫기
         onClose();
         return; // 모달 닫기
