@@ -92,13 +92,10 @@ const QuizHistoryListModal: React.FC<QuizHistorySelectModalProps> = ({
         <Button
           size="md"
           color="pink"
-          onClick={handleNextPage}
-          disabled={isLast}
-          className={`!w-[12.25rem] !h-[2.25rem] ${
-            isLast ? "opacity-50 cursor-not-allowed" : ""
-          }`}
+          onClick={isLast ? onClose : handleNextPage}
+          className="!w-[12.25rem] !h-[2.25rem]"
         >
-          다음
+          {isLast ? "닫기" : "다음"}
         </Button>
       </>
     );
@@ -251,7 +248,7 @@ const QuizHistoryListModal: React.FC<QuizHistorySelectModalProps> = ({
         </div>
 
         {/* 이전/다음 버튼 */}
-        {!noFilteredResults && filteredHistories.length > itemsPerPage && (
+        {!noFilteredResults && (
           <div className="flex justify-center gap-2 mt-4 mb-2">
             {renderNavigationButtons()}
           </div>
