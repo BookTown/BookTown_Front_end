@@ -132,6 +132,24 @@ const HistoryMain = () => {
     }
   };
   
+  // 히스토리 삭제 처리 함수 추가
+  const handleHistoryDeleted = (bookId: number, groupIndex: number) => {
+    // 삭제된 히스토리를 상태에서 제거
+    setBookHistoryList(prevList => 
+      prevList.map(book => {
+        // 해당 책에 대한 처리만 수행
+        if (book.bookId === bookId) {
+          return {
+            ...book,
+            // 삭제된 groupIndex와 일치하지 않는 히스토리만 유지
+            histories: book.histories.filter(history => history.groupIndex !== groupIndex)
+          };
+        }
+        return book;
+      })
+    );
+  };
+  
   // 모달 닫기 핸들러들
   const handleHistorySelectModalClose = () => {
     setShowHistorySelectModal(false);
@@ -203,6 +221,7 @@ const HistoryMain = () => {
           histories={selectedBook.histories}
           onClose={handleHistorySelectModalClose}
           onSelectHistory={handleHistorySelect}
+          onHistoryDeleted={handleHistoryDeleted} // 콜백 추가
         />
       )}
 

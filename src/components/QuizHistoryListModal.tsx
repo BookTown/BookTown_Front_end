@@ -20,7 +20,7 @@ interface QuizHistorySelectModalProps {
   histories: QuizHistoryItem[];
   onClose: () => void;
   onSelectHistory: (bookId: number, groupIndex: number) => void;
-  onHistoryDeleted?: (historyId: number) => void;
+  onHistoryDeleted?: (bookId: number, groupIndex: number) => void; // 매개변수 수정
 }
 
 const QuizHistoryListModal: React.FC<QuizHistorySelectModalProps> = ({
@@ -99,9 +99,9 @@ const QuizHistoryListModal: React.FC<QuizHistorySelectModalProps> = ({
       const updatedHistories = filteredHistories.filter(item => item.id !== history.id);
       setFilteredHistories(updatedHistories);
       
-      // 부모 컴포넌트에 삭제 알림 (옵션)
+      // 부모 컴포넌트에 삭제 알림 (수정된 부분)
       if (onHistoryDeleted) {
-        onHistoryDeleted(history.id);
+        onHistoryDeleted(history.bookId, history.groupIndex);
       }
       
       // 페이지 조정 (현재 페이지의 모든 항목이 삭제된 경우 이전 페이지로)
