@@ -103,6 +103,13 @@ const QuizHistoryListModal: React.FC<QuizHistorySelectModalProps> = ({
       if (onHistoryDeleted) {
         onHistoryDeleted(history.bookId, history.groupIndex);
       }
+
+       // 모든 히스토리가 삭제되었는지 확인
+      if (updatedHistories.length === 0) {
+        // 모든 히스토리가 삭제되었으면 모달 닫기
+        onClose();
+        return; // 모달 닫기
+      }
       
       // 페이지 조정 (현재 페이지의 모든 항목이 삭제된 경우 이전 페이지로)
       if (currentPage > 0 && currentPage >= Math.ceil(updatedHistories.length / itemsPerPage)) {
