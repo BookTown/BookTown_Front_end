@@ -4,8 +4,11 @@ interface TTSState {
   voiceType: 'female' | 'male';
 }
 
+// 로컬 스토리지에서 저장된 음성 타입을 가져옴
+const savedVoiceType = localStorage.getItem('ttsVoiceType');
+
 const initialState: TTSState = {
-  voiceType: 'female'  // 기본값을 female로 설정
+  voiceType: (savedVoiceType as 'female' | 'male') || 'female'
 };
 
 const ttsSlice = createSlice({
@@ -14,6 +17,8 @@ const ttsSlice = createSlice({
   reducers: {
     setVoiceType: (state, action: PayloadAction<'female' | 'male'>) => {
       state.voiceType = action.payload;
+      // 로컬 스토리지에 설정 저장
+      localStorage.setItem('ttsVoiceType', action.payload);
     }
   }
 });

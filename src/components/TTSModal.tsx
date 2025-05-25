@@ -19,7 +19,7 @@ type VoiceOption = {
 const TTSModal: React.FC<TTSModalProps> = ({
   isOpen,
   onClose,
-  initialVoice = "female",
+  initialVoice = localStorage.getItem('ttsVoiceType') === 'male' ? '남성' : '여성',
   onSave,
 }) => {
   const dispatch = useDispatch();
