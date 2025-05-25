@@ -33,7 +33,7 @@ const Loading = () => {
                 />
             </div>
             <p className="mt-4 text-2xl md:text-5xl text-center">
-                고을이가 줄거리 생성중...
+                고을이가 줄거리 불러오는중...
             </p>
             <p className="text-lg md:text-xl text-center text-[#9CAAB9] mb-6">
                 <br />
