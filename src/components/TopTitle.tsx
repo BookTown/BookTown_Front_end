@@ -52,7 +52,7 @@ const TopTitle: React.FC<TopTitleProps> = ({ bookId }) => {
 
   return (
     <div className="w-full max-w-[1440px] mx-auto bg-[#FFFAF0]">
-      <div className="mx-auto flex items-center h-[60px] px-4 relative">
+      <div className="mx-auto flex items-center h-[60px] md:px-4 relative">
         {/* 좌측: 로고 */}
         <div className="absolute left-4">
           <Link to="/home" className="flex items-center">

@@ -242,7 +242,7 @@ const QuizHistoryListModal: React.FC<QuizHistorySelectModalProps> = ({
         <div className="bg-gray-50 rounded-lg p-4 mb-5 border border-black/20 h-[18.75rem]">
           {noFilteredResults ? (
             <div className="flex items-center justify-center h-full">
-              <p className="text-2xl text-[#9CAAB9]">선택한 유형의 퀴즈 기록이 없습니다.</p>
+              <p className="text-xl md:text-2xl text-[#9CAAB9]">선택한 유형의 퀴즈 기록이 없습니다.</p>
             </div>
           ) : (
             <div className="space-y-4">
