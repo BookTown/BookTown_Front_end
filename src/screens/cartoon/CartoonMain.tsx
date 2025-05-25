@@ -404,69 +404,71 @@ const CartoonMain = () => {
   const isLastScene = currentPage === scenes.length - 1;
 
   return (
-    <div className="pb-4 px-4 flex flex-col items-center">
-      <TopTitle />
-      <div className="w-full max-w-[24rem] md:max-w-[32rem] lg:max-w-[36rem]">
-        {/* 만화 장면 */}
-        <SceneFrame
-          illustrationUrl={
-            currentScene.illustrationUrl ||
-            (cartoon.thumbnailUrl
-              ? cartoon.thumbnailUrl
-              : "/images/default-book.png")
-          }
-          onPrev={goToPrevPage}
-          onNext={goToNextPage}
-          isFirst={isFirstScene}
-          isLast={isLastScene}
-          currentPage={currentPage}
-          totalPages={scenes.length}
-        />
+    <>
+      <TopTitle  />
+      <div className="pb-4 px-4 flex flex-col items-center">
+        <div className="w-full max-w-[24rem] md:max-w-[32rem] lg:max-w-[36rem]">
+          {/* 만화 장면 */}
+          <SceneFrame
+            illustrationUrl={
+              currentScene.illustrationUrl ||
+              (cartoon.thumbnailUrl
+                ? cartoon.thumbnailUrl
+                : "/images/default-book.png")
+            }
+            onPrev={goToPrevPage}
+            onNext={goToNextPage}
+            isFirst={isFirstScene}
+            isLast={isLastScene}
+            currentPage={currentPage}
+            totalPages={scenes.length}
+          />
 
-        {/* 텍스트 내용 */}
-        <PromptFrame 
-          content={currentScene.content} 
-          femaleAudioUrl={currentScene.femaleAudioUrl}
-          maleAudioUrl={currentScene.maleAudioUrl}
-          onPageChange={handleAudioCleanup}
-        />
+          {/* 텍스트 내용 */}
+          <PromptFrame 
+            content={currentScene.content} 
+            femaleAudioUrl={currentScene.femaleAudioUrl}
+            maleAudioUrl={currentScene.maleAudioUrl}
+            onPageChange={handleAudioCleanup}
+          />
 
-        {/* 마지막 페이지일 때만 버튼 표시 */}
-        {isLastScene && (
-          <div className="mt-4 flex justify-center gap-8 md:gap-12 lg:gap-20">
-            <Button
-              size="md"
-              color="white"
-              type="button"
-              onClick={handleViewSummaryAgain}
-              className="flex items-center justify-center"
-            >
-              <RotateCw
-                className="mr-1.5 md:mr-2 lg:mr-4 stroke-[#C75C5C]"
-                size={16}
-                strokeWidth={2}
-              />
-              다시 보기
-            </Button>
+          {/* 마지막 페이지일 때만 버튼 표시 */}
+          {isLastScene && (
+            <div className="mt-4 flex justify-center gap-8 md:gap-12 lg:gap-20">
+              <Button
+                size="md"
+                color="white"
+                type="button"
+                onClick={handleViewSummaryAgain}
+                className="flex items-center justify-center"
+              >
+                <RotateCw
+                  className="mr-1.5 md:mr-2 lg:mr-4 stroke-[#C75C5C]"
+                  size={16}
+                  strokeWidth={2}
+                />
+                다시 보기
+              </Button>
 
-            <Button
-              size="md"
-              color="pink"
-              type="button"
-              onClick={handleSolveQuiz}
-              className="flex items-center justify-center"
-            >
-              <BookOpenCheck
-                className="mr-1.5 md:mr-2 lg:mr-4 stroke-[#FFFFFF]"
-                size={16}
-                strokeWidth={2}
-              />
-              퀴즈 풀기
-            </Button>
-          </div>
-        )}
+              <Button
+                size="md"
+                color="pink"
+                type="button"
+                onClick={handleSolveQuiz}
+                className="flex items-center justify-center"
+              >
+                <BookOpenCheck
+                  className="mr-1.5 md:mr-2 lg:mr-4 stroke-[#FFFFFF]"
+                  size={16}
+                  strokeWidth={2}
+                />
+                퀴즈 풀기
+              </Button>
+            </div>
+          )}
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 
