@@ -1,7 +1,6 @@
 import { createBrowserRouter } from "react-router-dom";
 import App from "./App";
 import Login from "./screens/auth/Login";
-import Register from "./screens/auth/Register";
 import Home from "./screens/home/Home";
 import Search from "./screens/search/Search";
 import Popular from "./screens/book/Popular";
@@ -15,6 +14,7 @@ import Quiz from "./screens/quiz/Quiz";
 import QuizEntry from "./screens/quiz/QuizEntry";
 import CartoonMain from "./screens/cartoon/CartoonMain";
 import Loading from "./screens/cartoon/Loading";
+import Register from "./screens/setting/Register";
 
 const router = createBrowserRouter([
     {
@@ -24,10 +24,6 @@ const router = createBrowserRouter([
             {
                 path: "",
                 element: <Login />,
-            },
-            {
-                path: "/register",
-                element: <Register />,
             },
             {
                 path: "/home",
@@ -80,6 +76,10 @@ const router = createBrowserRouter([
             {
                 path: "/loading",
                 element: <Loading />,
+            },
+            {
+                path: "/register",
+                element: <Register />
             }
         ]
     },

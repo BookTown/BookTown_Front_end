@@ -178,11 +178,13 @@ const SettingMain = () => {
           />
         </button>
         <button className="w-full">
-          <MenuItem
-            icon={<BookOpenIcon className="w-6 h-6 text-white" />}
-            label="원하는 고전 신청하기"
-            iconBg="bg-[#F9A8A8]"
-          />
+          <Link to="/Register">
+            <MenuItem
+              icon={<BookOpenIcon className="w-6 h-6 text-white" />}
+              label="원하는 고전 신청하기"
+              iconBg="bg-[#F9A8A8]"
+            />
+          </Link>
         </button>
         <button onClick={() => setIsExitModalOpen(true)} className="w-full">
           <MenuItem
