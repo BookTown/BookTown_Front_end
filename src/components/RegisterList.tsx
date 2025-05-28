@@ -36,6 +36,11 @@ const RegisterList: React.FC = () => {
     }
   };
   
+  // 제목 생략 함수
+  const truncateTitle = (title: string) => {
+    return title.length > 10 ? title.slice(0, 10) + "..." : title;
+  };
+  
   // 보기 버튼 클릭시 사유를 보여주는 모달 상태
   const [isReasonModalOpen, setIsReasonModalOpen] = useState(false);
   const [selectedRequest, setSelectedRequest] = useState<{id: number, title: string, reason: string} | null>(null);
@@ -99,27 +104,21 @@ const RegisterList: React.FC = () => {
     setIsReasonModalOpen(true);
   };
 
-  // 로딩 중일 때
   if (isLoading) {
     return (
       <div className="w-full max-w-[37.5rem] mx-auto">
-        <div className="bg-white rounded-lg shadow-sm pb-4 overflow-y-auto">
-          <div className="py-8 text-center text-gray-500">
-            신청 내역을 불러오는 중...
-          </div>
+        <div className="bg-white rounded-lg shadow-sm p-8 text-center">
+          <p className="text-gray-500">로딩 중...</p>
         </div>
       </div>
     );
   }
 
-  // 에러가 발생했을 때
   if (error) {
     return (
       <div className="w-full max-w-[37.5rem] mx-auto">
-        <div className="bg-white rounded-lg shadow-sm pb-4 overflow-y-auto">
-          <div className="py-8 text-center text-red-500">
-            {error}
-          </div>
+        <div className="bg-white rounded-lg shadow-sm p-8 text-center">
+          <p className="text-red-500">{error}</p>
         </div>
       </div>
     );
@@ -132,8 +131,8 @@ const RegisterList: React.FC = () => {
         <div className="flex border-b border-black py-2 text-center mx-2">
           <div className='w-1/12'></div>
           <div className="w-2/5 ">책제목</div>
-          <div className="w-1/6 ">신청일</div>
-          <div className="w-1/3 ">상태</div>
+          <div className="w-1/4 ">신청일</div>
+          <div className="w-1/4 ">상태</div>
           <div className="w-1/5">사유</div>
         </div>
         
@@ -148,9 +147,9 @@ const RegisterList: React.FC = () => {
                   className="h-5 text-gray-400 hover:text-[#C75C5C] transition-colors duration-500 cursor-pointer mx-auto"
                 />
               </div>
-              <div className="w-2/5">{request.title}</div>
-              <div className="w-1/6">{request.appliedDate}</div>
-              <span className={`${getStatusColor(request.status)} w-1/3`}>
+              <div className="w-2/5">{truncateTitle(request.title)}</div>
+              <div className="w-1/4">{request.appliedDate}</div>
+              <span className={`${getStatusColor(request.status)} w-1/4`}>
                 {getStatusInKorean(request.status)}
               </span>
               <div className="w-1/5">
