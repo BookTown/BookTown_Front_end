@@ -13,8 +13,12 @@ const RegisterInput: React.FC<RegisterInputProps> = ({ onCancel, onSubmit }) => 
     if (bookTitle.trim()) {
       onSubmit(bookTitle);
       setBookTitle('');
+      alert('책 신청이 완료되었습니다!');
     }
   };
+
+  // 버튼 비활성화 여부 확인
+  const isButtonDisabled = !bookTitle.trim();
 
   return (
     <div className='max-w-[37.5rem] mx-auto'>
@@ -43,7 +47,8 @@ const RegisterInput: React.FC<RegisterInputProps> = ({ onCancel, onSubmit }) => 
           color="pink" 
           size="md" 
           onClick={handleSubmit}
-          className="px-8 !w-24 !h-12 !rounded-xl !text-2xl"
+          disabled={isButtonDisabled}
+          className={`px-8 !w-24 !h-12 !rounded-xl !text-2xl ${isButtonDisabled ? 'opacity-50 cursor-not-allowed' : ''}`}
         >
           신청
         </Button>

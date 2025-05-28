@@ -7,7 +7,7 @@ export interface BookRequest {
   status: RequestStatus;
   requestDate: string;
   title: string;
-  rejectionReason: string | null;
+  reason: string | null;
 }
 
 // 목데이터
@@ -17,35 +17,35 @@ export const mockBookRequests: BookRequest[] = [
     status: '승인 대기',
     requestDate: '25.05.28',
     title: '어린 왕자',
-    rejectionReason: null
+    reason: null
   },
   {
     id: 2,
     status: '승인 완료',
     requestDate: '25.05.27',
     title: '로미오와 줄리엣',
-    rejectionReason: null
+    reason: null
   },
   {
     id: 3,
     status: '승인 거부',
     requestDate: '25.05.26',
     title: '나랑너랑놀아요',
-    rejectionReason: '이미 등록된 도서입니다.'
+    reason: '이미 등록된 도서입니다.'
   },
   {
     id: 4,
     status: '승인 대기',
     requestDate: '25.05.25',
     title: '데미안',
-    rejectionReason: null
+    reason: null
   },
   {
     id: 5,
     status: '승인 거부',
     requestDate: '25.05.24',
     title: '해리포터',
-    rejectionReason: '저작권 문제로 등록이 불가합니다.'
+    reason: '저작권 문제로 등록이 불가합니다.'
   }
 ];
 
