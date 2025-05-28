@@ -20,26 +20,29 @@ const RegisterMain: React.FC = () => {
           <p className="text-xl text-[#A39C9C] pb-2">보고싶은 책을 신청할 수 있어요</p>
         </div>
       </div>
-      {!isInputMode && (
-        <div className='flex justify-between pt-4 pb-2 px-1 max-w-[37.5rem] mx-auto'>
-          <div className="text-2xl">신청 리스트</div>
-          <button
-            onClick={() => setIsInputMode(true)}
-            className="p-2 rounded-full hover:text-[#C75C5C] transition-colors duration-500"
-          >
-            <Pencil size={20} />
-          </button>
+      
+      <div style={{ paddingTop: '100px' }}>
+        {!isInputMode && (
+          <div className='flex justify-between pt-4 pb-2 px-1 max-w-[37.5rem] mx-auto'>
+            <div className="text-2xl">신청 리스트</div>
+            <button
+              onClick={() => setIsInputMode(true)}
+              className="p-2 rounded-full hover:text-[#C75C5C] transition-colors duration-500"
+            >
+              <Pencil size={20} />
+            </button>
+          </div>
+        )}
+        <div>
+          {isInputMode ? (
+          <RegisterInput 
+            onCancel={() => setIsInputMode(false)} 
+            onSubmit={handleSubmit}
+          />
+        ) : (
+          <RegisterList />
+        )}
         </div>
-      )}
-      <div>
-        {isInputMode ? (
-        <RegisterInput 
-          onCancel={() => setIsInputMode(false)} 
-          onSubmit={handleSubmit}
-        />
-      ) : (
-        <RegisterList />
-      )}
       </div>
     </div>
   );

@@ -214,7 +214,7 @@ const HistoryMain = () => {
           ))}
         </ListFrame>
       ) : (
-        <div className="w-full py-10 flex justify-center items-center h-[100dvh]">
+        <div className="fixed inset-0 flex items-center justify-center">
           <p className="text-[#9CAAB9] text-2xl">풀었던 퀴즈가 없습니다.</p>
         </div>
       )}
