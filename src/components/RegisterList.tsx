@@ -32,7 +32,8 @@ const RegisterList: React.FC = () => {
         {mockBookRequests.length > 0 ? (
           mockBookRequests.map((request) => (
             <div key={request.id} className="flex items-center text-center border-b border-gray-200 py-3 mx-2">
-              <Trash2 className="w-1/12 h-5 text-gray-400" />
+              { /* 쓰레기통 버튼을 눌렀을 때, 리스트가 삭제되는 로직 구현 */}
+              <Trash2 className="w-1/12 h-5 text-gray-400 hover:text-[#C75C5C] transition-colors duration-500 cursor-pointer" />
               <span className={`${getStatusColor(request.status)} w-1/3`}>{request.status}</span>
               <div className="w-1/6">{request.requestDate}</div>
               <div className="w-2/5">{request.title}</div>

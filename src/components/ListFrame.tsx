@@ -60,7 +60,7 @@ const ListFrame = ({
         <button
           onClick={() => handlePageChange(Math.max(currentPage - 1, 1))}
           disabled={currentPage === 1}
-          className="px-3 py-1.5 rounded-full bg-[#FFFAF0] text-sm font-medium disabled:opacity-50 hover:opacity-80 transition-colors"
+          className="px-3 py-1.5 rounded-full bg-[#FFFAF0] text-sm disabled:opacity-50 hover:opacity-80 transition-colors"
         >
           이전
         </button>
@@ -82,7 +82,7 @@ const ListFrame = ({
         <button
           onClick={() => handlePageChange(Math.min(currentPage + 1, totalPages))}
           disabled={currentPage === totalPages}
-          className="px-3 py-1.5 rounded-full bg-[#FFFAF0] text-sm font-medium disabled:opacity-50 hover:opacity-80 transition-colors"
+          className="px-3 py-1.5 rounded-full bg-[#FFFAF0] text-sm disabled:opacity-50 hover:opacity-80 transition-colors"
         >
           다음
         </button>
