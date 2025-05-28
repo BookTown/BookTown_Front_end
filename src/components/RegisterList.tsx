@@ -39,7 +39,7 @@ const RegisterList: React.FC = () => {
   };
 
   return (
-    <div className="w-full max-w-[37.5rem] bg-white rounded-lg shadow-sm pb-4 h-96 overflow-y-auto mx-auto">
+    <div className="w-full max-w-[37.5rem] bg-white rounded-lg shadow-sm pb-4 overflow-y-auto mx-auto">
         {/* 테이블 헤더 */}
         <div className="flex border-b border-black py-2 text-center mx-2">
           <div className='w-1/12'></div>
