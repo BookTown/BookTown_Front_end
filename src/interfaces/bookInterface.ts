@@ -42,3 +42,12 @@ export interface IBookSearchResponse {
 }
 
 export type IBookSearch = IBookSearchResponse[];
+
+// 책 신청 관련 인터페이스
+export interface BookApplication {
+  id: number;
+  title: string;
+  status: string;
+  appliedDate: string;
+  rejectionReason: string | null;
+}

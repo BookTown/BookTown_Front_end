@@ -1,16 +1,34 @@
-import React, { useState } from 'react';
-import { mockBookRequests } from '../mocks/mockBookRequests';
+import React, { useState, useEffect } from 'react';
 import { Trash2 } from 'lucide-react';
 import ReasonModal from './ReasonModal';
+import { fetchBookApplications } from '../api/api';
+import { BookApplication } from '../interfaces/bookInterface';
 
 const RegisterList: React.FC = () => {
+  // 상태 변환 함수
+  const getStatusInKorean = (status: string) => {
+    switch(status) {
+      case 'PENDING':
+        return '승인 대기';
+      case 'APPROVED':
+        return '승인 완료';
+      case 'REJECTED':
+        return '승인 거부';
+      default:
+        return status;
+    }
+  };
+
   // 상태 배경색 설정 함수
   const getStatusColor = (status: string) => {
     switch(status) {
+      case 'REJECTED':
       case '승인 거부':
         return 'text-[#C75C5C]';
+      case 'APPROVED':
       case '승인 완료':
         return 'text-[#4CAF50]';
+      case 'PENDING':
       case '승인 대기':
         return 'text-[#A39C9C]';
       default:
@@ -22,12 +40,34 @@ const RegisterList: React.FC = () => {
   const [isReasonModalOpen, setIsReasonModalOpen] = useState(false);
   const [selectedRequest, setSelectedRequest] = useState<{id: number, title: string, reason: string} | null>(null);
   
-  // 삭제할 목록을 관리하기 위한 상태
-  const [requests, setRequests] = useState(mockBookRequests);
+  // 신청 내역 상태 관리
+  const [requests, setRequests] = useState<BookApplication[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   
   // 페이지네이션 상태
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 6;
+  
+  // 컴포넌트 마운트 시 데이터 불러오기
+  useEffect(() => {
+    const loadApplications = async () => {
+      try {
+        setIsLoading(true);
+        setError(null);
+        const data = await fetchBookApplications();
+        setRequests(data || []);
+      } catch (err) {
+        console.error('신청 내역 불러오기 실패:', err);
+        setError('신청 내역을 불러오는데 실패했습니다.');
+        setRequests([]);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadApplications();
+  }, []);
   
   // 페이지네이션 계산
   const totalPages = Math.ceil(requests.length / itemsPerPage);
@@ -59,6 +99,32 @@ const RegisterList: React.FC = () => {
     setIsReasonModalOpen(true);
   };
 
+  // 로딩 중일 때
+  if (isLoading) {
+    return (
+      <div className="w-full max-w-[37.5rem] mx-auto">
+        <div className="bg-white rounded-lg shadow-sm pb-4 overflow-y-auto">
+          <div className="py-8 text-center text-gray-500">
+            신청 내역을 불러오는 중...
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // 에러가 발생했을 때
+  if (error) {
+    return (
+      <div className="w-full max-w-[37.5rem] mx-auto">
+        <div className="bg-white rounded-lg shadow-sm pb-4 overflow-y-auto">
+          <div className="py-8 text-center text-red-500">
+            {error}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="w-full max-w-[37.5rem] mx-auto">
       <div className="bg-white rounded-lg shadow-sm pb-4 overflow-y-auto">
@@ -83,16 +149,18 @@ const RegisterList: React.FC = () => {
                 />
               </div>
               <div className="w-2/5">{request.title}</div>
-              <div className="w-1/6">{request.requestDate}</div>
-              <span className={`${getStatusColor(request.status)} w-1/3`}>{request.status}</span>
+              <div className="w-1/6">{request.appliedDate}</div>
+              <span className={`${getStatusColor(request.status)} w-1/3`}>
+                {getStatusInKorean(request.status)}
+              </span>
               <div className="w-1/5">
-                {request.status === '승인 거부' && (
+                {(request.status === 'REJECTED' || request.status === '승인 거부') && (
                   <button 
                     className="px-2 py-1 text-xs bg-[#C75C5C] text-white rounded hover:bg-[#B04A4A] transition-colors"
                     onClick={() => handleOpenReasonModal({
                       id: request.id, 
                       title: request.title,
-                      reason: request.reason || '사유가 없습니다.'
+                      reason: request.rejectionReason || '사유가 없습니다.'
                     })}
                   >
                     보기

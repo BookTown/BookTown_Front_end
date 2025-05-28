@@ -300,3 +300,16 @@ export const applyBook = async (title: string) => {
     throw error;
   }
 };
+
+// 책 신청 내역 조회 API
+export const fetchBookApplications = async () => {
+  console.log('책 신청 내역 조회 API 호출 시작');
+  try {
+    const response = await axiosApi.get('/apply/all');
+    console.log('책 신청 내역 API 응답 성공:', response.data);
+    return response.data;
+  } catch (error) {
+    console.error('책 신청 내역 API 오류:', error);
+    throw error;
+  }
+};
