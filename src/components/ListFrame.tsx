@@ -45,7 +45,7 @@ const ListFrame = ({
   );
 
   return (
-    <div className="px-4 pb-20 md:pb-0 flex flex-col min-h-[calc(100vh-12rem)]">
+    <div className="px-4 pb-20 md:pb-0 flex flex-col">
       <div className={`grid grid-cols-2 md:grid-cols-4 ${gapClasses[gapSize]} mx-auto my-auto mb-8 flex-grow w-full`}>
         {currentItems.map((item, index) => (
           <div key={index} className="p-1 relative" style={{ transformOrigin: 'center' }}>
