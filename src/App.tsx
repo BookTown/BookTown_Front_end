@@ -5,7 +5,7 @@ import { useFetchLikedBooks } from "./hooks/useFetchLikedBooks";
 
 function App() {
   // 인증 가드 훅 사용
-  useAuthRedirectGuard();
+  //useAuthRedirectGuard();
   
   // 좋아요 목록 불러오기 훅 사용
   useFetchLikedBooks();

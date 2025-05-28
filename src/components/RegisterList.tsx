@@ -65,9 +65,9 @@ const RegisterList: React.FC = () => {
         {/* 테이블 헤더 */}
         <div className="flex border-b border-black py-2 text-center mx-2">
           <div className='w-1/12'></div>
-          <div className="w-1/3 ">상태</div>
-          <div className="w-1/6 ">신청일</div>
           <div className="w-2/5 ">책제목</div>
+          <div className="w-1/6 ">신청일</div>
+          <div className="w-1/3 ">상태</div>
           <div className="w-1/5">사유</div>
         </div>
         
@@ -82,9 +82,9 @@ const RegisterList: React.FC = () => {
                   className="h-5 text-gray-400 hover:text-[#C75C5C] transition-colors duration-500 cursor-pointer mx-auto"
                 />
               </div>
-              <span className={`${getStatusColor(request.status)} w-1/3`}>{request.status}</span>
-              <div className="w-1/6">{request.requestDate}</div>
               <div className="w-2/5">{request.title}</div>
+              <div className="w-1/6">{request.requestDate}</div>
+              <span className={`${getStatusColor(request.status)} w-1/3`}>{request.status}</span>
               <div className="w-1/5">
                 {request.status === '승인 거부' && (
                   <button 
