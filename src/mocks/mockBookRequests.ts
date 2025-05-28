@@ -46,6 +46,48 @@ export const mockBookRequests: BookRequest[] = [
     requestDate: '25.05.24',
     title: '해리포터',
     reason: '저작권 문제로 등록이 불가합니다.'
+  },
+  {
+    id: 6,
+    status: '승인 거부',
+    requestDate: '25.05.24',
+    title: '해리포터',
+    reason: '저작권 문제로 등록이 불가합니다.'
+  },
+  {
+    id: 7,
+    status: '승인 거부',
+    requestDate: '25.05.24',
+    title: '해리포터',
+    reason: '저작권 문제로 등록이 불가합니다.'
+  },
+  {
+    id: 8,
+    status: '승인 거부',
+    requestDate: '25.05.24',
+    title: '해리포터',
+    reason: '저작권 문제로 등록이 불가합니다.'
+  },
+  {
+    id: 9,
+    status: '승인 거부',
+    requestDate: '25.05.24',
+    title: '해리포터',
+    reason: '저작권 문제로 등록이 불가합니다.'
+  },
+  {
+    id: 10,
+    status: '승인 거부',
+    requestDate: '25.05.24',
+    title: '해리포터',
+    reason: '저작권 문제로 등록이 불가합니다.'
+  }, 
+  {
+    id: 11,
+    status: '승인 거부',
+    requestDate: '25.05.24',
+    title: '해리포터',
+    reason: '저작권 문제로 등록이 불가합니다.'
   }
 ];
 
