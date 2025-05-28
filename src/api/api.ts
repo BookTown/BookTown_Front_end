@@ -287,3 +287,16 @@ export const fetchAllRanks = async (): Promise<RankUser[]> => {
     throw error;
   }
 };
+
+// 책 신청 API
+export const applyBook = async (title: string) => {
+  console.log('책 신청 API 호출 시작:', title);
+  try {
+    const response = await axiosApi.post('/apply', { title });
+    console.log('책 신청 API 응답 성공:', response.data);
+    return response.data;
+  } catch (error) {
+    console.error('책 신청 API 오류:', error);
+    throw error;
+  }
+};
