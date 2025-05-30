@@ -8,6 +8,7 @@ import MultipleChoice from "./MultipleChoice";
 import ShortAnswer from "./ShortAnswer";
 import OxQuiz from "./OxQuiz";
 import ScoreModal from "./ScoreModal";
+import { mockMotivation } from "../../mocks/mockMotivation";
 
 const Quiz: React.FC = () => {
   const navigate = useNavigate();
@@ -217,6 +218,10 @@ const Quiz: React.FC = () => {
 
 // 로딩 상태 렌더링 함수
 function renderLoadingState(isSubmitting: boolean) {
+  // 랜덤 동기부여 문구 선택
+  const randomIndex = Math.floor(Math.random() * mockMotivation.length);
+  const randomMotivation = mockMotivation[randomIndex];
+
   return (
     <div className="flex flex-col items-center justify-center h-[80vh]">
       <div className="w-64 h-64 md:w-96 md:h-96">
@@ -228,6 +233,12 @@ function renderLoadingState(isSubmitting: boolean) {
       </div>
       <p className="mt-4 text-2xl md:text-5xl text-center">
         {isSubmitting ? "퀴즈 채점중..." : "고을이가 문제 생성중..."}
+      </p>
+      <p className="text-lg md:text-xl text-center text-[#9CAAB9] mb-6">
+        <br />
+        🗣 "{randomMotivation.motivation}"
+        <br />
+        {randomMotivation.characters}, {"<"}{randomMotivation.title}{">"}
       </p>
     </div>
   );
