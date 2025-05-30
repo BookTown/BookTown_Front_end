@@ -94,7 +94,7 @@ const RankMain = () => {
       <section className="w-full max-w-6xl mx-auto px-4 pb-20 flex flex-col md:flex-row md:justify-between items-center md:items-start gap-6">
         {/* Top 3 시상대 */}
         <div className="relative flex flex-col items-center md:w-3/5 md:pt-24">
-          <div className="flex items-end justify-center mb-8">
+          <div className="flex items-end justify-center gap-6 mb-8">
             {/* 2등 - top3가 2명 이상 있을 경우에만 표시 */}
             {top3Users.length > 1 && (
               <div 
@@ -165,9 +165,9 @@ const RankMain = () => {
 
         {/* 전체 랭킹 리스트 */}
         <div className="w-full md:w-1/2">
-          <div className="bg-white shadow rounded-lg overflow-hidden">
+          <div className="shadow rounded-lg overflow-hidden">
             <div className="max-h-[500px] overflow-y-auto">
-              <table className="w-full text-sm">
+              <table className="w-full bg-white text-sm">
                 <thead className="bg-gray-100 text-gray-700 sticky top-0">
                   <tr>
                     <th className="w-16 px-4 py-2 text-center">순위</th>
