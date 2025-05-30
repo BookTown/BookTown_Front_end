@@ -63,7 +63,7 @@ const RegisterInput: React.FC<RegisterInputProps> = ({ onCancel, onSubmit }) => 
           disabled={isButtonDisabled}
           className={`px-8 !w-24 !h-12 !rounded-xl !text-2xl ${isButtonDisabled ? 'opacity-50 cursor-not-allowed' : ''}`}
         >
-          {isSubmitting ? '신청중...' : '신청'}
+          신청
         </Button>
         <Button 
           color="white" 
