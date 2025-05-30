@@ -56,8 +56,7 @@ const RegisterList: React.FC = () => {
   
   // 날짜 포맷팅 함수
   const formatDate = (dateString: string) => {
-    const [year, month, day] = dateString.split('-');
-    return `${year.slice(2)}-${month}-${day}`;
+    return dateString.substring(2);
   };
   
   // 컴포넌트 마운트 시 데이터 불러오기
