@@ -16,7 +16,6 @@ const ListFrame = ({
 
   useEffect(() => {
     const handleResize = () => {
-      // 모바일 화면에서는 8개, 데스크탑 화면에서는 12개
       setItemsPerView(window.innerWidth < 768 ? 8 : 12);
     };
     handleResize();
@@ -51,7 +50,7 @@ const ListFrame = ({
         {currentItems.map((item, index) => (
           <li 
             key={index} 
-            className="p-1 relative w-[calc(50%-0.5rem)] md:w-[calc(25%-0.75rem)]" 
+            className="p-1 relative w-[calc(50%-0.5rem)] md:max-w-[23%] md:flex-[0_0_23%]" 
             style={{ transformOrigin: 'center' }}
           >
             {item}
