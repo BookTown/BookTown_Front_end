@@ -45,22 +45,25 @@ const ListFrame = ({
   );
 
   return (
-    <div className="px-4 pb-20 md:pb-0 flex flex-col min-h-[calc(100vh-12rem)] md:h-[864px] bg-[#FFFAF0]">
-      <ul className={`flex flex-wrap ${gapClasses[gapSize]} mx-auto my-auto mb-8 flex-grow w-full md:max-h-[720px]`}>
-        {currentItems.map((item, index) => (
-          <li 
-            key={index} 
-            className="p-1 relative w-[calc(50%-0.5rem)] md:max-w-[23%] md:flex-[0_0_23%]" 
-            style={{ transformOrigin: 'center' }}
-          >
-            {item}
-          </li>
-        ))}
-      </ul>
+    <div className="px-4 pb-20 md:pb-0 flex flex-col min-h-[calc(100vh-12rem)] bg-[#FFFAF0]">
+      {/* 북카드 리스트 컨테이너 - 고정 높이와 오버플로우 설정 */}
+      <div className="flex-grow mb-16 md:mb-20 overflow-hidden"> {/* 하단 마진 추가 */}
+        <ul className={`flex flex-wrap ${gapClasses[gapSize]} mx-auto mb-4 w-full md:max-h-[680px]`}>
+          {currentItems.map((item, index) => (
+            <li 
+              key={index} 
+              className="p-1 relative w-[calc(50%-0.5rem)] md:max-w-[23%] md:flex-[0_0_23%]" 
+              style={{ transformOrigin: 'center' }}
+            >
+              {item}
+            </li>
+          ))}
+        </ul>
+      </div>
       
-      {/* Pagination */}
+      {/* Pagination - 하단에 고정 */}
       {totalPages > 1 && (
-      <div className="w-full flex justify-center items-center gap-2 py-4">
+      <div className="w-full flex justify-center items-center gap-2 py-4 mt-auto">
         <button
           onClick={() => handlePageChange(Math.max(currentPage - 1, 1))}
           disabled={currentPage === 1}

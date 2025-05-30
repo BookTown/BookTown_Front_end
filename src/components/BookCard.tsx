@@ -51,7 +51,7 @@ const BookCard: React.FC<BookCardProps> = ({
     },
     lg: {
       container: "w-full",
-      image: "h-40 md:h-56",
+      image: "h-40",
       title: "text-base md:text-lg",
       author: "text-sm md:text-base",
       heartSize: 24,
