@@ -4,7 +4,11 @@ import { useState, useEffect, useCallback } from "react";
 import BookModal from "../../components/BookModal";
 import { Link } from "react-router-dom";
 import { Heart } from "lucide-react";
-import { usePopularBooks, useRecentBooks, useBannerBook } from "../../hooks/useBookQueries";
+import {
+  usePopularBooks,
+  useRecentBooks,
+  useBannerBook,
+} from "../../hooks/useBookQueries";
 import { useAppSelector, useAppDispatch } from "../../redux/hooks";
 import { IBook } from "../../interfaces/bookInterface";
 import { selectIsLiked, toggleLike } from "../../redux/slices/likeSlice";
@@ -23,21 +27,26 @@ const Main = () => {
   const [cardsPerSection, setCardsPerSection] = useState(2);
 
   // React Query로 데이터 가져오기
-  const { isLoading: isLoadingPopular, error: popularError } = usePopularBooks();
+  const { isLoading: isLoadingPopular, error: popularError } =
+    usePopularBooks();
   const { isLoading: isLoadingRecent, error: recentError } = useRecentBooks();
   const { isLoading: isLoadingBanner, error: bannerError } = useBannerBook();
-  
+
   // Redux 스토어에서 데이터 가져오기
   const dispatch = useAppDispatch();
-  const popularBooks = useAppSelector(state => state.books.popular) || [];
-  const recentBooks = useAppSelector(state => state.books.recent) || [];
-  const bannerBook = useAppSelector(state => state.books.banner);
+  const popularBooks = useAppSelector((state) => state.books.popular) || [];
+  const recentBooks = useAppSelector((state) => state.books.recent) || [];
+  const bannerBook = useAppSelector((state) => state.books.banner);
 
   // 메인 도서로 배너 도서 사용 (bannerBook이 없으면 첫번째 인기 도서 사용)
-  const mainBook = bannerBook || (Array.isArray(popularBooks) && popularBooks.length > 0 ? popularBooks[0] : null);
-  
+  const mainBook =
+    bannerBook ||
+    (Array.isArray(popularBooks) && popularBooks.length > 0
+      ? popularBooks[0]
+      : null);
+
   // 메인 배너 도서의 좋아요 상태 확인
-  const isMainBookLiked = useAppSelector(state => 
+  const isMainBookLiked = useAppSelector((state) =>
     mainBook ? selectIsLiked(state, mainBook.id) : false
   );
 
@@ -47,25 +56,28 @@ const Main = () => {
       setCardsPerSection(window.innerWidth >= 768 ? 4 : 2);
     };
     handleResize();
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
   }, []);
 
   // handleMainBookLike 함수를 useCallback으로 메모이제이션
-  const handleMainBookLike = useCallback(async (e: React.MouseEvent) => {
-    e.stopPropagation();
-    if (!mainBook || !mainBook.id) {
-      console.error('유효하지 않은 메인 도서 ID:', mainBook?.id);
-      return;
-    }
-    
-    try {
-      console.log(`🔄 좋아요 토글 처리 시작: id=${mainBook.id}`);
-      await dispatch(toggleLike(mainBook.id)).unwrap();
-    } catch (error) {
-      console.error("좋아요 토글 처리 실패:", error);
-    }
-  }, [mainBook, dispatch]);
+  const handleMainBookLike = useCallback(
+    async (e: React.MouseEvent) => {
+      e.stopPropagation();
+      if (!mainBook || !mainBook.id) {
+        console.error("유효하지 않은 메인 도서 ID:", mainBook?.id);
+        return;
+      }
+
+      try {
+        console.log(`🔄 좋아요 토글 처리 시작: id=${mainBook.id}`);
+        await dispatch(toggleLike(mainBook.id)).unwrap();
+      } catch (error) {
+        console.error("좋아요 토글 처리 실패:", error);
+      }
+    },
+    [mainBook, dispatch]
+  );
 
   // BookCard 선택 핸들러 메모이제이션
   const handleBookSelect = useCallback((book: Book) => {
@@ -85,7 +97,7 @@ const Main = () => {
         id: mainBook.id,
         title: mainBook.title,
         author: mainBook.author,
-        imageUrl: mainBook.thumbnailUrl
+        imageUrl: mainBook.thumbnailUrl,
       });
       setShowModal(true);
     }
@@ -93,41 +105,60 @@ const Main = () => {
 
   if (isLoadingPopular || isLoadingRecent || isLoadingBanner) {
     return (
-        <div className="flex flex-col justify-center items-center h-[100dvh] text-2xl">
-          <Loader />
-          <div className="pt-5">데이터를 불러오는 중...</div>
-        </div>
+      <div className="flex flex-col justify-center items-center h-[100dvh] text-2xl">
+        <Loader />
+        <div className="pt-5">데이터를 불러오는 중...</div>
+      </div>
     );
   }
 
   if (popularError || recentError || bannerError) {
-    return <div className="flex justify-center items-center h-[100dvh] text-2xl">데이터를 불러오는데 실패했습니다.</div>;
+    return (
+      <div className="flex justify-center items-center h-[100dvh] text-2xl">
+        데이터를 불러오는데 실패했습니다.
+      </div>
+    );
   }
 
   // 데이터 확인 및 안전한 액세스
   const isPopularBooksArray = Array.isArray(popularBooks);
   const isRecentBooksArray = Array.isArray(recentBooks);
-  
+
   return (
     <div className="pt-14 pb-16 md:pb-0">
       {/* 메인 도서 (index 0) */}
       {mainBook && (
-        <div className="relative w-full h-60 md:h-[34rem] overflow-hidden mb-4">
+        <div
+          className="relative w-full h-60 md:h-[34rem] overflow-hidden mb-4 group"
+        >
           <img
             src={mainBook.thumbnailUrl}
             alt={mainBook.title}
-            className="w-full h-full object-cover md:rounded-xl"
+            className="w-full h-full object-cover md:rounded-xl transition-transform duration-700 md:group-hover:scale-105"
             loading="eager"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent md:rounded-xl"/>
-          <div className="absolute bottom-4 left-4 text-white drop-shadow-lg">
-            <h2 className="text-xl md:text-2xl mb-1">{mainBook.title}</h2>
-            <p className="text-sm md:text-base pb-3">{mainBook.author}</p>
+          {/* 기본 그라데이션 */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent md:rounded-xl transition-opacity duration-500" />
+
+          {/* 호버 시 나타나는 더 강한 그라데이션 (데스크톱에서만) */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent opacity-0 md:group-hover:opacity-100 transition-opacity duration-500 md:rounded-xl" />
+
+          {/* 호버 시 미묘하게 움직이는 정보 컨테이너 */}
+          <div className="absolute bottom-4 left-4 text-white drop-shadow-lg transition-transform duration-500 md:group-hover:translate-y-[-8px]">
+            <h2 className="text-xl md:text-2xl mb-1 transition-all duration-500 md:group-hover:text-[1.7rem]">
+              {mainBook.title}
+            </h2>
+            <p className="text-sm md:text-base pb-3 transition-all duration-500 md:group-hover:text-[1.1rem]">
+              {mainBook.author}
+            </p>
             <div className="flex items-center gap-2">
               <Button
                 size="md"
                 color="pink"
-                onClick={handleMainBannerClick}
+                className="transition-transform duration-300 md:group-hover:scale-105"
+                onClick={() => {
+                  handleMainBannerClick();
+                }}
               >
                 보러가기
               </Button>
@@ -138,16 +169,23 @@ const Main = () => {
                   console.log("좋아요 버튼 클릭");
                   handleMainBookLike(e);
                 }}
-                className="p-1.5 md:p-2 rounded-full bg-white/80 hover:bg-white transition-colors duration-200 z-10 relative"
+                className="p-1.5 md:p-2 rounded-full bg-white/80 hover:bg-white transition-all duration-300 z-10 relative md:group-hover:scale-105 md:group-hover:bg-white"
                 aria-label={isMainBookLiked ? "좋아요 취소" : "좋아요"}
               >
                 <Heart
                   size={20}
-                  className={`${isMainBookLiked ? "fill-[#C75C5C] stroke-[#C75C5C]" : "stroke-[#C75C5C]"} md:w-6 md:h-6 pointer-events-none`}
+                  className={`${
+                    isMainBookLiked
+                      ? "fill-[#C75C5C] stroke-[#C75C5C]"
+                      : "stroke-[#C75C5C]"
+                  } md:w-6 md:h-6 pointer-events-none`}
                 />
               </button>
             </div>
           </div>
+
+          {/* 호버 시 나타나는 미묘한 그림자 효과 */}
+          <div className="hidden md:block absolute inset-0 opacity-0 group-hover:opacity-100 shadow-[inset_0_0_50px_rgba(0,0,0,0.3)] transition-opacity duration-500 pointer-events-none"></div>
         </div>
       )}
 
@@ -163,23 +201,25 @@ const Main = () => {
           </Link>
         </div>
         <div className="px-4 grid grid-cols-2 md:grid-cols-4 gap-4 place-items-center">
-          {isPopularBooksArray && popularBooks.length > 1 ? 
-            popularBooks.slice(1, 1 + cardsPerSection).map((book: IBook) => (
-              <BookCard
-                key={book.id}
-                id={book.id}
-                thumbnailUrl={book.thumbnailUrl}
-                title={book.title}
-                author={book.author}
-                onBookSelect={handleBookSelect}
-                size="sm"
-              />
-            )) : (
-              <div className="col-span-2 md:col-span-4 text-center text-gray-500">
-                인기 도서가 없습니다
-              </div>
-            )
-          }
+          {isPopularBooksArray && popularBooks.length > 1 ? (
+            popularBooks
+              .slice(1, 1 + cardsPerSection)
+              .map((book: IBook) => (
+                <BookCard
+                  key={book.id}
+                  id={book.id}
+                  thumbnailUrl={book.thumbnailUrl}
+                  title={book.title}
+                  author={book.author}
+                  onBookSelect={handleBookSelect}
+                  size="sm"
+                />
+              ))
+          ) : (
+            <div className="col-span-2 md:col-span-4 text-center text-gray-500">
+              인기 도서가 없습니다
+            </div>
+          )}
         </div>
       </div>
 
@@ -195,23 +235,25 @@ const Main = () => {
           </Link>
         </div>
         <div className="px-4 grid grid-cols-2 md:grid-cols-4 gap-4 place-items-center">
-          {isRecentBooksArray && recentBooks.length > 0 ? 
-            recentBooks.slice(0, cardsPerSection).map((book: IBook) => (
-              <BookCard
-                key={book.id}
-                id={book.id}
-                thumbnailUrl={book.thumbnailUrl}
-                title={book.title}
-                author={book.author}
-                onBookSelect={handleBookSelect}
-                size="sm"
-              />
-            )) : (
-              <div className="col-span-2 md:col-span-4 text-center text-gray-500">
-                최신 등록된 도서가 없습니다
-              </div>
-            )
-          }
+          {isRecentBooksArray && recentBooks.length > 0 ? (
+            recentBooks
+              .slice(0, cardsPerSection)
+              .map((book: IBook) => (
+                <BookCard
+                  key={book.id}
+                  id={book.id}
+                  thumbnailUrl={book.thumbnailUrl}
+                  title={book.title}
+                  author={book.author}
+                  onBookSelect={handleBookSelect}
+                  size="sm"
+                />
+              ))
+          ) : (
+            <div className="col-span-2 md:col-span-4 text-center text-gray-500">
+              최신 등록된 도서가 없습니다
+            </div>
+          )}
         </div>
       </div>
 
