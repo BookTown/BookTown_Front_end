@@ -151,10 +151,10 @@ const SettingMain = () => {
         {/* 연필 아이콘 (우측 상단 고정) */}
         <button
           onClick={() => setIsInfoModalOpen(true)}
-          className="absolute top-4 right-4 p-2 rounded-full hover:text-gray-700 transition-colors duration-200"
+          className="absolute top-4 right-4 p-2 rounded-full"
           aria-label="프로필 편집"
         >
-          <PencilIcon className="w-5 h-5 text-[#9CAAB9]" />
+          <PencilIcon className="w-5 h-5 text-[#9CAAB9] hover:text-gray-700 transition-colors duration-500" />
         </button>
       </section>
 
