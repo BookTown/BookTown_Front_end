@@ -30,7 +30,7 @@ const QuizCard: React.FC<QuizCardProps> = ({
     },
     lg: {
       container: "w-full",
-      image: "h-40",
+      image: "h-40 md:h-56",
       title: "text-base md:text-lg",
       author: "text-sm md:text-base",
       score: "text-sm md:text-base font-semibold",

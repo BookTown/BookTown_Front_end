@@ -47,8 +47,8 @@ const ListFrame = ({
   return (
     <div className="px-4 pb-20 md:pb-0 flex flex-col min-h-[calc(100vh-12rem)] bg-[#FFFAF0]">
       {/* 북카드 리스트 컨테이너 - 고정 높이와 오버플로우 설정 */}
-      <div className="flex-grow mb-16 md:mb-20 overflow-hidden"> {/* 하단 마진 추가 */}
-        <ul className={`flex flex-wrap ${gapClasses[gapSize]} mx-auto mb-4 w-full md:max-h-[680px]`}>
+      <div className="flex-grow overflow-hidden">
+        <ul className={`flex flex-wrap ${gapClasses[gapSize]} mx-auto mb-4 w-full`}>
           {currentItems.map((item, index) => (
             <li 
               key={index} 
