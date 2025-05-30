@@ -151,7 +151,7 @@ const Main = () => {
             <p className="text-sm md:text-base pb-3 transition-all duration-500 md:group-hover:text-[1.1rem]">
               {mainBook.author}
             </p>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-[1rem]">
               <Button
                 size="md"
                 color="pink"
@@ -185,7 +185,7 @@ const Main = () => {
           </div>
 
           {/* 호버 시 나타나는 미묘한 그림자 효과 */}
-          <div className="hidden md:block absolute inset-0 opacity-0 group-hover:opacity-100 shadow-[inset_0_0_50px_rgba(0,0,0,0.3)] transition-opacity duration-500 pointer-events-none"></div>
+          <div className="hidden md:block absolute inset-0 opacity-0 group-hover:opacity-100 shadow-[inset_0_0_50px_rgba(0,0,0,0.3)] transition-opacity duration-500 pointer-events-none md:rounded-xl"></div>
         </div>
       )}
 
