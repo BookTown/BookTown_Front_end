@@ -131,7 +131,7 @@ const SettingMain = () => {
             />
             <button
               onClick={() => setIsImageModalOpen(true)}
-              className="text-sm text-[#9CAAB9] hover:text-gray-700 mt-2 w-full text-center"
+              className="text-sm text-[#9CAAB9] hover:text-gray-700 transition-colors duration-500 mt-2 w-full text-center"
             >
               이미지 변경
             </button>
