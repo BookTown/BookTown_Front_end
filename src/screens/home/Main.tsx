@@ -177,47 +177,67 @@ const Main = () => {
           </div>
 
           {/* 데스크톱용 호버 효과 정보 컨테이너 */}
-          <div className="hidden md:block absolute bottom-4 left-4 text-white drop-shadow-lg transition-transform duration-500 md:group-hover:translate-y-[-8px]">
-            <h2 className="text-2xl mb-1 transition-all duration-500 md:group-hover:text-[1.7rem]">
-              {mainBook.title}
-            </h2>
-            <p className="text-base pb-3 transition-all duration-500 md:group-hover:text-[1.1rem]">
-              {mainBook.author}
-            </p>
-            <div className="flex items-center gap-4 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+          <div
+            className="hidden md:block absolute bottom-0 inset-x-0 text-white py-8 px-6 
+              bg-gradient-to-t from-black/90 via-black/70 to-transparent 
+              transform translate-y-[65%] group-hover:translate-y-0 
+              transition-transform duration-700 ease-in-out"
+          >
+            {/* 타이틀과 저자 정보 - 항상 보이는 부분 */}
+            <div className="transform translate-y-[-60%] group-hover:translate-y-0 transition-transform duration-500">
+              <h2 className="text-2xl font-semibold mb-2 drop-shadow-lg transition-all duration-500 group-hover:text-3xl">
+                {mainBook.title}
+              </h2>
+              <p className="text-lg text-gray-200 transition-all duration-500">
+                {mainBook.author}
+              </p>
+            </div>
+
+            {/* 버튼 그룹 - 호버 시 나타남 */}
+            <div className="flex items-center gap-4 mt-6 opacity-0 group-hover:opacity-100 transition-all duration-500 delay-100">
               <Button
                 size="md"
                 color="pink"
                 className="transition-transform duration-300 group-hover:scale-105"
-                onClick={() => {
-                  handleMainBannerClick();
-                }}
+                onClick={handleMainBannerClick}
               >
                 보러가기
               </Button>
+
               <button
                 onClick={(e) => {
                   e.stopPropagation();
                   e.preventDefault();
                   handleMainBookLike(e);
                 }}
-                className="p-2 rounded-full bg-white/80 hover:bg-white transition-all duration-300 z-10 group-hover:scale-105 group-hover:bg-white"
+                className="p-2 rounded-full bg-white/20 hover:bg-white/40 transition-all duration-300 z-10"
                 aria-label={isMainBookLiked ? "좋아요 취소" : "좋아요"}
+                type="button"
               >
                 <Heart
-                  size={20}
+                  size={24}
                   className={`${
                     isMainBookLiked
                       ? "fill-[#C75C5C] stroke-[#C75C5C]"
-                      : "stroke-[#C75C5C]"
-                  } w-6 h-6 pointer-events-none`}
+                      : "stroke-white"
+                  } pointer-events-none`}
                 />
               </button>
             </div>
           </div>
 
-          {/* 호버 시 나타나는 미묘한 그림자 효과 */}
-          <div className="hidden md:block absolute inset-0 opacity-0 group-hover:opacity-100 shadow-[inset_0_0_50px_rgba(0,0,0,0.3)] transition-opacity duration-500 pointer-events-none md:rounded-xl"></div>
+          {/* 넷플릭스 스타일 테두리 효과 */}
+          <div
+            className="hidden md:block absolute inset-0 md:rounded-xl opacity-0 
+              group-hover:opacity-100 shadow-[inset_0_0_100px_rgba(255,255,255,0.1)] 
+              pointer-events-none transition-opacity duration-700"
+          ></div>
+
+          {/* 호버시 오버레이 */}
+          <div
+            className="absolute inset-0 md:rounded-xl bg-black/0 
+              group-hover:bg-black/20 transition-colors duration-700"
+          ></div>
         </div>
       )}
 
