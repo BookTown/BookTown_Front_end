@@ -14,7 +14,7 @@ const RegisterMain: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-[#FFFAF0] text-black px-4 pt-14 pb-24 md:pt-12 md:px-6">
-      <div className="flex justify-between items-center" style={{ paddingTop: '100px' }}>
+      <div className="flex justify-between items-center">
           <div className="pt-4">
           <h1 className="text-3xl">원하는 고전 신청하기</h1>
           <p className="text-xl text-[#A39C9C] pb-2">보고싶은 책을 신청할 수 있어요</p>
