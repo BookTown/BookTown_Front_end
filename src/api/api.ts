@@ -313,3 +313,16 @@ export const fetchBookApplications = async () => {
     throw error;
   }
 };
+
+// 책 신청 삭제 API
+export const deleteBookApplication = async (id: number) => {
+  console.log('책 신청 삭제 API 호출 시작:', id);
+  try {
+    const response = await axiosApi.delete(`/apply/delete/${id}`);
+    console.log('책 신청 삭제 API 응답 성공:', response.data);
+    return response.data;
+  } catch (error) {
+    console.error('책 신청 삭제 API 오류:', error);
+    throw error;
+  }
+};

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Trash2 } from 'lucide-react';
 import ReasonModal from './ReasonModal';
-import { fetchBookApplications } from '../api/api';
+import { fetchBookApplications, deleteBookApplication } from '../api/api';
 import { BookApplication } from '../interfaces/bookInterface';
 
 const RegisterList: React.FC = () => {
@@ -85,15 +85,22 @@ const RegisterList: React.FC = () => {
     setCurrentPage(page);
   };
   
-  // 임시로 mockBookRequests를 사용하여 삭제 기능 구현했음
-  const handleDelete = (id: number) => {
+  // 삭제 기능 구현
+  const handleDelete = async (id: number) => {
     if(window.confirm('정말 이 신청을 삭제하시겠습니까?')) {
-      setRequests(requests.filter(request => request.id !== id));
-      // 삭제 후 현재 페이지에 아이템이 없으면 이전 페이지로
-      const newTotal = requests.length - 1;
-      const newTotalPages = Math.ceil(newTotal / itemsPerPage);
-      if (currentPage > newTotalPages && newTotalPages > 0) {
-        setCurrentPage(newTotalPages);
+      try {
+        await deleteBookApplication(id);
+        setRequests(requests.filter(request => request.id !== id));
+        
+        // 삭제 후 현재 페이지에 아이템이 없으면 이전 페이지로
+        const newTotal = requests.length - 1;
+        const newTotalPages = Math.ceil(newTotal / itemsPerPage);
+        if (currentPage > newTotalPages && newTotalPages > 0) {
+          setCurrentPage(newTotalPages);
+        }
+      } catch (error) {
+        console.error('신청 삭제 실패:', error);
+        alert('신청 삭제에 실패했습니다. 다시 시도해주세요.');
       }
     }
   };
