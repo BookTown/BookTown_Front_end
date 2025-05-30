@@ -54,6 +54,11 @@ const RegisterList: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 6;
   
+  // 날짜 포맷팅 함수
+  const formatDate = (dateString: string) => {
+    return dateString.replace('20', '');
+  };
+  
   // 컴포넌트 마운트 시 데이터 불러오기
   useEffect(() => {
     const loadApplications = async () => {
@@ -155,7 +160,7 @@ const RegisterList: React.FC = () => {
                 />
               </div>
               <div className="w-2/5">{truncateTitle(request.title)}</div>
-              <div className="w-1/4">{request.appliedDate}</div>
+              <div className="w-1/4">{formatDate(request.appliedDate)}</div>
               <span className={`${getStatusColor(request.status)} w-1/4`}>
                 {getStatusInKorean(request.status)}
               </span>
