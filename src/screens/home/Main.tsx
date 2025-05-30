@@ -136,10 +136,10 @@ const Main = () => {
             loading="eager"
           />
           {/* 기본 그라데이션 */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent md:rounded-xl transition-opacity duration-500" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent md:rounded-xl transition-opacity duration-500 pointer-events-none" />
 
           {/* 데스크톱일 때, 호버 시 나타나는 더 강한 그라데이션 */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent opacity-0 md:group-hover:opacity-100 transition-opacity duration-500 md:rounded-xl" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent opacity-0 md:group-hover:opacity-100 transition-opacity duration-500 md:rounded-xl pointer-events-none" />
 
           {/* 모바일용 항상 보이는 정보 컨테이너 */}
           <div className="absolute bottom-4 left-4 right-4 text-white drop-shadow-lg md:hidden">
@@ -179,9 +179,9 @@ const Main = () => {
           {/* 데스크톱용 호버 효과 정보 컨테이너 */}
           <div
             className="hidden md:block absolute bottom-0 inset-x-0 text-white py-8 px-6 
-              bg-gradient-to-t from-black/90 via-black/70 to-transparent 
-              transform translate-y-[65%] group-hover:translate-y-0 
-              transition-transform duration-700 ease-in-out"
+        bg-gradient-to-t from-black/90 via-black/70 to-transparent 
+        transform translate-y-[65%] group-hover:translate-y-0 
+        transition-transform duration-700 ease-in-out z-20"
           >
             {/* 타이틀과 저자 정보 - 항상 보이는 부분 */}
             <div className="transform translate-y-[-60%] group-hover:translate-y-0 transition-transform duration-500">
@@ -219,7 +219,7 @@ const Main = () => {
                   className={`${
                     isMainBookLiked
                       ? "fill-[#C75C5C] stroke-[#C75C5C]"
-                      : "stroke-white"
+                      : "stroke-[#C75C5C]"
                   } pointer-events-none`}
                 />
               </button>
@@ -229,14 +229,14 @@ const Main = () => {
           {/* 넷플릭스 스타일 테두리 효과 */}
           <div
             className="hidden md:block absolute inset-0 md:rounded-xl opacity-0 
-              group-hover:opacity-100 shadow-[inset_0_0_100px_rgba(255,255,255,0.1)] 
-              pointer-events-none transition-opacity duration-700"
+        group-hover:opacity-100 shadow-[inset_0_0_100px_rgba(255,255,255,0.1)] 
+        pointer-events-none transition-opacity duration-700"
           ></div>
 
           {/* 호버시 오버레이 */}
           <div
             className="absolute inset-0 md:rounded-xl bg-black/0 
-              group-hover:bg-black/20 transition-colors duration-700"
+        group-hover:bg-black/20 transition-colors duration-700 pointer-events-none"
           ></div>
         </div>
       )}
