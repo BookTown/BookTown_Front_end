@@ -126,79 +126,49 @@ const Main = () => {
 
   return (
     <div className="pt-14 pb-16 md:pb-0">
-      {/* 메인 도서 */}
+      {/* 메인 도서 (index 0) */}
       {mainBook && (
-        <div
-          className="relative w-full h-60 md:h-[38rem] overflow-hidden mb-4 md:rounded-xl group cursor-pointer"
-          onClick={handleMainBannerClick}
-        >
-          {/* 배경 이미지 */}
-          <div className="absolute inset-0 overflow-hidden md:rounded-xl">
-            <img
-              src={mainBook.thumbnailUrl}
-              alt={mainBook.title}
-              className="w-full h-full object-cover scale-[1.02] filter blur-[8px] brightness-[0.4] 
-                md:group-hover:blur-[12px] md:group-hover:brightness-[0.3] transition-all duration-1000"
-              loading="eager"
-            />
-          </div>
+        <div className="relative w-full h-60 md:h-[34rem] overflow-hidden mb-4 group md:rounded-xl">
+          <img
+            src={mainBook.thumbnailUrl}
+            alt={mainBook.title}
+            className="w-full h-full object-cover md:rounded-xl transition-transform duration-700 md:group-hover:scale-105"
+            loading="eager"
+          />
+          {/* 기본 그라데이션 */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent md:rounded-xl transition-opacity duration-500" />
 
-          {/* 메인 커버 이미지 */}
-          <div
-            className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 
-              w-[45%] h-[85%] overflow-hidden rounded-lg shadow-2xl
-              md:group-hover:scale-105 transition-all duration-700"
-          >
-            <img
-              src={mainBook.thumbnailUrl}
-              alt={mainBook.title}
-              className="w-full h-full object-cover"
-            />
-            {/* 커버 이미지 반사/광택 효과 */}
-            <div
-              className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/5 to-white/20 
-                md:group-hover:opacity-70 transition-opacity duration-700"
-            ></div>
-          </div>
+          {/* 호버 시 나타나는 더 강한 그라데이션 (데스크톱에서만) */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent opacity-0 md:group-hover:opacity-100 transition-opacity duration-500 md:rounded-xl" />
 
-          {/* 도서 정보 컨테이너 */}
-          <div
-            className="absolute bottom-0 inset-x-0 text-white py-10 px-6 
-              bg-gradient-to-t from-black/90 via-black/70 to-transparent 
-              transform md:translate-y-[70%] md:group-hover:translate-y-0 
-              transition-transform duration-700 ease-in-out"
-          >
-            {/* 타이틀과 저자 정보 */}
-            <div className="mb-6 transform md:translate-y-[-60%] md:group-hover:translate-y-0 transition-transform duration-500">
-              <h2 className="text-3xl md:text-4xl font-bold mb-2 drop-shadow-lg">
-                {mainBook.title}
-              </h2>
-              <p className="text-lg md:text-xl text-gray-300 mb-4">
-                {mainBook.author}
-              </p>
-            </div>
-
-            {/* 버튼 그룹 */}
-            <div className="flex items-center gap-4 opacity-0 md:group-hover:opacity-100 transition-opacity duration-500 delay-100">
-              {/* 보러가기 버튼 */}
+          {/* 호버 시 미묘하게 움직이는 정보 컨테이너 */}
+          <div className="absolute bottom-4 left-4 text-white drop-shadow-lg transition-transform duration-500 md:group-hover:translate-y-[-8px]">
+            <h2 className="text-xl md:text-2xl mb-1 transition-all duration-500 md:group-hover:text-[1.7rem]">
+              {mainBook.title}
+            </h2>
+            <p className="text-sm md:text-base pb-3 transition-all duration-500 md:group-hover:text-[1.1rem]">
+              {mainBook.author}
+            </p>
+            <div className="flex items-center gap-[1rem]">
               <Button
                 size="md"
                 color="pink"
                 className="transition-transform duration-300 md:group-hover:scale-105"
+                onClick={() => {
+                  handleMainBannerClick();
+                }}
               >
                 보러가기
               </Button>
-
-              {/* 좋아요 버튼 */}
               <button
                 onClick={(e) => {
-                  e.stopPropagation(); // 이벤트 버블링 방지
-                  e.preventDefault(); // 기본 동작 방지
+                  e.stopPropagation();
+                  e.preventDefault();
+                  console.log("좋아요 버튼 클릭");
                   handleMainBookLike(e);
                 }}
-                className="p-3 rounded-full bg-white/20 hover:bg-white/40 transition-all duration-300 z-10"
+                className="p-1.5 md:p-2 rounded-full bg-white/80 hover:bg-white transition-all duration-300 z-10 relative md:group-hover:scale-105 md:group-hover:bg-white"
                 aria-label={isMainBookLiked ? "좋아요 취소" : "좋아요"}
-                type="button" // 명시적으로 버튼 타입 지정
               >
                 <Heart
                   size={20}
@@ -206,24 +176,14 @@ const Main = () => {
                     isMainBookLiked
                       ? "fill-[#C75C5C] stroke-[#C75C5C]"
                       : "stroke-[#C75C5C]"
-                  } pointer-events-none`}
+                  } md:w-6 md:h-6 pointer-events-none`}
                 />
               </button>
             </div>
           </div>
 
-          {/* 넷플릭스 스타일 테두리 효과 */}
-          <div
-            className="hidden md:block absolute inset-0 md:rounded-xl opacity-0 
-              md:group-hover:opacity-100 shadow-[inset_0_0_100px_rgba(255,255,255,0.1)] 
-              pointer-events-none transition-opacity duration-700"
-          ></div>
-
-          {/* 호버시 오버레이 */}
-          <div
-            className="absolute inset-0 md:rounded-xl bg-black/0 
-              md:group-hover:bg-black/20 transition-colors duration-700"
-          ></div>
+          {/* 호버 시 나타나는 미묘한 그림자 효과 */}
+          <div className="hidden md:block absolute inset-0 opacity-0 group-hover:opacity-100 shadow-[inset_0_0_50px_rgba(0,0,0,0.3)] transition-opacity duration-500 pointer-events-none md:rounded-xl"></div>
         </div>
       )}
 
