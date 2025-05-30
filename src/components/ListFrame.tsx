@@ -45,14 +45,18 @@ const ListFrame = ({
   );
 
   return (
-    <div className="px-4 pb-20 md:pb-0 flex flex-col">
-      <div className={`grid grid-cols-2 md:grid-cols-4 ${gapClasses[gapSize]} mx-auto my-auto mb-8 flex-grow w-full`}>
+    <div className="px-4 pb-20 md:pb-0 flex flex-col min-h-[calc(100vh-12rem)] md:h-[864px]">
+      <ul className={`flex flex-wrap ${gapClasses[gapSize]} mx-auto my-auto mb-8 flex-grow w-full`}>
         {currentItems.map((item, index) => (
-          <div key={index} className="p-1 relative" style={{ transformOrigin: 'center' }}>
+          <li 
+            key={index} 
+            className="p-1 relative w-[calc(50%-0.5rem)] md:w-[calc(25%-0.75rem)]" 
+            style={{ transformOrigin: 'center' }}
+          >
             {item}
-          </div>
+          </li>
         ))}
-      </div>
+      </ul>
       
       {/* Pagination */}
       {totalPages > 1 && (
