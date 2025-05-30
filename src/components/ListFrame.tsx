@@ -8,7 +8,7 @@ interface ListFrameProps {
 
 const ListFrame = ({ 
   children, 
-  itemsPerPage = 12,
+  itemsPerPage = 12, 
   gapSize = "medium" 
 }: ListFrameProps) => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -16,7 +16,7 @@ const ListFrame = ({
 
   useEffect(() => {
     const handleResize = () => {
-      setItemsPerView(12); 
+      setItemsPerView(12);
     };
     handleResize();
     window.addEventListener('resize', handleResize);
@@ -50,7 +50,7 @@ const ListFrame = ({
         {currentItems.map((item, index) => (
           <li 
             key={index} 
-            className="p-1 relative w-[calc(16.666%-0.42rem)] md:w-[calc(33.333%-0.67rem)]" 
+            className="p-1 relative w-[calc(50%-0.5rem)] md:w-[calc(25%-0.75rem)]" 
             style={{ transformOrigin: 'center' }}
           >
             {item}
