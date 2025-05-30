@@ -44,61 +44,49 @@ const HistoryMain = () => {
   const [historyData, setHistoryData] = useState<QuizHistoryDetail | null>(null);
   const [isLoadingDetail, setIsLoadingDetail] = useState(false);
 
-  // 퀴즈 히스토리 데이터를 가져오는 함수 - 분리하여 재사용성 향상
-  const loadQuizHistory = async (userId: number) => {
-    try {
-      setIsLoading(true);
-      
-      const historyData = await fetchUserQuizHistory(userId);
-      
-      // 책 이미지 정보 추가
-      const updatedData = await Promise.all(historyData.map(async (book: BookHistoryItem) => {
-        try {
-          const bookDetail = await fetchBookDetailById(book.bookId);
-          if (bookDetail && bookDetail.thumbnailUrl) {
-            return {
-              ...book,
-              imageUrl: bookDetail.thumbnailUrl,
-              histories: book.histories 
-            };
-          }
-        } catch (error) {
-          console.error(`책 ID ${book.bookId}의 세부 정보를 불러오는데 실패했습니다.`, error);
-        }
-        
-        return {
-          ...book,
-          histories: book.histories 
-        };
-      }));
-      
-      setBookHistoryList(updatedData);
-      setError(null);
-    } catch (err) {
-      console.error('퀴즈 히스토리 로딩 오류:', err);
-      setError('퀴즈 히스토리를 불러오는 중 오류가 발생했습니다.');
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   useEffect(() => {
-    const initializeData = async () => {
+    const loadQuizHistory = async () => {
       try {
+        setIsLoading(true);
+        
         const userProfile = await fetchUserProfile();
         const userId = userProfile.id;
-        setUserId(userId);
+        setUserId(userId); // 사용자 ID 저장
         
-        // 분리된 함수 호출
-        await loadQuizHistory(userId);
+        const historyData = await fetchUserQuizHistory(userId);
+        
+        // 책 이미지 정보 추가
+        const updatedData = await Promise.all(historyData.map(async (book: BookHistoryItem) => {
+          try {
+            const bookDetail = await fetchBookDetailById(book.bookId);
+            if (bookDetail && bookDetail.thumbnailUrl) {
+              return {
+                ...book,
+                imageUrl: bookDetail.thumbnailUrl,
+                histories: book.histories 
+              };
+            }
+          } catch (error) {
+            console.error(`책 ID ${book.bookId}의 세부 정보를 불러오는데 실패했습니다.`, error);
+          }
+          
+          // 책 정보를 불러오는 데 실패한 경우
+          return {
+            ...book,
+            histories: book.histories 
+          };
+        }));
+        
+        setBookHistoryList(updatedData);
       } catch (err) {
-        console.error('사용자 프로필 로딩 오류:', err);
-        setError('사용자 정보를 불러오는 중 오류가 발생했습니다.');
+        console.error('퀴즈 히스토리 로딩 오류:', err);
+        setError('퀴즈 히스토리를 불러오는 중 오류가 발생했습니다.');
+      } finally {
         setIsLoading(false);
       }
     };
 
-    initializeData();
+    loadQuizHistory();
   }, []);
 
   // 퀴즈 카드 클릭 핸들러 - 히스토리 선택 모달 표시
@@ -139,17 +127,47 @@ const HistoryMain = () => {
     }
   };
   
-  // 히스토리 삭제 처리 함수 - API 재호출 방식으로 변경
+  // 히스토리 삭제 처리 함수 수정
   const handleHistoryDeleted = async (bookId: number, groupIndex: number) => {
-    // 히스토리 삭제 후 API를 다시 호출하여 최신 데이터를 가져오되, 모달은 닫지 않음
+    // 데이터 삭제 후 API에서 최신 데이터를 다시 가져옴
     if (userId) {
       try {
-        // API에서 최신 데이터 다시 가져오기
-        await loadQuizHistory(userId);
+        // API에서 최신 히스토리 데이터를 다시 가져옴
+        const updatedHistoryData = await fetchUserQuizHistory(userId);
         
-        // 선택된 책의 최신 정보 업데이트 (모달이 열려있는 상태 유지)
+        // 책 이미지 정보를 유지하면서 데이터 업데이트
+        const updatedBookList = await Promise.all(updatedHistoryData.map(async (book: BookHistoryItem) => {
+          // 기존 리스트에서 동일한 책을 찾아 이미지 URL 복원
+          const existingBook = bookHistoryList.find(item => item.bookId === book.bookId);
+          if (existingBook && existingBook.imageUrl) {
+            return {
+              ...book,
+              imageUrl: existingBook.imageUrl
+            };
+          } else {
+            // 이미지 정보가 없으면 API에서 가져오기 시도
+            try {
+              const bookDetail = await fetchBookDetailById(book.bookId);
+              if (bookDetail && bookDetail.thumbnailUrl) {
+                return {
+                  ...book,
+                  imageUrl: bookDetail.thumbnailUrl
+                };
+              }
+            } catch (error) {
+              console.error(`책 ID ${book.bookId}의 세부 정보를 불러오는데 실패했습니다.`, error);
+            }
+          }
+          
+          return book;
+        }));
+        
+        // 업데이트된 데이터로 상태 갱신
+        setBookHistoryList(updatedBookList);
+        
+        // 선택된 책이 있고, 해당 책이 현재 삭제된 책과 동일하다면 선택된 책 정보도 업데이트
         if (selectedBook && selectedBook.bookId === bookId) {
-          const updatedBook = bookHistoryList.find(book => book.bookId === bookId);
+          const updatedBook = updatedBookList.find(book => book.bookId === bookId);
           if (updatedBook) {
             setSelectedBook(updatedBook);
           }
@@ -234,7 +252,7 @@ const HistoryMain = () => {
           histories={selectedBook.histories}
           onClose={handleHistorySelectModalClose}
           onSelectHistory={handleHistorySelect}
-          onHistoryDeleted={handleHistoryDeleted}
+          onHistoryDeleted={handleHistoryDeleted} // 콜백 추가
         />
       )}
 
