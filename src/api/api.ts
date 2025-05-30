@@ -301,11 +301,11 @@ export const applyBook = async (title: string) => {
   }
 };
 
-// 책 신청 내역 조회 API
+// 책 신청 내역 조회 API (개별 사용자)
 export const fetchBookApplications = async () => {
   console.log('책 신청 내역 조회 API 호출 시작');
   try {
-    const response = await axiosApi.get('/apply/all');
+    const response = await axiosApi.get('/apply/user');
     console.log('책 신청 내역 API 응답 성공:', response.data);
     return response.data;
   } catch (error) {
