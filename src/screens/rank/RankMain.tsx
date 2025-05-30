@@ -153,7 +153,7 @@ const RankMain = () => {
                     e.currentTarget.src = basicProfile;
                   }}
                 />
-                <div className="bg-[#C75C5C] text-white rounded-lg px-6 py-3 text-center w-22 h-26">
+                <div className="bg-[#C75C5C] text-white rounded-lg px-6 py-3 text-center w-20 h-26">
                   <Award className="w-7 h-7 mx-auto mb-2" />
                   <div className="text-base font-bold">{top3Users[2].score}점</div>
                   <div className="text-sm truncate">{top3Users[2].username}</div>
