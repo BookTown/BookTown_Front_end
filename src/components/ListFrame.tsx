@@ -16,6 +16,7 @@ const ListFrame = ({
 
   useEffect(() => {
     const handleResize = () => {
+      // 화면 크기에 따라 itemsPerView를 조정
       setItemsPerView(window.innerWidth < 768 ? 8 : 12);
     };
     handleResize();
