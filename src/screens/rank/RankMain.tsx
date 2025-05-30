@@ -91,10 +91,10 @@ const RankMain = () => {
         <p className="text-xl text-[#A39C9C] pb-2">가장 퀴즈를 많이 푼 유저를 확인하세요</p>
       </div>
 
-      <section className="w-full max-w-6xl mx-auto px-4 pb-20 flex flex-col md:flex-row md:justify-between items-center md:items-start gap-8">
+      <section className="w-full max-w-6xl mx-auto px-4 pb-20 flex flex-col md:flex-row md:justify-between items-center md:items-start gap-6">
         {/* Top 3 시상대 */}
         <div className="relative flex flex-col items-center md:w-3/5 md:pt-24">
-          <div className="flex items-end justify-center gap-8 mb-8">
+          <div className="flex items-end justify-center mb-8">
             {/* 2등 - top3가 2명 이상 있을 경우에만 표시 */}
             {top3Users.length > 1 && (
               <div 
