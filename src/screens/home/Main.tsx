@@ -128,9 +128,7 @@ const Main = () => {
     <div className="pt-14 pb-16 md:pb-0">
       {/* 메인 도서 (index 0) */}
       {mainBook && (
-        <div
-          className="relative w-full h-60 md:h-[34rem] overflow-hidden mb-4 group"
-        >
+        <div className="relative w-full h-60 md:h-[34rem] overflow-hidden mb-4 group md:rounded-xl">
           <img
             src={mainBook.thumbnailUrl}
             alt={mainBook.title}
