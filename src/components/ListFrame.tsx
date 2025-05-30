@@ -8,7 +8,7 @@ interface ListFrameProps {
 
 const ListFrame = ({ 
   children, 
-  itemsPerPage = 8,
+  itemsPerPage = 12,
   gapSize = "medium" 
 }: ListFrameProps) => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -16,7 +16,7 @@ const ListFrame = ({
 
   useEffect(() => {
     const handleResize = () => {
-      setItemsPerView(window.innerWidth < 768 ? 8 : 12);
+      setItemsPerView(12); 
     };
     handleResize();
     window.addEventListener('resize', handleResize);
@@ -33,9 +33,9 @@ const ListFrame = ({
 
   // gap 크기에 따른 클래스 결정
   const gapClasses = {
-    small: "gap-4 md:gap-5",
-    medium: "gap-5 md:gap-6",
-    large: "gap-6 md:gap-8" 
+    small: "gap-3 md:gap-5",
+    medium: "gap-4 md:gap-6",
+    large: "gap-5 md:gap-8" 
   };
 
   const totalPages = Math.ceil(children.length / itemsPerView);
@@ -45,12 +45,12 @@ const ListFrame = ({
   );
 
   return (
-    <div className="px-4 pb-20 md:pb-0 flex flex-col min-h-[calc(100vh-12rem)] md:h-[864px]">
+    <div className="px-4 pb-20 md:pb-0 flex flex-col min-h-[calc(100vh-12rem)] md:h-[864px] bg-[#FFFAF0]">
       <ul className={`flex flex-wrap ${gapClasses[gapSize]} mx-auto my-auto mb-8 flex-grow w-full`}>
         {currentItems.map((item, index) => (
           <li 
             key={index} 
-            className="p-1 relative w-[calc(50%-0.5rem)] md:w-[calc(25%-0.75rem)]" 
+            className="p-1 relative w-[calc(16.666%-0.42rem)] md:w-[calc(33.333%-0.67rem)]" 
             style={{ transformOrigin: 'center' }}
           >
             {item}
@@ -64,11 +64,11 @@ const ListFrame = ({
         <button
           onClick={() => handlePageChange(Math.max(currentPage - 1, 1))}
           disabled={currentPage === 1}
-          className="px-3 py-1.5 rounded-full bg-[#FFFAF0] text-sm disabled:opacity-50 hover:opacity-80 transition-colors"
+          className="px-3 py-1.5 rounded-full text-sm disabled:opacity-50 hover:opacity-80 transition-colors"
         >
           이전
         </button>
-        <div className="flex gap-1.5">
+        <div className="flex gap-1.5 flex-wrap justify-center max-w-[240px]">
           {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
             <button
               key={page}
@@ -86,7 +86,7 @@ const ListFrame = ({
         <button
           onClick={() => handlePageChange(Math.min(currentPage + 1, totalPages))}
           disabled={currentPage === totalPages}
-          className="px-3 py-1.5 rounded-full bg-[#FFFAF0] text-sm disabled:opacity-50 hover:opacity-80 transition-colors"
+          className="px-3 py-1.5 rounded-full text-sm disabled:opacity-50 hover:opacity-80 transition-colors"
         >
           다음
         </button>
