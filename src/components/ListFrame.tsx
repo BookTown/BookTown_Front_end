@@ -16,7 +16,7 @@ const ListFrame = ({
 
   useEffect(() => {
     const handleResize = () => {
-      // 화면 크기에 따라 itemsPerView를 조정
+      // 모바일 화면에서는 8개, 데스크탑 화면에서는 12개
       setItemsPerView(window.innerWidth < 768 ? 8 : 12);
     };
     handleResize();
@@ -47,7 +47,7 @@ const ListFrame = ({
 
   return (
     <div className="px-4 pb-20 md:pb-0 flex flex-col min-h-[calc(100vh-12rem)] md:h-[864px] bg-[#FFFAF0]">
-      <ul className={`flex flex-wrap ${gapClasses[gapSize]} mx-auto my-auto mb-8 flex-grow w-full`}>
+      <ul className={`flex flex-wrap ${gapClasses[gapSize]} mx-auto my-auto mb-8 flex-grow w-full md:max-h-[720px]`}>
         {currentItems.map((item, index) => (
           <li 
             key={index} 
