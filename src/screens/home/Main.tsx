@@ -1,6 +1,7 @@
 import BookCard from "../../components/BookCard";
 import { useState, useEffect, useCallback } from "react";
 import BookModal from "../../components/BookModal";
+import Button from "../../components/Button";
 import { Link } from "react-router-dom";
 import { Heart } from "lucide-react";
 import {
@@ -180,33 +181,27 @@ const Main = () => {
             {/* 버튼 그룹 */}
             <div className="flex items-center gap-4 opacity-0 md:group-hover:opacity-100 transition-opacity duration-500 delay-100">
               {/* 보러가기 버튼 */}
-              <button
-                type="button"
-                className="w-full max-w-[340px] text-lg font-medium rounded-xl 
-                  bg-[#C75C5C] text-white px-8 py-3 shadow-lg
-                  hover:bg-[#b54d4d] active:bg-[#a44444]
-                  hover:transform hover:scale-105 active:scale-[0.98]
-                  transition-all duration-300 outline-none"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleMainBannerClick();
-                }}
+              <Button
+                size="md"
+                color="pink"
+                className="transition-transform duration-300 md:group-hover:scale-105"
               >
                 보러가기
-              </button>
+              </Button>
 
               {/* 좋아요 버튼 */}
               <button
                 onClick={(e) => {
-                  e.stopPropagation();
-                  e.preventDefault();
+                  e.stopPropagation(); // 이벤트 버블링 방지
+                  e.preventDefault(); // 기본 동작 방지
                   handleMainBookLike(e);
                 }}
                 className="p-3 rounded-full bg-white/20 hover:bg-white/40 transition-all duration-300 z-10"
                 aria-label={isMainBookLiked ? "좋아요 취소" : "좋아요"}
+                type="button" // 명시적으로 버튼 타입 지정
               >
                 <Heart
-                  size={24}
+                  size={20}
                   className={`${
                     isMainBookLiked
                       ? "fill-[#C75C5C] stroke-[#C75C5C]"
