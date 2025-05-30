@@ -16,7 +16,7 @@ const ListFrame = ({
 
   useEffect(() => {
     const handleResize = () => {
-      setItemsPerView(12);
+      setItemsPerView(window.innerWidth < 768 ? 8 : 12);
     };
     handleResize();
     window.addEventListener('resize', handleResize);
