@@ -137,19 +137,10 @@ const Main = () => {
           src={mainBook.thumbnailUrl}
           alt={`${mainBook.title} 배경`}
           className="absolute inset-0 w-full h-full object-cover md:rounded-xl 
-                    brightness-[0.4] md:blur-[8px] md:group-hover:blur-[12px] md:group-hover:brightness-[0.3]
+                    md:brightness-[0.4] md:blur-[8px] md:group-hover:blur-[12px] md:group-hover:brightness-[0.3]
                     transition-all duration-700"
           loading="eager"
         />
-        
-        {/* 모바일 전용 표지 이미지 */}
-        <div className="md:hidden absolute inset-0 flex justify-center items-center py-4">
-          <img
-            src={mainBook.thumbnailUrl}
-            alt={mainBook.title}
-            className="h-[65%] w-auto object-contain rounded-lg shadow-xl"
-          />
-        </div>
         
         {/* 데스크톱 전용 표지 이미지 */}
         <div
@@ -183,7 +174,7 @@ const Main = () => {
           </div>
           
           {/* 데스크톱 전용 타이틀과 저자 - 호버 효과 */}
-          <div className="hidden md:block transform md:translate-y-[-50%] md:group-hover:translate-y-0 transition-transform duration-500">
+          <div className="hidden md:block transform md:translate-y-[-90%] md:group-hover:translate-y-0 transition-transform duration-500">
             <h2 className="text-3xl font-bold mb-2 drop-shadow-lg transition-all duration-500 md:group-hover:text-4xl">
               {mainBook.title}
             </h2>
