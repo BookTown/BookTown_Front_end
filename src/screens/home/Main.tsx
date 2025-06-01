@@ -126,69 +126,118 @@ const Main = () => {
 
   return (
     <div className="pt-14 pb-16 md:pb-0">
-      {/* 메인 도서 - 시네마틱 스타일 배너 */}
+      {/* 메인 도서 */}
       {mainBook && (
-        <div className="relative w-full aspect-[4/5] md:aspect-[16/9] overflow-hidden mb-4 group">
-          {/* 블러 처리된 배경 이미지 (확장 효과) */}
+        <div className="relative w-full h-60 md:h-[34rem] overflow-hidden mb-4 group md:rounded-xl">
           <img
             src={mainBook.thumbnailUrl}
-            alt={`${mainBook.title}`}
-            className="absolute inset-0 w-full h-full object-cover blur-md scale-110"
+            alt={mainBook.title}
+            className="w-full h-full object-cover md:rounded-xl transition-transform duration-700 md:group-hover:scale-105"
+            loading="eager"
           />
-          
-          {/* 어두운 그라데이션 오버레이 */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-black/30"></div>
-          
-          {/* 배너 내용 영역 */}
-          <div className="relative z-10 h-full flex flex-col justify-end p-6 md:p-12">
-            {/* 타이틀과 저자 정보 */}
-            <h2 className="text-2xl md:text-4xl font-semibold text-white mb-2 drop-shadow-lg">
-              {mainBook.title}
-            </h2>
-            <p className="text-sm md:text-lg text-white/90 mb-4 max-w-md">
-              {mainBook.author}
-            </p>
-            
-            {/* 버튼 영역 */}
-            <div className="flex items-center gap-3 mt-2">
+          {/* 기본 그라데이션 */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent md:rounded-xl transition-opacity duration-500 pointer-events-none" />
+
+          {/* 데스크톱일 때, 호버 시 나타나는 더 강한 그라데이션 */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent opacity-0 md:group-hover:opacity-100 transition-opacity duration-500 md:rounded-xl pointer-events-none" />
+
+          {/* 모바일용 항상 보이는 정보 컨테이너 */}
+          <div className="absolute bottom-4 left-4 right-4 text-white drop-shadow-lg md:hidden">
+            <h2 className="text-xl mb-1">{mainBook.title}</h2>
+            <p className="text-sm pb-3">{mainBook.author}</p>
+            <div className="flex items-center gap-3">
               <Button
                 size="md"
                 color="pink"
-                onClick={handleMainBannerClick}
-                className="transition-transform duration-300 hover:scale-105"
+                onClick={() => {
+                  handleMainBannerClick();
+                }}
               >
                 보러가기
               </Button>
-              
               <button
                 onClick={(e) => {
                   e.stopPropagation();
                   e.preventDefault();
                   handleMainBookLike(e);
                 }}
-                className="p-2 rounded-full bg-white/20 hover:bg-white/30 transition-all duration-300"
+                className="p-1.5 rounded-full bg-white/80 hover:bg-white transition-all duration-300 z-10"
                 aria-label={isMainBookLiked ? "좋아요 취소" : "좋아요"}
               >
                 <Heart
-                  size={22}
+                  size={20}
                   className={`${
                     isMainBookLiked
                       ? "fill-[#C75C5C] stroke-[#C75C5C]"
                       : "stroke-[#C75C5C]"
-                  }`}
+                  } pointer-events-none`}
                 />
               </button>
             </div>
           </div>
-          
-          {/* 전경 표지 이미지 (데스크톱에만 표시) */}
-          <div className="hidden md:block absolute bottom-8 right-12 h-4/5 aspect-[2/3] shadow-2xl rounded-lg overflow-hidden transform transition-transform duration-500 group-hover:scale-105">
-            <img
-              src={mainBook.thumbnailUrl}
-              alt={mainBook.title}
-              className="w-full h-full object-cover"
-            />
+
+          {/* 데스크톱용 호버 효과 정보 컨테이너 */}
+          <div
+            className="hidden md:block absolute bottom-0 inset-x-0 text-white py-8 px-6 
+        bg-gradient-to-t from-black/90 via-black/70 to-transparent 
+        transform translate-y-[65%] group-hover:translate-y-0 
+        transition-transform duration-700 ease-in-out z-20"
+          >
+            {/* 타이틀과 저자 정보 - 항상 보이는 부분 */}
+            <div className="transform translate-y-[-60%] group-hover:translate-y-0 transition-transform duration-500">
+              <h2 className="text-2xl font-semibold mb-2 drop-shadow-lg transition-all duration-500 group-hover:text-3xl">
+                {mainBook.title}
+              </h2>
+              <p className="text-lg text-gray-200 transition-all duration-500">
+                {mainBook.author}
+              </p>
+            </div>
+
+            {/* 버튼 그룹 - 호버 시 나타남 */}
+            <div className="flex items-center gap-4 mt-6 opacity-0 group-hover:opacity-100 transition-all duration-500 delay-100">
+              <Button
+                size="md"
+                color="pink"
+                className="transition-transform duration-300 group-hover:scale-105"
+                onClick={handleMainBannerClick}
+              >
+                보러가기
+              </Button>
+
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  e.preventDefault();
+                  handleMainBookLike(e);
+                }}
+                className="p-2 rounded-full bg-white/20 hover:bg-white/40 transition-all duration-300 z-10"
+                aria-label={isMainBookLiked ? "좋아요 취소" : "좋아요"}
+                type="button"
+              >
+                <Heart
+                  size={24}
+                  className={`${
+                    isMainBookLiked
+                      ? "fill-[#C75C5C] stroke-[#C75C5C]"
+                      : "stroke-[#C75C5C]"
+                  } pointer-events-none`}
+                />
+              </button>
+            </div>
           </div>
+
+          {/* 넷플릭스 스타일 테두리 효과 */}
+          <div
+            className="hidden md:block absolute inset-0 md:rounded-xl opacity-0 
+        group-hover:opacity-100 shadow-[inset_0_0_100px_rgba(255,255,255,0.1)] 
+        pointer-events-none transition-opacity duration-700"
+          ></div>
+
+          {/* 호버시 오버레이 */}
+          <div
+            className="absolute inset-0 md:rounded-xl bg-black/0 
+        group-hover:bg-black/20 transition-colors duration-700 pointer-events-none"
+          ></div>
         </div>
       )}
 
