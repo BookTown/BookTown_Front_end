@@ -120,7 +120,7 @@ const SettingMain = () => {
       </div>
       
       {/* 프로필 섹션 */}
-      <section className="w-full max-w-sm mx-6 md:mx-auto mb-8 md:mb-12 md:max-w-md relative">
+      <section className="w-full max-w-sm pl-3 mx-auto mb-8 md:mb-12 md:max-w-md relative">
         <div className="flex items-center space-x-4">
           {/* 프로필 이미지 */}
           <div className="relative">

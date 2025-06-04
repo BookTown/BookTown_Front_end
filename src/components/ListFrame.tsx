@@ -78,8 +78,8 @@ const ListFrame: React.FC<ListFrameProps> = ({
   return (
     <div className="px-4 pb-20 md:pb-0 flex flex-col min-h-[calc(100vh-12rem)] bg-[#FFFAF0]">
       {/* 북카드 리스트 컨테이너 */}
-      <div className="flex-grow overflow-hidden">
-        <ul className="flex flex-wrap gap-4 md:gap-6 mx-auto mb-4 w-full">
+      <div className="flex-grow">
+        <ul className="flex flex-wrap gap-4 md:gap-y-6 md:[column-gap:2.2rem] mx-auto mb-4 w-full">
           {currentItems.map((item, index) => (
             <li 
               key={index} 
