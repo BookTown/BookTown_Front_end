@@ -222,7 +222,7 @@ const SettingMain = () => {
           />
         </button>
         <button className="w-full">
-          <Link to={userRole === 'ADMIN' ? "/admin/book-requests" : "/Register"}>
+          <Link to={userRole === 'ADMIN' ? "/admin" : "/register"}>
             <MenuItem
               icon={<BookOpenIcon className="w-6 h-6 text-white" />}
               label={userRole === 'ADMIN' ? "신청리스트 관리하기" : "원하는 고전 신청하기"}
