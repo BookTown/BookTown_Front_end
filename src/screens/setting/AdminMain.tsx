@@ -57,7 +57,7 @@ const AdminMain: React.FC = () => {
   
   // 제목 생략 함수
   const truncateTitle = (title: string) => {
-    return title.length > 15 ? title.slice(0, 15) + "..." : title;
+    return title.length > 10 ? title.slice(0, 10) + "..." : title;
   };
   
   // 날짜 포맷팅 함수
@@ -69,7 +69,7 @@ const AdminMain: React.FC = () => {
   useEffect(() => {
     if (userRole !== 'ADMIN') {
       alert('관리자만 접근할 수 있는 페이지입니다.');
-      navigate('/');
+      navigate('/home');
       return;
     }
     
@@ -192,7 +192,7 @@ const AdminMain: React.FC = () => {
           <p className="text-xl text-[#A39C9C] pb-2">사용자들의 고전 신청 내역을 관리할 수 있어요</p>
         </div>
         <div className="w-full max-w-[37.5rem] mx-auto">
-          <div className="bg-white rounded-lg shadow-sm p-8 text-center h-[22rem]">
+          <div className="bg-white rounded-lg shadow-sm p-8 text-center h-[24rem] md:h-[23rem]">
             <p className="text-gray-500">로딩 중...</p>
           </div>
         </div>
@@ -208,7 +208,7 @@ const AdminMain: React.FC = () => {
           <p className="text-xl text-[#A39C9C] pb-2">사용자들의 고전 신청 내역을 관리할 수 있어요</p>
         </div>
         <div className="w-full max-w-[37.5rem] mx-auto">
-          <div className="bg-white rounded-lg shadow-sm p-8 text-center h-[22rem]">
+          <div className="bg-white rounded-lg shadow-sm p-8 text-center h-[24rem] md:h-[23rem]">
             <p className="text-red-500">{error}</p>
           </div>
         </div>
@@ -224,7 +224,7 @@ const AdminMain: React.FC = () => {
       </div>
       
       <div className="w-full max-w-[37.5rem] mx-auto">
-        <div className="bg-white rounded-lg shadow-sm pb-4 h-[22rem] overflow-y-auto">
+        <div className="bg-white rounded-lg shadow-sm pb-4 h-[24rem] md:h-[23rem] overflow-y-auto">
           {/* 테이블 헤더 */}
           <div className="flex border-b border-black py-2 text-center mx-2">
             <div className="w-1/12"></div>
@@ -254,16 +254,16 @@ const AdminMain: React.FC = () => {
                   {request.status === 'PENDING' && (
                     <div className="flex justify-center space-x-2">
                       <button 
-                        className="px-2 py-1 text-xs bg-green-500 text-white rounded hover:bg-green-600 transition-colors"
+                        className="px-3 py-1 text-xs text-[#4CAF50] border border-[#4CAF50] rounded hover:bg-gray-50 transition-colors"
                         onClick={() => handleApprove(request.id)}
                       >
-                        승인 수락
+                        수락
                       </button>
                       <button 
-                        className="px-2 py-1 text-xs bg-red-500 text-white rounded hover:bg-red-600 transition-colors"
+                        className="px-3 py-1 text-xs text-[#C75C5C] border border-[#C75C5C] rounded hover:bg-gray-50 transition-colors"
                         onClick={() => handleOpenRejectModal(request)}
                       >
-                        승인 거부
+                        거부
                       </button>
                     </div>
                   )}
