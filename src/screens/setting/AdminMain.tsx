@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { useAppSelector } from '../../redux/hooks';
+import { useAppDispatch } from '../../redux/hooks';
 import { useNavigate } from 'react-router-dom';
 import { Trash2 } from 'lucide-react';
 import { fetchAllBookApplications, approveBookApplication, rejectBookApplication } from '../../api/admin';
-import { deleteBookApplication } from '../../api/api';  // API 추가
+import { deleteBookApplication } from '../../api/api';
 import { BookApplication } from '../../interfaces/bookInterface';
 import ReasonModal from '../../components/ReasonModal';
+import { fetchUserProfile } from '../../api/user'; // 사용자 정보 조회 API 추가
+import { setUserData } from '../../redux/slices/userSlice'; // Redux 액션 추가
 
 const AdminMain: React.FC = () => {
   // 상태 관리
@@ -16,6 +18,7 @@ const AdminMain: React.FC = () => {
   const itemsPerPage = 6;
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
   const [expandedTitleId, setExpandedTitleId] = useState<number | null>(null);
+  const [isCheckingAuth, setIsCheckingAuth] = useState(true); // 권한 확인 상태 추가
 
   // 모달 관련 상태
   const [isReasonModalOpen, setIsReasonModalOpen] = useState(false);
@@ -23,9 +26,9 @@ const AdminMain: React.FC = () => {
   const [isRejectReasonModalOpen, setIsRejectReasonModalOpen] = useState(false);
   const [rejectionReason, setRejectionReason] = useState('');
   
-  // 로그인 사용자의 역할 확인
-  const userRole = useAppSelector((state) => state.user.role);
+  // Redux
   const navigate = useNavigate();
+  const dispatch = useAppDispatch(); // dispatch 추가
   
   // 화면 크기 변경 감지
   useEffect(() => {
@@ -90,31 +93,68 @@ const AdminMain: React.FC = () => {
     return dateString ? dateString.substring(2, 10) : '';
   };
   
+  // 데이터 로드 함수
+  const loadApplications = async () => {
+    try {
+      setIsLoading(true);
+      setError(null);
+      const data = await fetchAllBookApplications();
+      setRequests(data || []);
+    } catch (err) {
+      console.error('신청 내역 불러오기 실패:', err);
+      setError('신청 내역을 불러오는데 실패했습니다.');
+      setRequests([]);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  
   // 권한 체크 및 데이터 로드
   useEffect(() => {
-    if (userRole !== 'ADMIN') {
-      alert('관리자만 접근할 수 있는 페이지입니다.');
-      navigate('/home');
-      return;
-    }
-    
-    const loadApplications = async () => {
+    const checkAuthAndLoadData = async () => {
       try {
-        setIsLoading(true);
-        setError(null);
-        const data = await fetchAllBookApplications();
-        setRequests(data || []);
+        setIsCheckingAuth(true);
+        
+        // 사용자 정보 가져오기 (새로고침 시에도 정보 유지)
+        const userInfo = await fetchUserProfile();
+        
+        // Redux 상태 업데이트
+        if (userInfo) {
+          dispatch(setUserData({
+            id: userInfo.id,
+            email: userInfo.email,
+            username: userInfo.username,
+            profileImage: userInfo.profileImage,
+            role: userInfo.role,
+            score: userInfo.score,
+            introduction: userInfo.introduction
+          }));
+          
+          // 관리자 권한 확인
+          if (userInfo.role !== 'ADMIN') {
+            alert('관리자만 접근할 수 있는 페이지입니다.');
+            navigate('/home');
+            return;
+          }
+          
+          // 권한 확인 후 데이터 로드
+          await loadApplications();
+        } else {
+          // 사용자 정보가 없는 경우
+          alert('로그인이 필요합니다.');
+          navigate('/login');
+        }
       } catch (err) {
-        console.error('신청 내역 불러오기 실패:', err);
-        setError('신청 내역을 불러오는데 실패했습니다.');
-        setRequests([]);
+        console.error('권한 확인 실패:', err);
+        alert('권한을 확인할 수 없습니다. 다시 로그인해주세요.');
+        navigate('/login');
       } finally {
-        setIsLoading(false);
+        setIsCheckingAuth(false);
       }
     };
-
-    loadApplications();
-  }, [userRole, navigate]);
+    
+    checkAuthAndLoadData();
+  }, [navigate, dispatch]);
   
   // 페이지네이션 계산
   const totalPages = Math.ceil(requests.length / itemsPerPage);
@@ -210,7 +250,8 @@ const AdminMain: React.FC = () => {
     }
   };
 
-  if (isLoading) {
+  // 권한 확인 중이거나 데이터 로딩 중
+  if (isCheckingAuth || isLoading) {
     return (
       <div className="min-h-screen bg-[#FFFAF0] text-black px-4 pt-14 pb-24 md:pt-12 md:px-6">
         <div className="pl-0 pt-4 mb-6">
@@ -218,7 +259,7 @@ const AdminMain: React.FC = () => {
           <p className="text-xl text-[#A39C9C] pb-2">사용자들의 고전 신청 내역을 관리할 수 있어요</p>
         </div>
         <div className="w-full max-w-[37.5rem] mx-auto">
-          <div className="bg-white rounded-lg shadow-sm p-8 text-center h-[25.1rem] md:h-[24rem]">
+          <div className="bg-white rounded-lg shadow-sm p-8 text-center h-[25.1rem]">
             <p className="text-gray-500">로딩 중...</p>
           </div>
         </div>
@@ -234,7 +275,7 @@ const AdminMain: React.FC = () => {
           <p className="text-xl text-[#A39C9C] pb-2">사용자들의 고전 신청 내역을 관리할 수 있어요</p>
         </div>
         <div className="w-full max-w-[37.5rem] mx-auto">
-          <div className="bg-white rounded-lg shadow-sm p-8 text-center h-[25.1rem] md:h-[24rem]">
+          <div className="bg-white rounded-lg shadow-sm p-8 text-center h-[25.1rem]">
             <p className="text-red-500">{error}</p>
           </div>
         </div>
@@ -250,7 +291,7 @@ const AdminMain: React.FC = () => {
       </div>
       
       <div className="w-full max-w-[37.5rem] mx-auto">
-        <div className="bg-white rounded-lg shadow-sm pb-4 h-[25.1rem] md:h-[24rem] overflow-y-auto">
+        <div className="bg-white rounded-lg shadow-sm pb-4 h-[25.1rem] overflow-y-auto">
           {/* 테이블 헤더 */}
           <div className="flex border-b border-black py-2 text-center mx-2">
             <div className="w-1/12"></div>
