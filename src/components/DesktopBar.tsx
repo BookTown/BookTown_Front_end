@@ -4,6 +4,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { logoutUser } from "../api/user";
 import { useAppDispatch } from "../redux/hooks";
 import { clearLikes } from "../redux/slices/likeSlice";
+import { clearUserData } from "../redux/slices/userSlice";
 
 const DesktopBar = () => {
   const location = useLocation();
@@ -34,6 +35,7 @@ const DesktopBar = () => {
       sessionStorage.removeItem("redirectPath");
       // 좋아요 상태 초기화
       dispatch(clearLikes());
+      dispatch(clearUserData());
       navigate("/");
     }
   };
