@@ -3,6 +3,7 @@ import { useAppSelector } from '../../redux/hooks';
 import { useNavigate } from 'react-router-dom';
 import { Trash2 } from 'lucide-react';
 import { fetchAllBookApplications, approveBookApplication, rejectBookApplication } from '../../api/admin';
+import { deleteBookApplication } from '../../api/api';  // API 추가
 import { BookApplication } from '../../interfaces/bookInterface';
 import ReasonModal from '../../components/ReasonModal';
 
@@ -13,6 +14,8 @@ const AdminMain: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 6;
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+  const [expandedTitleId, setExpandedTitleId] = useState<number | null>(null);
 
   // 모달 관련 상태
   const [isReasonModalOpen, setIsReasonModalOpen] = useState(false);
@@ -23,6 +26,27 @@ const AdminMain: React.FC = () => {
   // 로그인 사용자의 역할 확인
   const userRole = useAppSelector((state) => state.user.role);
   const navigate = useNavigate();
+  
+  // 화면 크기 변경 감지
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    
+    window.addEventListener('resize', handleResize);
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
+  
+  // 제목 클릭 핸들러
+  const handleTitleClick = (id: number) => {
+    if (expandedTitleId === id) {
+      setExpandedTitleId(null); // 같은 제목 다시 클릭하면 접기
+    } else {
+      setExpandedTitleId(id); // 다른 제목 클릭하면 펼치기
+    }
+  };
   
   // 상태 변환 함수
   const getStatusInKorean = (status: string) => {
@@ -55,9 +79,10 @@ const AdminMain: React.FC = () => {
     }
   };
   
-  // 제목 생략 함수
+  // 제목 생략 함수 - 반응형으로 수정
   const truncateTitle = (title: string) => {
-    return title.length > 10 ? title.slice(0, 10) + "..." : title;
+    const limit = isMobile ? 7 : 10;
+    return title.length > limit ? title.slice(0, limit) + "..." : title;
   };
   
   // 날짜 포맷팅 함수
@@ -100,6 +125,7 @@ const AdminMain: React.FC = () => {
   // 페이지 변경 핸들러
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
+    setExpandedTitleId(null); // 페이지 변경 시 확장된 제목 초기화
   };
   
   // 모달 열기 핸들러
@@ -163,11 +189,11 @@ const AdminMain: React.FC = () => {
     }
   };
   
-  // 삭제 기능 구현
+  // 삭제 기능
   const handleDelete = async (id: number) => {
     if(window.confirm('정말 이 신청을 삭제하시겠습니까?')) {
       try {
-        // 여기에 삭제 API 구현 필요
+        await deleteBookApplication(id);
         setRequests(requests.filter(request => request.id !== id));
         
         // 삭제 후 현재 페이지에 아이템이 없으면 이전 페이지로
@@ -245,7 +271,18 @@ const AdminMain: React.FC = () => {
                     className="h-5 text-gray-400 hover:text-[#C75C5C] transition-colors duration-500 cursor-pointer mx-auto"
                   />
                 </div>
-                <div className="w-1/4">{truncateTitle(request.title)}</div>
+                <div className="w-1/4">
+                  <div 
+                    className="cursor-pointer hover:text-[#C75C5C] transition-colors"
+                    onClick={() => handleTitleClick(request.id)}
+                    title={request.title}
+                  >
+                    {expandedTitleId === request.id ? request.title : truncateTitle(request.title)}
+                    {expandedTitleId === request.id && request.title.length > (isMobile ? 7 : 10) && 
+                      <span className="text-xs text-gray-500 block">(접기)</span>
+                    }
+                  </div>
+                </div>
                 <div className="w-1/6">{formatDate(request.appliedDate)}</div>
                 <span className={`${getStatusColor(request.status)} w-1/6`}>
                   {getStatusInKorean(request.status)}
