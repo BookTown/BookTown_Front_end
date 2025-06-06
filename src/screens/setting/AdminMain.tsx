@@ -443,16 +443,10 @@ const AdminMain: React.FC = () => {
             />
             
             {/* 버튼 영역 */}
-            <div className="flex justify-end gap-2">
-              <button 
-                onClick={() => setIsRejectReasonModalOpen(false)}
-                className="px-4 py-2 text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-100 transition-colors"
-              >
-                취소
-              </button>
+            <div className="flex justify-center">
               <button 
                 onClick={handleReject}
-                className="px-4 py-2 bg-[#C75C5C] text-white rounded-lg hover:bg-[#B04A4A] transition-colors"
+                className="px-6 py-2 bg-[#C75C5C] text-white rounded-lg hover:bg-[#B04A4A] transition-colors"
               >
                 거부
               </button>
