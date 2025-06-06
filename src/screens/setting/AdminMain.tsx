@@ -218,7 +218,7 @@ const AdminMain: React.FC = () => {
           <p className="text-xl text-[#A39C9C] pb-2">사용자들의 고전 신청 내역을 관리할 수 있어요</p>
         </div>
         <div className="w-full max-w-[37.5rem] mx-auto">
-          <div className="bg-white rounded-lg shadow-sm p-8 text-center h-[24rem] md:h-[23rem]">
+          <div className="bg-white rounded-lg shadow-sm p-8 text-center h-[25.1rem] md:h-[24rem]">
             <p className="text-gray-500">로딩 중...</p>
           </div>
         </div>
@@ -234,7 +234,7 @@ const AdminMain: React.FC = () => {
           <p className="text-xl text-[#A39C9C] pb-2">사용자들의 고전 신청 내역을 관리할 수 있어요</p>
         </div>
         <div className="w-full max-w-[37.5rem] mx-auto">
-          <div className="bg-white rounded-lg shadow-sm p-8 text-center h-[24rem] md:h-[23rem]">
+          <div className="bg-white rounded-lg shadow-sm p-8 text-center h-[25.1rem] md:h-[24rem]">
             <p className="text-red-500">{error}</p>
           </div>
         </div>
@@ -250,7 +250,7 @@ const AdminMain: React.FC = () => {
       </div>
       
       <div className="w-full max-w-[37.5rem] mx-auto">
-        <div className="bg-white rounded-lg shadow-sm pb-4 h-[24rem] md:h-[23rem] overflow-y-auto">
+        <div className="bg-white rounded-lg shadow-sm pb-4 h-[25.1rem] md:h-[24rem] overflow-y-auto">
           {/* 테이블 헤더 */}
           <div className="flex border-b border-black py-2 text-center mx-2">
             <div className="w-1/12"></div>
