@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAppDispatch } from '../../redux/hooks';
 import { useNavigate } from 'react-router-dom';
-import { Trash2 } from 'lucide-react';
+import { Trash2, X } from 'lucide-react'; // X 아이콘 추가
 import { fetchAllBookApplications, approveBookApplication, rejectBookApplication } from '../../api/admin';
 import { deleteBookApplication } from '../../api/api';
 import { BookApplication } from '../../interfaces/bookInterface';
@@ -411,30 +411,48 @@ const AdminMain: React.FC = () => {
 
       {/* 거부 사유 입력 모달 */}
       {isRejectReasonModalOpen && selectedRequest && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 w-full max-w-md mx-4">
-            <h3 className="text-lg font-medium mb-4">거부 사유 입력</h3>
-            <p className="text-sm text-gray-700 mb-4">
-              "{selectedRequest.title}" 책의 거부 사유를 입력해주세요.
-            </p>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+          {/* 배경 딤처리 - 클릭 시 모달 닫기 */}
+          <div className="absolute inset-0" onClick={() => setIsRejectReasonModalOpen(false)} />
+          
+          {/* 모달 본문 */}
+          <div className="bg-white rounded-xl p-5 w-[90%] max-w-md shadow-lg z-10 max-h-[90vh] overflow-y-auto">
+            {/* 헤더: 책 제목 및 닫기 버튼 */}
+            <div className="flex justify-between items-center mb-4">
+              <div>
+                <h2 className="text-lg font-medium">거부 사유 입력</h2>
+                <p className="text-sm text-gray-500">
+                  책: {selectedRequest.title}
+                </p>
+              </div>
+              <button
+                onClick={() => setIsRejectReasonModalOpen(false)}
+                className="p-1 rounded-full hover:bg-gray-100"
+                aria-label="닫기"
+              >
+                <X size={20} />
+              </button>
+            </div>
             
+            {/* 거부 사유 입력 영역 */}
             <textarea
               value={rejectionReason}
               onChange={(e) => setRejectionReason(e.target.value)}
               placeholder="거부 사유를 입력하세요"
-              className="w-full p-2 border border-gray-300 rounded h-24 resize-none focus:outline-none focus:border-[#C75C5C]"
+              className="w-full p-4 border border-gray-200 rounded-lg bg-gray-50 h-32 resize-none focus:outline-none focus:border-[#C75C5C] mb-4"
             />
             
-            <div className="flex justify-end gap-2 mt-4">
+            {/* 버튼 영역 */}
+            <div className="flex justify-end gap-2">
               <button 
                 onClick={() => setIsRejectReasonModalOpen(false)}
-                className="px-4 py-2 text-gray-700 border border-gray-300 rounded hover:bg-gray-100 transition-colors"
+                className="px-4 py-2 text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-100 transition-colors"
               >
                 취소
               </button>
               <button 
                 onClick={handleReject}
-                className="px-4 py-2 bg-[#C75C5C] text-white rounded hover:bg-[#B04A4A] transition-colors"
+                className="px-4 py-2 bg-[#C75C5C] text-white rounded-lg hover:bg-[#B04A4A] transition-colors"
               >
                 거부
               </button>

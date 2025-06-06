@@ -103,6 +103,7 @@ const RegisterList: React.FC = () => {
         if (currentPage > newTotalPages && newTotalPages > 0) {
           setCurrentPage(newTotalPages);
         }
+        alert('신청이 삭제되었습니다.');
       } catch (error) {
         console.error('신청 삭제 실패:', error);
         alert('신청 삭제에 실패했습니다. 다시 시도해주세요.');
