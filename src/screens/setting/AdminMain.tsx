@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useAppSelector } from '../../redux/hooks';
 import { useNavigate } from 'react-router-dom';
-import { Check, X } from 'lucide-react';
-import { fetchAllBookApplications, approveBookApplication, rejectBookApplication, } from '../../api/admin';
+import { Trash2 } from 'lucide-react';
+import { fetchAllBookApplications, approveBookApplication, rejectBookApplication } from '../../api/admin';
 import { BookApplication } from '../../interfaces/bookInterface';
 import ReasonModal from '../../components/ReasonModal';
 
@@ -57,12 +57,12 @@ const AdminMain: React.FC = () => {
   
   // 제목 생략 함수
   const truncateTitle = (title: string) => {
-    return title.length > 10 ? title.slice(0, 10) + "..." : title;
+    return title.length > 15 ? title.slice(0, 15) + "..." : title;
   };
   
   // 날짜 포맷팅 함수
   const formatDate = (dateString: string) => {
-    return dateString.substring(0, 10);
+    return dateString ? dateString.substring(2, 10) : '';
   };
   
   // 권한 체크 및 데이터 로드
@@ -120,7 +120,7 @@ const AdminMain: React.FC = () => {
     if(window.confirm('이 신청을 승인하시겠습니까?')) {
       try {
         const response = await approveBookApplication(id);
-        // 데이터 갱신 - 스크린샷에 맞게 응답 처리
+        // 데이터 갱신
         setRequests(requests.map(req => 
           req.id === id ? {
             ...req, 
@@ -147,7 +147,7 @@ const AdminMain: React.FC = () => {
     
     try {
       const response = await rejectBookApplication(selectedRequest.id, rejectionReason);
-      // 데이터 갱신 - 스크린샷에 맞게 응답 처리
+      // 데이터 갱신
       setRequests(requests.map(req => 
         req.id === selectedRequest.id ? {
           ...req,
@@ -160,6 +160,27 @@ const AdminMain: React.FC = () => {
     } catch (error) {
       console.error('신청 거부 실패:', error);
       alert('신청 거부에 실패했습니다. 다시 시도해주세요.');
+    }
+  };
+  
+  // 삭제 기능 구현
+  const handleDelete = async (id: number) => {
+    if(window.confirm('정말 이 신청을 삭제하시겠습니까?')) {
+      try {
+        // 여기에 삭제 API 구현 필요
+        setRequests(requests.filter(request => request.id !== id));
+        
+        // 삭제 후 현재 페이지에 아이템이 없으면 이전 페이지로
+        const newTotal = requests.length - 1;
+        const newTotalPages = Math.ceil(newTotal / itemsPerPage);
+        if (currentPage > newTotalPages && newTotalPages > 0) {
+          setCurrentPage(newTotalPages);
+        }
+        alert('신청이 삭제되었습니다.');
+      } catch (error) {
+        console.error('신청 삭제 실패:', error);
+        alert('신청 삭제에 실패했습니다. 다시 시도해주세요.');
+      }
     }
   };
 
@@ -207,47 +228,51 @@ const AdminMain: React.FC = () => {
           {/* 테이블 헤더 */}
           <div className="flex border-b border-black py-2 text-center mx-2">
             <div className="w-1/12"></div>
-            <div className="w-2/5">책제목</div>
-            <div className="w-1/6">신청자</div>
+            <div className="w-1/4">책제목</div>
             <div className="w-1/6">신청일</div>
             <div className="w-1/6">상태</div>
-            <div className="w-1/6">관리</div>
+            <div className="w-1/3">사유</div>
           </div>
           
           {/* 테이블 내용 */}
           {currentRequests.length > 0 ? (
             currentRequests.map((request) => (
               <div key={request.id} className="flex items-center text-center border-b border-gray-200 py-3 mx-2">
-                {/* 승인/거절 버튼 */}
+                {/* 삭제 버튼 */}
                 <div className="w-1/12">
-                  {request.status === 'PENDING' && (
-                    <div className="flex justify-center space-x-1">
-                      <Check 
-                        onClick={() => handleApprove(request.id)}
-                        className="h-5 text-green-500 hover:text-green-700 transition-colors duration-500 cursor-pointer"
-                      />
-                      <X 
-                        onClick={() => handleOpenRejectModal(request)}
-                        className="h-5 text-red-500 hover:text-red-700 transition-colors duration-500 cursor-pointer"
-                      />
-                    </div>
-                  )}
+                  <Trash2 
+                    onClick={() => handleDelete(request.id)}
+                    className="h-5 text-gray-400 hover:text-[#C75C5C] transition-colors duration-500 cursor-pointer mx-auto"
+                  />
                 </div>
-                <div className="w-2/5">{truncateTitle(request.title)}</div>
-                <div className="w-1/4">{formatDate(request.appliedDate)}</div>
+                <div className="w-1/4">{truncateTitle(request.title)}</div>
+                <div className="w-1/6">{formatDate(request.appliedDate)}</div>
                 <span className={`${getStatusColor(request.status)} w-1/6`}>
                   {getStatusInKorean(request.status)}
                 </span>
-                <div className="w-1/6">
-                  {(request.status === 'REJECTED') && (
+                <div className="w-1/3">
+                  {request.status === 'PENDING' && (
+                    <div className="flex justify-center space-x-2">
+                      <button 
+                        className="px-2 py-1 text-xs bg-green-500 text-white rounded hover:bg-green-600 transition-colors"
+                        onClick={() => handleApprove(request.id)}
+                      >
+                        승인 수락
+                      </button>
+                      <button 
+                        className="px-2 py-1 text-xs bg-red-500 text-white rounded hover:bg-red-600 transition-colors"
+                        onClick={() => handleOpenRejectModal(request)}
+                      >
+                        승인 거부
+                      </button>
+                    </div>
+                  )}
+                  {request.status === 'REJECTED' && (
                     <button 
                       className="px-2 py-1 text-xs bg-[#C75C5C] text-white rounded hover:bg-[#B04A4A] transition-colors"
-                      onClick={() => handleOpenReasonModal({
-                        ...request,
-                        rejectionReason: request.rejectionReason || '사유가 없습니다.'
-                      })}
+                      onClick={() => handleOpenReasonModal(request)}
                     >
-                      사유
+                      보기
                     </button>
                   )}
                 </div>
@@ -312,7 +337,7 @@ const AdminMain: React.FC = () => {
           <div className="bg-white rounded-lg p-6 w-full max-w-md mx-4">
             <h3 className="text-lg font-medium mb-4">거부 사유 입력</h3>
             <p className="text-sm text-gray-700 mb-4">
-              "{selectedRequest.title}" 신청을 거부합니다. 거부 사유를 입력해주세요.
+              "{selectedRequest.title}" 책의 거부 사유를 입력해주세요.
             </p>
             
             <textarea
@@ -333,7 +358,7 @@ const AdminMain: React.FC = () => {
                 onClick={handleReject}
                 className="px-4 py-2 bg-[#C75C5C] text-white rounded hover:bg-[#B04A4A] transition-colors"
               >
-                거부 확정
+                거부
               </button>
             </div>
           </div>
