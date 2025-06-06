@@ -15,9 +15,10 @@ import EditProfileInfo from "./EditProfileInfo";
 import EditProfileImage from "./EditProfileImage";
 import ExitMember from "./ExitMember";
 import { updateProfileImage } from "../../api/user";
-import { useAppDispatch } from "../../redux/hooks";
+import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { clearLikes } from "../../redux/slices/likeSlice";
 import TTSModal from "../../components/TTSModal";
+import { setUserData, clearUserData } from "../../redux/slices/userSlice";
 
 interface UserProfile {
   id: number;
@@ -29,6 +30,14 @@ interface UserProfile {
   difficulty: string;
   score: number;
   introduction: string | null;
+  role?: 'USER' | 'ADMIN';
+  bookApplies?: Array<{
+    id: number;
+    title: string;
+    status: string;
+    appliedAt: string;
+    rejectionReason: string | null;
+  }>;
 }
 
 interface MenuItemProps {
@@ -42,6 +51,7 @@ const SettingMain = () => {
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
+  const userRole = useAppSelector((state) => state.user.role);
   const [isInfoModalOpen, setIsInfoModalOpen] = useState(false);
   const [isImageModalOpen, setIsImageModalOpen] = useState(false);
   const [isExitModalOpen, setIsExitModalOpen] = useState(false);
@@ -53,13 +63,23 @@ const SettingMain = () => {
       try {
         const data = await fetchUserProfile();
         setUserProfile(data);
+        // 사용자 데이터를 리덕스에 저장
+        dispatch(setUserData({
+          id: data.id,
+          email: data.email,
+          username: data.username,
+          profileImage: data.profileImage,
+          role: data.role, // API에서 'USER' 또는 'ADMIN' 반환 가정
+          score: data.score,
+          introduction: data.introduction,
+        }));
       } catch (error) {
         console.error("Failed to fetch user profile:", error);
       }
     };
 
     fetchProfile();
-  }, []);
+  }, [dispatch]);
 
   // 로그아웃 처리 함수
   const handleLogout = async () => {
@@ -77,6 +97,8 @@ const SettingMain = () => {
       sessionStorage.removeItem("redirectPath");
       // 좋아요 상태 초기화
       dispatch(clearLikes());
+      // 사용자 데이터 초기화
+      dispatch(clearUserData());
       navigate("/");
     }
   };
@@ -88,6 +110,17 @@ const SettingMain = () => {
       // 성공 시 프로필 다시 불러오기
       const data = await fetchUserProfile();
       setUserProfile(data);
+      
+      // 리덕스 스토어 업데이트
+      dispatch(setUserData({
+        id: data.id,
+        email: data.email,
+        username: data.username,
+        profileImage: data.profileImage,
+        role: data.role,
+        score: data.score,
+        introduction: data.introduction,
+      }));
     } catch (error) {
       console.error("Failed to update profile:", error);
     }
@@ -98,6 +131,17 @@ const SettingMain = () => {
       await updateProfileImage(file);
       const data = await fetchUserProfile();
       setUserProfile(data);
+      
+      // 리덕스 스토어 업데이트
+      dispatch(setUserData({
+        id: data.id,
+        email: data.email,
+        username: data.username,
+        profileImage: data.profileImage,
+        role: data.role,
+        score: data.score,
+        introduction: data.introduction,
+      }));
     } catch (error) {
       console.error("Failed to update image:", error);
     }
@@ -178,10 +222,10 @@ const SettingMain = () => {
           />
         </button>
         <button className="w-full">
-          <Link to="/Register">
+          <Link to={userRole === 'ADMIN' ? "/admin/book-requests" : "/Register"}>
             <MenuItem
               icon={<BookOpenIcon className="w-6 h-6 text-white" />}
-              label="원하는 고전 신청하기"
+              label={userRole === 'ADMIN' ? "신청리스트 관리하기" : "원하는 고전 신청하기"}
               iconBg="bg-[#F9A8A8]"
             />
           </Link>
@@ -224,6 +268,17 @@ const SettingMain = () => {
           try {
             const data = await fetchUserProfile();
             setUserProfile(data);
+            
+            // 리덕스 스토어 업데이트
+            dispatch(setUserData({
+              id: data.id,
+              email: data.email,
+              username: data.username,
+              profileImage: data.profileImage,
+              role: data.role,
+              score: data.score,
+              introduction: data.introduction,
+            }));
           } catch (error) {
             console.error(
               "Failed to fetch user profile after deletion:",

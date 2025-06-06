@@ -3,6 +3,7 @@ import booksReducer from "./slices/bookSlice";
 import cartoonReducer from "./slices/cartoonSlice";
 import likesReducer from "./slices/likeSlice";
 import ttsReducer from "./slices/ttsSlice";
+import userReducer from "./slices/userSlice";
 
 export const store = configureStore({
   reducer: {
@@ -10,6 +11,7 @@ export const store = configureStore({
     cartoon: cartoonReducer,
     likes: likesReducer,  // 좋아요 관련 상태 관리 리듀서
     tts: ttsReducer,
+    user: userReducer,
   },
 });
 

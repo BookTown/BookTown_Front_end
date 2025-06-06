@@ -15,6 +15,7 @@ import QuizEntry from "./screens/quiz/QuizEntry";
 import CartoonMain from "./screens/cartoon/CartoonMain";
 import Loading from "./screens/cartoon/Loading";
 import Register from "./screens/setting/Register";
+import Admin from "./screens/setting/Admin";
 
 const router = createBrowserRouter([
     {
@@ -80,6 +81,10 @@ const router = createBrowserRouter([
             {
                 path: "/register",
                 element: <Register />
+            },
+            {
+                path: "/admin",
+                element: <Admin />
             }
         ]
     },
