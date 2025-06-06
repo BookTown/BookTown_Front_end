@@ -2,8 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useAppDispatch } from '../../redux/hooks';
 import { useNavigate } from 'react-router-dom';
 import { Trash2, X } from 'lucide-react'; // X 아이콘 추가
-import { fetchAllBookApplications, approveBookApplication, rejectBookApplication } from '../../api/admin';
-import { deleteBookApplication } from '../../api/api';
+import { fetchAllBookApplications, approveBookApplication, rejectBookApplication, AdminDeleteBookApplication } from '../../api/admin';
 import { BookApplication } from '../../interfaces/bookInterface';
 import ReasonModal from '../../components/ReasonModal';
 import { fetchUserProfile } from '../../api/user'; // 사용자 정보 조회 API 추가
@@ -233,7 +232,7 @@ const AdminMain: React.FC = () => {
   const handleDelete = async (id: number) => {
     if(window.confirm('정말 이 신청을 삭제하시겠습니까?')) {
       try {
-        await deleteBookApplication(id);
+        await AdminDeleteBookApplication(id);
         setRequests(requests.filter(request => request.id !== id));
         
         // 삭제 후 현재 페이지에 아이템이 없으면 이전 페이지로

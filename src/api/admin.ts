@@ -36,3 +36,16 @@ export const rejectBookApplication = async (id: number, reason: string): Promise
     throw error;
   }
 };
+
+// 관리자 책 신청 삭제 API
+export const AdminDeleteBookApplication = async (id: number) => {
+  console.log('책 신청 삭제 API 호출 시작:', id);
+  try {
+    const response = await axiosApi.delete(`/apply/admin/delete/${id}`);
+    console.log('책 신청 삭제 API 응답 성공:', response.data);
+    return response.data;
+  } catch (error) {
+    console.error('책 신청 삭제 API 오류:', error);
+    throw error;
+  }
+};
