@@ -6,14 +6,22 @@
 </div>
 </br>
 
-## 🙋 소개
-추후 추가
+## 📚 소개
 
-**책고을**은 **AI 기반 그림책과 퀴즈로 배우는 고전문학 반응형 웹 애플리케이션**입니다.
+**책고을**은 고전문학을 보다 쉽고 흥미롭게 접할 수 있도록 돕는 **AI 기반 반응형 웹 애플리케이션**입니다.
 
-## 🚀 목표
+AI 줄거리 요약, 장면 일러스트 생성, 퀴즈 기능을 통해 고전문학에 대한 심리적 장벽을 낮추고,
 
-추후 추가
+읽고 보고 푸는 방식으로 몰입도 높은 독서 경험을 제공합니다.
+
+
+## 🎯 목표
+
+- **낮은 독서율 개선**: AI 기술을 활용해 독서 진입장벽 완화
+- **고전문학 접근성 향상**: 복잡한 문장을 요약하고 시각적으로 표현
+- **인터랙티브 학습 제공**: 퀴즈를 통한 능동적 콘텐츠 소비 유도
+    - **맞춤형 독서 기록**: 사용자별 히스토리와 학습 분석 기능 지원
+- **기기 제한 없는 사용성**: 반응형 UI/UX로 다양한 환경에서 접근 가능
 
 ## 💻 기능
 
@@ -35,6 +43,12 @@
 <h3>2025.03 ~ 2025.05</h3>
 
 ## ⚒️ 기술스택
+### 배포
+<p>
+  <img src="https://img.shields.io/badge/nginx-%23009639.svg?style=for-the-badge&logo=nginx&logoColor=white" alt="Nginx Badge"/>
+  <img src="https://img.shields.io/badge/GitHub%20Actions-2088FF?style=for-the-badge&logo=github-actions&logoColor=white" alt="GitHub Actions Badge"/>
+</p>
+
 ### 프론트엔드
 
 <p><img src="https://img.shields.io/badge/typescript-%23007ACC.svg?style=for-the-badge&logo=typescript&logoColor=white" alt="TypeScript Badge"/> <img src="https://img.shields.io/badge/tailwindcss-%2338B2AC.svg?style=for-the-badge&logo=tailwind-css&logoColor=white" alt="TailwindCSS Badge"/> <img src="https://img.shields.io/badge/React-61DAFB?style=for-the-badge&logo=react&logoColor=black" alt="React Badge"/> <img src="https://img.shields.io/badge/redux-%23593d88.svg?style=for-the-badge&logo=redux&logoColor=white" alt="Redux Badge"/></p>
