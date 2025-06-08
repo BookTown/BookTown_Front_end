@@ -326,3 +326,16 @@ export const deleteBookApplication = async (id: number) => {
     throw error;
   }
 };
+
+// 새로운 책 등록 API
+export const registerBook = async (gutenbergId: number) => {
+  console.log('새 책 등록 API 호출 시작:', gutenbergId);
+  try {
+    const response = await axiosApi.post('/book/register', { gutenbergId });
+    console.log('새 책 등록 API 응답 성공:', response.data);
+    return response.data;
+  } catch (error) {
+    console.error('새 책 등록 API 오류:', error);
+    throw error;
+  }
+};
