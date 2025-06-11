@@ -1,14 +1,14 @@
 # BookTown - 책고을
 
 <div align="center">
-  <img src="./public/images/Loader.gif" width="600"/>
+  <img src="https://media.discordapp.net/attachments/1095566754152972338/1381217861741187172/mascot.gif?ex=6846b6e0&is=68456560&hm=86f357ada3b1cb02363680220255d1d33797968cbf961be6ca907ec03b30dc7e&=&width=946&height=983" width="600"/>
   <h3> 📚 고전문학 그림책 감상과 퀴즈 학습을 결합한 반응형 웹 애플리케이션 </h3>
 </div>
 </br>
 
 ## 📚 소개
 
-**책고을**은 고전문학을 쉽고 흥미롭게 접할 수 있도록 돕는  **AI 기반 반응형 웹 애플리케이션**입니다.
+**책고을**은 고전문학을 쉽고 흥미롭게 접할 수 있도록 돕는 **AI 기반 반응형 웹 애플리케이션**입니다.
 
 - AI 줄거리 요약, 장면 일러스트 생성, 퀴즈 기능을 통해 고전문학의 심리적 장벽을 낮춥니다.  
 - 읽고, 보고, 푸는 방식으로 **몰입도 높은 독서 경험**을 제공합니다.
@@ -199,4 +199,9 @@
 
 ## 🎞 시연 영상
 
-<p><img src="https://img.shields.io/badge/YouTube-%23FF0000.svg?style=for-the-badge&logo=YouTube&logoColor=white" alt="Youtube Badge"/> </p>
+<p>
+  <a href="https://www.youtube.com/watch?v=r0-LVrRMRjA" target="_blank">
+    <img src="https://img.shields.io/badge/YouTube-%23FF0000.svg?style=for-the-badge&logo=YouTube&logoColor=white" alt="Youtube Badge"/>
+  </a>
+</p>
+
