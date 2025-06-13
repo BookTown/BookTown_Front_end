@@ -98,7 +98,7 @@ const AdminMain: React.FC = () => {
 
   // 제목 생략 함수 - 반응형으로 수정
   const truncateTitle = (title: string) => {
-    const limit = isMobile ? 7 : 10;
+    const limit = isMobile ? 6 : 10;
     return title.length > limit ? title.slice(0, limit) + "..." : title;
   };
 
@@ -447,7 +447,7 @@ const AdminMain: React.FC = () => {
                       ? request.title
                       : truncateTitle(request.title)}
                     {expandedTitleId === request.id &&
-                      request.title.length > (isMobile ? 7 : 10) && (
+                      request.title.length > (isMobile ? 6 : 10) && (
                         <span className="text-xs text-gray-500 block">
                           (접기)
                         </span>
