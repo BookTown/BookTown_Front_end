@@ -2,6 +2,26 @@
 @tailwind components;
 @tailwind utilities;
 
+@font-face {
+  font-family: 'OnGlipParkDaHyun';
+  src: url('../public/fonts/OnGlipParkDaHyun.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@layer base {
+  html {
+    font-family: 'OnGlipParkDaHyun', system-ui, sans-serif;
+  }
+  
+  body {
+    font-family: 'OnGlipParkDaHyun', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}
+
 /* body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
@@ -15,3 +35,24 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
 } */
+
+/* 데스크톱 전용 스크롤바 스타일 */
+@media (hover: hover) and (pointer: fine) {
+  .desktop-scroll::-webkit-scrollbar {
+    height: 6px;
+  }
+
+  .desktop-scroll::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .desktop-scroll::-webkit-scrollbar-thumb {
+    background-color: #C75C5C;
+    border-radius: 8px;
+  }
+
+  .desktop-scroll {
+    scrollbar-color: #C75C5C transparent; /* for Firefox */
+    scrollbar-width: thin;
+  }
+}
